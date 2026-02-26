@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Oferta Especial - Liberação em Andamento</title>
+
+  <style>
+    :root{
+      --bg:#070707;
+      --panel:#0f0f0f;
+      --border: rgba(255,255,255,.10);
+      --danger:#8b0000;
+      --danger2:#b30000;
+      --red:#ff2e2e;
+      --green:#00ff9a;
+      --text:#ffffff;
+      --muted2:rgba(255,255,255,.55);
+      --shadow: 0 18px 50px rgba(0,0,0,.55);
+      --radius:16px;
+      --max: 980px;
+
+      --btn:#0a6a5a;
+      --btnHover:#085a4d;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color:var(--text);
+    }
+
+    .top-alert{
+      width:100%;
+      background: linear-gradient(0deg, var(--danger), var(--danger2));
+      color:#fff;
+      font-weight:900;
+      text-align:center;
+      padding:12px 10px;
+      letter-spacing:.3px;
+      position:sticky;
+      top:0;
+      z-index:10;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    .top-alert .icon{ margin-right:8px; }
+
+    .wrap{
+      max-width:var(--max);
+      margin:0 auto;
+      padding: 26px 14px 30px;
+    }
+
+    .hero{
+      text-align:center;
+      padding: 18px 10px 8px;
+    }
+    .hero .small{
+      font-size:20px;
+      font-weight:800;
+      color: rgba(255,255,255,.92);
+      margin:0 0 10px;
+    }
+    .hero .small .green{ color: var(--green); font-weight:1000; }
+
+    .hero .big{
+      font-size:52px;
+      font-weight:1000;
+      margin:0;
+      letter-spacing:1px;
+      color: var(--green);
+      text-shadow: 0 0 18px rgba(0,255,154,.20);
+    }
+    .hero .sub{
+      margin: 10px 0 0;
+      font-size:20px;
+      color:#fff;
+      font-weight:700;
+    }
+    .hero .warn{
+      margin: 14px auto 0;
+      max-width: 860px;
+      font-size:18px;
+      font-weight:900;
+      color: var(--red);
+      line-height:1.25;
+    }
+
+    .panel{
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px 18px;
+      margin: 18px auto 0;
+      overflow:hidden;
+    }
+
+    .panel-title{
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      text-align:center;
+      font-size:24px;
+      font-weight:1000;
+      color: var(--red);
+      margin: 0 0 14px;
+      letter-spacing:.4px;
+      text-transform: uppercase;
+    }
+
+    .stats{ text-align:center; }
+    .stats .label{
+      color: rgba(255,255,255,.88);
+      font-weight:800;
+      margin-bottom: 8px;
+    }
+    .stats .num{
+      font-size:56px;
+      font-weight:1000;
+      color: var(--green);
+      text-shadow: 0 0 16px rgba(0,255,154,.18);
+      margin: 6px 0;
+      line-height:1;
+    }
+    .stats .foot{
+      color: rgba(255,255,255,.78);
+      font-weight:800;
+      margin-top: 6px;
+    }
+    .note{
+      margin-top:10px;
+      font-size:12px;
+      color: var(--muted2);
+      font-weight:700;
+    }
+
+    .ticker-head{
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      text-align:center;
+      margin-bottom: 14px;
+      color: var(--green);
+      font-weight:1000;
+      text-transform: uppercase;
+      letter-spacing:.4px;
+      font-size:20px;
+    }
+
+    
+
+    .track{
+      display:flex;
+      gap: 12px;
+      padding: 14px;
+      will-change: transform;
+      transition: transform .55s ease;
+    }
+
+    .card{
+      flex: 0 0 calc((100% - 24px) / 3);
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 14px;
+      padding: 14px 14px;
+      min-height: 74px;
+    }
+
+    .card .name{
+      font-weight:1000;
+      font-size:16px;
+      margin:0 0 6px;
+      color: rgba(255,255,255,.95);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .card .meta{
+      margin:0;
+      font-weight:800;
+      color: rgba(255,255,255,.78);
+    }
+    .card .price{
+      color: var(--green);
+      font-weight:1000;
+    }
+
+    .bonus-title{
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      text-align:center;
+      color: var(--red);
+      font-weight:1000;
+      font-size:26px;
+      text-transform: uppercase;
+      margin:0 0 10px;
+    }
+    .bonus-text{
+      text-align:center;
+      color: rgba(255,255,255,.9);
+      font-size:18px;
+      line-height:1.5;
+      margin:0 auto;
+      max-width: 860px;
+      font-weight:800;
+    }
+    .bonus-text .green{
+      color: var(--green);
+      font-weight:1000;
+    }
+
+    .timer-wrap{ text-align:center; padding: 6px 0 0; }
+    .timer-label{
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      text-align:center;
+      color: var(--red);
+      font-weight:1000;
+      text-transform: uppercase;
+      letter-spacing:.4px;
+      font-size:22px;
+      margin: 0 0 12px;
+    }
+    .timer{
+      font-size:78px;
+      font-weight:1000;
+      color: var(--green);
+      text-shadow: 0 0 20px rgba(0,255,154,.22);
+      margin: 0 0 10px;
+      line-height:1;
+    }
+    .timer-warn{
+      color: var(--red);
+      font-weight:900;
+      font-size:18px;
+      margin: 10px auto 0;
+      max-width: 900px;
+      line-height:1.25;
+    }
+    .timer-sub{
+      color: rgba(255,255,255,.9);
+      font-weight:900;
+      margin-top: 10px;
+      font-size:18px;
+    }
+
+    .cta{ text-align:center; margin-top: 22px; }
+    .btn{
+      display:inline-block;
+      width: min(720px, 100%);
+      background: var(--btn);
+      color:#fff;
+      text-decoration:none;
+      font-weight:1000;
+      font-size:20px;
+      padding: 16px 18px;
+      border-radius: 12px;
+      border: 2px solid rgba(255,255,255,.12);
+      box-shadow: 0 12px 35px rgba(0,0,0,.35);
+      transition: transform .08s ease, background .2s ease;
+    }
+    .btn:hover{ background: var(--btnHover); }
+    .btn:active{ transform: scale(.99); }
+
+    .no{
+      display:inline-block;
+      margin-top: 14px;
+      color: rgba(255,255,255,.9);
+      font-weight:800;
+      text-decoration: underline;
+      font-size:14px;
+      max-width: 780px;
+    }
+
+    /* Rodapé + faixa vermelha só no "ATENÇÃO" */
+    .footer-note{
+      max-width: var(--max);
+      margin: 20px auto 0;
+      padding: 0 14px 40px;
+      text-align:center;
+      color: rgba(255,255,255,.85);
+      font-weight:900;
+      font-size:14px;
+      line-height:1.35;
+    }
+    .footer-note .attention-tag{
+  display:inline-block;
+  background: #fa2626;   /* vermelho claro */
+  color:#000000;            /* texto escuro pra destacar no vermelho claro */
+  font-weight:1000;
+  padding: 3px 8px;
+  border-radius: 0;      /* retangular */
+  margin-right: 4px;     /* mais perto do texto */
+  letter-spacing:.2px;
+  line-height: 1.1;
+}
+
+    /* Responsivo */
+    @media (max-width: 860px){
+      .hero .big{ font-size:40px; }
+      .card{ flex-basis: calc((100% - 12px) / 2); }
+      .timer{ font-size:64px; }
+    }
+
+    @media (max-width: 520px){
+      .hero .small{ font-size:18px; }
+      .hero .big{ font-size:32px; }
+      .hero .sub{ font-size:18px; }
+      .hero .warn{ font-size:16px; }
+
+      .panel{ padding:18px 14px; }
+      .panel-title{ font-size:22px; }
+      .bonus-title{ font-size:22px; }
+      .timer{ font-size:56px; }
+      .btn{ font-size:18px; }
+
+      /* ✅ MOBILE: centraliza conteúdo dos cards e evita “espaço sobrando” */
+      .card{
+        flex-basis: 100%;
+        text-align:center;
+      }
+      .card .name{
+        white-space: normal;       /* permite quebrar linha */
+        overflow: visible;
+        text-overflow: clip;
+      }
+      .card .meta{
+        text-align:center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="top-alert"><span class="icon">⚠️</span>SISTEMA DETECTOU INTENÇÃO DE SAÍDA</div>
+
+  <div class="wrap">
+
+    <div class="hero">
+      <p class="small">Sua vaga de <span class="green">R$197</span> ainda está reservada...</p>
+      <h1 class="big">ÚLTIMA LIBERAÇÃO POR R$97</h1>
+      <p class="sub">ou <b>12x</b> de <b>R$9,70</b></p>
+      <p class="warn">Se você fechar esta página, o sistema cancela automaticamente sua condição especial.</p>
+    </div>
+
+    <section class="panel">
+      <h2 class="panel-title">🚨 RESTAM POUCAS LIBERAÇÕES ATIVAS</h2>
+      <div class="stats">
+        <div class="label">Visitantes ativos nesta página:</div>
+        <div class="num" id="activeVisitors">97</div>
+        <div class="foot"><span id="activatedLast">6</span> já ativaram nos últimos minutos.</div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="ticker-head">✔️ ATIVAÇÕES RECENTES</div>
+      <div class="carousel" aria-label="Ativações recentes">
+        <div class="track" id="track"></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h3 class="bonus-title">🎁 BÔNUS SECRETO DE RECUPERAÇÃO</h3>
+      <p class="bonus-text">
+        Ao ativar agora por <b>R$97</b>, você recebe um material estratégico oculto que <b>NÃO</b> está disponível nem para quem paga <b>R$197</b>.<br><br>
+        <span class="green">Esse bônus é removido automaticamente quando o tempo expirar.</span>
+      </p>
+    </section>
+
+    <section class="panel">
+      <div class="timer-wrap">
+        <div class="timer-label">⏳ TEMPO RESTANTE:</div>
+        <div class="timer" id="timer">10:00</div>
+
+        <div class="timer-warn">
+          Quando esse cronômetro zerar, o sistema bloqueia sua vaga e libera <br>para outro visitante automaticamente.
+        </div>
+
+        <div class="timer-sub">Essa é sua última decisão.</div>
+
+        
+ <div>
+  <br>
+  <br>
+ 
+ <div>
+ <meta charset="UTF-8">
+   <cakto-upsell-buttons>
+      <cakto-upsell-accept
+        bg-color="#0f7865"
+        text-color="#ffffff"
+        upsell-accept-url="members_area"
+        offer-id="73qgmga"
+        app-base-url="https://app.cakto.com.br"
+        offer-type="downsell"
+        upsell-reject-url="https://blackmediasleuth.site/lotoapp/login"   
+      >
+        Sim, quero aproveitar essa última chance!
+      </cakto-upsell-accept>
+      <cakto-upsell-reject
+        upsell-reject-url="https://blackmediasleuth.site/lotoapp/login"       
+      >
+        Não, eu não quero aproveitar vou perder a chance de ficar milionário 
+      </cakto-upsell-reject>
+    </cakto-upsell-buttons>  
+    
+
+     <!-- Descomente o código abaixo para estilzar o css dos botões -->
+      <!-- <style>
+          /* Botão de aceitar upsell */
+          cakto-upsell-accept::part(button) {
+              background-color: red;
+              color: white;
+              /* Ajuste do tamanho do botão 
+              Descomente o código abaixo para definir um tamanho customizado para o botão */
+              /* width: 100vw; */
+          }
+
+          /* Botão de rejeitar upsell */
+          cakto-upsell-reject::part(button) {
+              background-color: blue;
+              color: white;
+          }
+      </style> -->
+
+  <script type="text/javascript" src="https://caktoscripts.nyc3.cdn.digitaloceanspaces.com/upsell.js"></script>
+ </div>
+
+
+    </section>
+
+  </div>
+
+  <div class="footer-note">
+    <span class="attention-tag">ATENÇÃO</span>
+    Ao sair desta página, sua condição especial será permanentemente encerrada.
+  </div>
+
+  <script>
+    // 1) TIMER 10 MIN (com persistência)
+    (function startCountdown(){
+      const TOTAL_SECONDS = 10 * 60;
+      const el = document.getElementById("timer");
+      const startedAtKey = "exit_offer_timer_started_at_v1";
+
+      let startedAt = Number(localStorage.getItem(startedAtKey));
+      if (!startedAt) {
+        startedAt = Date.now();
+        localStorage.setItem(startedAtKey, String(startedAt));
+      }
+
+      function render(){
+        const elapsed = Math.floor((Date.now() - startedAt) / 1000);
+        const remaining = Math.max(0, TOTAL_SECONDS - elapsed);
+        const mm = String(Math.floor(remaining / 60)).padStart(2,"0");
+        const ss = String(remaining % 60).padStart(2,"0");
+        el.textContent = `${mm}:${ss}`;
+        if (remaining <= 0) return;
+        setTimeout(render, 500);
+      }
+      render();
+    })();
+
+    // 2) VISITANTES / ATIVAÇÕES (variação suave)
+    (function simulateStats(){
+      const visitorsEl = document.getElementById("activeVisitors");
+      const activatedEl = document.getElementById("activatedLast");
+
+      let visitors = 97;
+      let activated = 6;
+
+      function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+
+      function step(){
+        visitors += (Math.random() < 0.55 ? 1 : -1) * (1 + Math.floor(Math.random()*4));
+        visitors += (Math.random() < 0.35 ? 1 : -1) * (Math.floor(Math.random()*3));
+        visitors = clamp(visitors, 80, 160);
+
+        activated += (Math.random() < 0.55 ? 1 : -1) * (Math.random() < 0.7 ? 1 : 2);
+        activated = clamp(activated, 6, 14);
+
+        visitorsEl.textContent = visitors;
+        activatedEl.textContent = activated;
+
+        const next = 6000 + Math.floor(Math.random()*4000);
+        setTimeout(step, next);
+      }
+      setTimeout(step, 2200);
+    })();
+
+    // 3) ATIVAÇÕES RECENTES (CAROUSEL)
+    (function recentActivationsCarousel(){
+      const track = document.getElementById("track");
+
+      const firstNames = [
+"Alberto","Bruna","Lucas","Mariana","Felipe","André","Carla","Rafael","Juliana","Paulo","Renata","Diego",
+"Letícia","Gustavo","Camila","Tiago","Fernanda","Roberto","Aline","Bruno","Viviane","Henrique","Patrícia","Igor",
+"Mateus","Larissa","Vinícius","Beatriz","Daniel","Natália","Fábio","Elaine","Sérgio","Cristiane","Rodrigo","Vanessa",
+"Leonardo","Tatiane","Márcio","Jéssica","Caio","Priscila","Eduardo","Bianca","César","Isabela","Samuel","Débora",
+"João","Raquel","Vitor","Luana","Alexandre","Monique","Murilo","Tainá","Otávio","Lorena","Heitor","Gabriela",
+"Ricardo","Michele","Nathan","Caroline","Thiago","Brenda","Danilo","Kelly","Marcelo","Mônica","Alan","Lívia",
+"Felício","Amanda","Wesley","Tatiana","Fernando","Kátia","Elias","Cláudia","Arthur","Evelyn","Rogério","Mayara",
+"Enzo","Valéria","Davi","Simone","Luiz","Cintia","Adriano","Karina","José","Elisa","William","Sabrina",
+"Antônio","Paula","Guilherme","Rebeca","Cristiano","Milena","Leandro","Rafaela","Augusto","Camille"
+];
+      const lastNames = [
+"Severino","Souza","Silva","Oliveira","Santos","Lima","Costa","Pereira","Almeida","Carvalho","Ribeiro","Gomes",
+"Martins","Araújo","Mendes","Barbosa","Rocha","Fernandes","Campos","Cardoso","Teixeira","Correia","Nascimento","Freitas",
+"Vieira","Batista","Dias","Monteiro","Moreira","Machado","Andrade","Coelho","Fonseca","Tavares","Rezende","Azevedo",
+"Torres","Guimarães","Moura","Borges","Farias","Duarte","Castro","Moraes","Pinto","Neves","Cavalcante","Peixoto",
+"Lacerda","Aguiar","Barreto","Nogueira","Ramos","Siqueira","Vasconcelos","Bittencourt","Bezerra","Marques","Melo","Queiroz",
+"Paiva","Viana","Pacheco","Figueiredo","Assis","Rangel","Sales","Xavier","Cunha","Porto","Lopes","Leite",
+"Brandão","Chaves","Valente","Galvão","Cordeiro","Macedo","Braga","Pimentel","Santana","Diniz","Prado","Matos",
+"Godoy","Cabral","Sarmento","Henriques","Nunes","Miranda","Zanetti","Alves","Amorim","Franco","Coutinho","Campos",
+"Sampaio","Sodré","Aragão","Câmara","Bastos","Salazar","Delgado","Alencar","Passos","Afonso","Brito","Ventura"
+];
+      const states = ["SP","RJ","MG","PR","SC","RS","BA","PE","CE","GO","DF","ES","PA","AM","MT","MS","RN","PB","AL","SE"];
+
+      // não repetir no mesmo navegador
+      const usedKey = "recent_acts_used_v2";
+      const used = new Set(JSON.parse(localStorage.getItem(usedKey) || "[]"));
+
+      function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+      function nextUniquePerson(){
+        for(let tries=0; tries<4000; tries++){
+          const full = `${pick(firstNames)} ${pick(lastNames)}`;
+          const st = pick(states);
+          const key = `${full}-${st}`;
+          if(!used.has(key)){
+            used.add(key);
+            localStorage.setItem(usedKey, JSON.stringify(Array.from(used)));
+
+            // ✅ alterna forma de pagamento (97 à vista OU 12x 9,70)
+            const paymentType = Math.random() < 0.55 ? "pix" : "parcelado";
+            return { name: full, state: st, paymentType };
+          }
+        }
+        return { name: "Cliente", state: "BR", paymentType: "pix" };
+      }
+
+      function makeCard(item){
+        const div = document.createElement("div");
+        div.className = "card";
+
+        const meta = item.paymentType === "parcelado"
+          ? `Ativou por <span class="price">12x de R$9,70</span>`
+          : `Ativou por <span class="price">R$97</span>`;
+
+        div.innerHTML = `
+          <p class="name">${item.name} <span style="color:rgba(255,255,255,.72); font-weight:900;">- (${item.state})</span></p>
+          <p class="meta">${meta}</p>
+        `;
+        return div;
+      }
+
+      // inicial
+      for(let i=0;i<9;i++){
+        track.appendChild(makeCard(nextUniquePerson()));
+      }
+
+      let index = 0;
+
+      function perView(){
+        const w = window.innerWidth;
+        if (w <= 520) return 1;
+        if (w <= 860) return 2;
+        return 3;
+      }
+
+      function updatePos(){
+        const first = track.children[0];
+        if(!first) return;
+        const cardWidth = first.getBoundingClientRect().width;
+        const gap = 12;
+        const x = (cardWidth + gap) * index;
+        track.style.transform = `translateX(${-x}px)`;
+      }
+
+      function advance(){
+        const pv = perView();
+        index++;
+
+        const remaining = track.children.length - index;
+        if (remaining < pv + 3){
+          for(let i=0;i<6;i++){
+            track.appendChild(makeCard(nextUniquePerson()));
+          }
+        }
+
+        updatePos();
+        setTimeout(advance, 2200);
+      }
+
+      setTimeout(() => { updatePos(); advance(); }, 900);
+      window.addEventListener("resize", updatePos);
+    })();
+  </script>
+</body>
+</html>
