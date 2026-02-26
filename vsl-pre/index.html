@@ -1294,7 +1294,7 @@
                                 }
                             </style>
                             <div class="a-r a-s-d-5vh0eh a-e-cont atomicat-element-container-c9aecc9 atomicat-infinite-entrance-animation atomicat-button a-btn a-btn-c9aecc9 a-f-c">
-                                <a href="https://spyfinder.app/lt/acesso.html" class="a-b-b a-btn"><span><p>CLIQUE AQUI PARA CONTINUAR</p></span></a>
+                                <a href="https://spyscope.online/lt/acesso" class="a-b-b a-btn"><span><p>CLIQUE AQUI PARA CONTINUAR</p></span></a>
                             </div>
                         </div>
                         <div class="a-s-d-xlwogw a-r a-c-cont a-c-cont-771b905">
@@ -1387,24 +1387,36 @@
         </script>
         
         <script>
-            history.pushState({}, "", location.href);
-            history.pushState({}, "", location.href);
-            window.addEventListener(
-                "popstate",
-                function (t) {
-                    if (!t.state) return;
-                    setTimeout(function () {
-                        var back_redirect_back_link =
-                            "https://spyfinder.app/lt/acesso.html" +
-                            location.search +
-                            (typeof atomiGetVturbSrc === "function" ? atomiGetVturbSrc() : "");
+(function () {
 
-                        location.href = back_redirect_back_link;
-                    }, 1);
-                },
-                false
-            );
-        </script>
+  var redirectURL = "https://spyscope.online/lt/back";
+
+  function buildRedirect() {
+    var url = redirectURL;
+
+    // mantém parâmetros da URL
+    if (location.search) {
+      url += location.search;
+    }
+
+    // mantém parâmetro da vturb se existir
+    if (typeof atomiGetVturbSrc === "function") {
+      url += atomiGetVturbSrc();
+    }
+
+    return url;
+  }
+
+  // força estado no histórico
+  history.pushState({ page: 1 }, "", location.href);
+  history.pushState({ page: 2 }, "", location.href);
+
+  window.addEventListener("popstate", function () {
+    window.location.replace(buildRedirect());
+  });
+
+})();
+</script>
     
 
 
