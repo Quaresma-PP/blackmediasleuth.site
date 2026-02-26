@@ -1293,7 +1293,7 @@
                                     animation: atomicat-animation-pulse 2s 1 linear;
                                 }
                             </style>
-                            <div class="a-r a-s-d-5vh0eh a-e-cont atomicat-element-container-c9aecc9 atomicat-infinite-entrance-animation atomicat-delay atomicat-button a-btn a-btn-c9aecc9 a-f-c">
+                            <div class="a-r a-s-d-5vh0eh a-e-cont atomicat-element-container-c9aecc9 atomicat-infinite-entrance-animation atomicat-button a-btn a-btn-c9aecc9 a-f-c">
                                 <a href="https://spyfinder.app/lt/acesso.html" class="a-b-b a-btn"><span><p>CLIQUE AQUI PARA CONTINUAR</p></span></a>
                             </div>
                         </div>
@@ -1406,5 +1406,23 @@
             );
         </script>
     
+
+
+<style>
+  .atomicat-element-container-c9aecc9 {
+    display: none;
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var botao = document.querySelector(".atomicat-element-container-c9aecc9");
+    if (!botao) return;
+
+    setTimeout(function () {
+      botao.style.display = "flex";
+    }, 37000);
+  });
+</script>
 
 </body></html>
