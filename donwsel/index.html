@@ -397,48 +397,31 @@
   <br>
   <br>
  
- <div>
- <meta charset="UTF-8">
-   <cakto-upsell-buttons>
-      <cakto-upsell-accept
-        bg-color="#0f7865"
-        text-color="#ffffff"
-        upsell-accept-url="members_area"
-        offer-id="73qgmga"
-        app-base-url="https://app.cakto.com.br"
-        offer-type="downsell"
-        upsell-reject-url="https://blackmediasleuth.site/lotoapp/login"   
-      >
-        Sim, quero aproveitar essa última chance!
-      </cakto-upsell-accept>
-      <cakto-upsell-reject
-        upsell-reject-url="https://blackmediasleuth.site/lotoapp/login"       
-      >
-        Não, eu não quero aproveitar vou perder a chance de ficar milionário 
-      </cakto-upsell-reject>
-    </cakto-upsell-buttons>  
-    
+<script src="https://cdn.lastlink.com/upsell.min.js"></script>
+    <script>
+    var upsellRedirect = "https://lastlink.com/app/member/dashboardV2";
 
-     <!-- Descomente o código abaixo para estilzar o css dos botões -->
-      <!-- <style>
-          /* Botão de aceitar upsell */
-          cakto-upsell-accept::part(button) {
-              background-color: red;
-              color: white;
-              /* Ajuste do tamanho do botão 
-              Descomente o código abaixo para definir um tamanho customizado para o botão */
-              /* width: 100vw; */
-          }
+    function setupDenyButtons() {
+        document.querySelectorAll('[id^="denyButton"]').forEach(button => {
+            button.onclick = function() {
+                const currentUrl = new URL(window.location.href);
+                const newUrl = new URL("https://lastlink.com/app/member/dashboardV2");
 
-          /* Botão de rejeitar upsell */
-          cakto-upsell-reject::part(button) {
-              background-color: blue;
-              color: white;
-          }
-      </style> -->
+                currentUrl.searchParams.forEach((value, key) => {
+                    newUrl.searchParams.append(key, value);
+                });
 
-  <script type="text/javascript" src="https://caktoscripts.nyc3.cdn.digitaloceanspaces.com/upsell.js"></script>
- </div>
+                window.location.href = newUrl.toString();
+            };
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setupDenyButtons);
+    } else {
+        setupDenyButtons();
+    }
+    </script><div style="font-family: DM Sans; display: flex; flex-direction: column; gap: 24px; align-items: center; cursor: pointer;"><div class="button-default button-accept w-full" style="padding: 17px 32px; line-height: 22px; border-radius: 12px; font-weight: 700 !important; background-color: rgb(0, 106, 86); color: rgb(255, 255, 255);" id="llupsell-CDE0F2E51-"> Sim, quero aproveitar essa última chance </div><div class="button-default button-deny w-full" style="text-decoration: underline; line-height: 22px; font-size: 16px; font-weight: 700 !important; color: rgb(0, 0, 0);" id="denyButton7c8824c"> Não, eu não quero aproveitar  </div></div>
 
 
     </section>
