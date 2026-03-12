@@ -1,0 +1,18 @@
+/* ========================
+   CTA - PRODUCTS REMOVIDO
+   (Estilos antigos de potes removidos
+   para não interferir no Tailwind)
+======================== */
+
+/* --- BLOCO DE PRODUTOS ANTIGO FOI COMPLETAMENTE REMOVIDO --- */
+
+
+/* ===================================================== */
+/*                    CUSTOM GLOBAL                      */
+/* ===================================================== */
+
+/* Mantido apenas se você usa em outras partes do site */
+
+@media screen and (max-width: 767px) {
+    /* Espaço reservado caso queira algo mobile global */
+}
