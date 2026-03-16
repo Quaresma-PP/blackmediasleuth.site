@@ -1,5 +1,5 @@
 <!DOCTYPE html><html><head>
-	<meta name="referrer" content="no-referrer">
+	<meta name="referrer" content="origin">
 	<title>SugarClear</title>
 	<meta name="description" content="SugarClear">
 	<meta name="keywords" content="SugarClear">
@@ -36,6 +36,17 @@
 
 	
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const monthlyLinks = document.querySelectorAll('#monthlyLink1, #monthlyLink2, #monthlyLink3');
+  const bestValueLinks = document.querySelectorAll('#bestValueLink1, #bestValueLink2, #bestValueLink3');
+  const popularLinks = document.querySelectorAll('#popularLink1, #popularLink2, #popularLink3');
+
+  monthlyLinks.forEach(el => el.href = MONTHLY_REFILLS_LINK);
+  bestValueLinks.forEach(el => el.href = BEST_VALUE_LINK);
+  popularLinks.forEach(el => el.href = MOST_POPULAR_LINK);
+});
+</script>
 <style>
 		@media screen and (max-width: 767px) {
 			.text-first h2 {
