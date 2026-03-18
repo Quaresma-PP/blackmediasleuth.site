@@ -19,16 +19,16 @@
         
         .video-wrapper{width:min(100%,860px);margin:0 auto 18px;padding:0 16px}
         .video-frame{position:relative;width:100%;padding-top:56.25%;background:#000;border-radius:18px;overflow:hidden;box-shadow:0 10px 24px rgba(0,0,0,.12)}
-        .video-frame iframe,.video-frame .video-poster,.video-frame .video-click-blocker{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+        .video-frame iframe,.video-frame .video-poster{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
         .video-shell{position:relative;width:100%;height:100%;overflow:hidden;background:#000}
         .video-poster{display:flex;align-items:center;justify-content:center;background:#000 center/cover no-repeat;cursor:pointer}
         .video-poster::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.12),rgba(0,0,0,.28))}
         .video-play-button{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;width:88px;height:88px;border:none;border-radius:999px;background:rgba(255,255,255,.92);box-shadow:0 10px 30px rgba(0,0,0,.22);cursor:pointer;transition:transform .2s ease,opacity .2s ease}
         .video-play-button::before{content:'';display:block;margin-left:6px;border-style:solid;border-width:16px 0 16px 26px;border-color:transparent transparent transparent #d10000}
         .video-play-button:hover{transform:scale(1.05)}
-        .video-click-blocker{display:none;z-index:3;background:transparent}
-        .video-frame.is-playing .video-poster{display:none}
-        .video-frame.is-playing .video-click-blocker{display:block}
+        .video-frame.is-playing .video-poster{opacity:0;visibility:hidden;pointer-events:none}
+        #youtubePlayerContainer{position:absolute;inset:0;width:100%;height:100%}
+        #youtubePlayerContainer iframe{width:100%;height:100%}
         
         .countdown-section{background:#0d48a1;padding:2rem 1rem;text-align:center}
         .countdown-title{color:#fff;font-size:1.25rem;font-weight:700;line-height:1.25;margin-bottom:.5rem;max-width:42rem;margin-left:auto;margin-right:auto}
@@ -199,11 +199,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="video-wrapper">
         <div id="area-video" class="video-frame" data-video-id="knvHXerwgK4">
             <div class="video-shell">
-                <div class="video-poster" id="videoPoster" role="button" aria-label="Dar play no vídeo" tabindex="0" style="background-image:url('https://img.youtube.com/vi/knvHXerwgK4/maxresdefault.jpg')">
+                <div class="video-poster" id="videoPoster" role="button" aria-label="Dar play no vídeo" tabindex="0" style="background-image:url('https://img.youtube.com/vi/knvHXerwgK4/hqdefault.jpg')">
                     <button type="button" class="video-play-button" id="customPlayButton" aria-label="Dar play no vídeo"></button>
                 </div>
                 <div id="youtubePlayerContainer"></div>
-                <div class="video-click-blocker" aria-hidden="true"></div>
             </div>
         </div>
     </div>
@@ -358,23 +357,30 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         var videoId = frame.getAttribute('data-video-id') || 'knvHXerwgK4';
         var started = false;
 
+        function criarIframe(){
+            return '<iframe width="560" height="315" src="https://www.youtube.com/embed/' + videoId + '?autoplay=1&controls=1&rel=0&modestbranding=1&playsinline=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>';
+        }
+
         function darPlay(){
             if(started) return;
             started = true;
             frame.classList.add('is-playing');
-            container.innerHTML = '<iframe src="https://www.youtube.com/embed/' + videoId + '?autoplay=1&controls=0&rel=0&modestbranding=1&playsinline=1&disablekb=1" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>';
+            container.innerHTML = criarIframe();
         }
 
-        poster.addEventListener('click', darPlay);
-        button.addEventListener('click', function(e){
-            e.preventDefault();
-            e.stopPropagation();
-            darPlay();
-        });
-        poster.addEventListener('keydown', function(e){
-            if(e.key === 'Enter' || e.key === ' ') {
+        function handlePlay(e){
+            if(e){
                 e.preventDefault();
-                darPlay();
+                e.stopPropagation();
+            }
+            darPlay();
+        }
+
+        poster.addEventListener('click', handlePlay);
+        button.addEventListener('click', handlePlay);
+        poster.addEventListener('keydown', function(e){
+            if(e.key === 'Enter' || e.key === ' ' || e.code === 'Space'){
+                handlePlay(e);
             }
         });
     }
