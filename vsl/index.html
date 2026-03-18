@@ -122,8 +122,6 @@
             .site-footer .copyright{font-size:14px}
         }
     
-.video-click-blocker{pointer-events:none!important}
-.video-frame.is-started .video-click-blocker{display:block!important;pointer-events:auto!important;cursor:default}
 </style>
     
   
@@ -177,10 +175,14 @@
         <div id="area-video" class="video-frame" data-video-id="knvHXerwgK4">
             <div class="video-shell">
                 <div id="youtubePlayerContainer"></div>
+                <div class="video-poster" id="videoPoster" role="button" aria-label="Dar play no vídeo" tabindex="0" style="background-image:url('https://img.youtube.com/vi/knvHXerwgK4/maxresdefault.jpg')">
+                    <div class="video-overlay-content">
+                        <button type="button" class="video-play-button" id="customPlayButton" aria-label="Dar play no vídeo"></button>
+                    </div>
+                </div>
                 <div class="video-click-blocker" id="videoClickBlocker" aria-hidden="true"></div>
             </div>
         </div>
-    </div>
     </div>
 
     <div id="elementoOculto" data-show-delay="120000" style="display:none"><!-- 120000 = 2 minutos. Altere este valor em milissegundos quando quiser. -->
@@ -306,6 +308,7 @@
 
 
 
+
 <script>
 (function(){
     var player = null;
@@ -313,6 +316,8 @@
     var pitchLiberado = false;
     var TEMPO_LIBERACAO = 352;
     var started = false;
+    var apiReady = false;
+    var pendingPlay = false;
 
     function mostrarPitch(){
         var elemento = document.getElementById('elementoOculto');
@@ -350,6 +355,16 @@
         }
     }
 
+    function mostrarOverlay(){
+        var frame = document.getElementById('area-video');
+        if(frame) frame.classList.remove('is-started');
+    }
+
+    function esconderOverlay(){
+        var frame = document.getElementById('area-video');
+        if(frame) frame.classList.add('is-started');
+    }
+
     function bloquearInteracoes(e){
         if(e){
             e.preventDefault();
@@ -360,12 +375,14 @@
 
     function carregarApiYoutube(callback){
         if(window.YT && window.YT.Player){
+            apiReady = true;
             callback();
             return;
         }
 
         var anterior = window.onYouTubeIframeAPIReady;
         window.onYouTubeIframeAPIReady = function(){
+            apiReady = true;
             if(typeof anterior === 'function'){
                 try{ anterior(); }catch(e){}
             }
@@ -379,11 +396,111 @@
         }
     }
 
-    function iniciarVideoNativo(){
-        var frame = document.getElementById('area-video');
-        var container = document.getElementById('youtubePlayerContainer');
+    function criarPlayer(){
+        if(player) return;
+
+        player = new YT.Player('youtubePlayerContainer', {
+            width: '100%',
+            height: '100%',
+            videoId: 'knvHXerwgK4',
+            playerVars: {
+                autoplay: 0,
+                controls: 1,
+                rel: 0,
+                modestbranding: 1,
+                playsinline: 1,
+                fs: 0,
+                iv_load_policy: 3,
+                cc_load_policy: 0,
+                origin: window.location.origin
+            },
+            events: {
+                onReady: function(){
+                    if(pendingPlay){
+                        pendingPlay = false;
+                        tentarPlay();
+                    }
+                    esconderPitchInicial();
+                },
+                onStateChange: function(event){
+                    if(event.data === YT.PlayerState.PLAYING || event.data === YT.PlayerState.BUFFERING){
+                        started = true;
+                        esconderOverlay();
+                        iniciarMonitoramentoTempo();
+                        verificarTempoVideo();
+                    } else if(event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.CUED || event.data === YT.PlayerState.UNSTARTED){
+                        pararMonitoramentoTempo();
+                        mostrarOverlay();
+                        verificarTempoVideo();
+                    } else if(event.data === YT.PlayerState.ENDED){
+                        mostrarPitch();
+                        pararMonitoramentoTempo();
+                        mostrarOverlay();
+                    }
+                }
+            }
+        });
+    }
+
+    function tentarPlay(){
+        if(!player || typeof player.playVideo !== 'function'){
+            pendingPlay = true;
+            return;
+        }
+        try{ player.playVideo(); }catch(e){ pendingPlay = true; }
+        try{ player.unMute(); }catch(e){}
+    }
+
+    function clicarParaPlay(e){
+        if(e){
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        esconderOverlay();
+        pendingPlay = true;
+        if(apiReady && player){
+            pendingPlay = false;
+            tentarPlay();
+        } else {
+            carregarApiYoutube(function(){
+                criarPlayer();
+                if(pendingPlay){
+                    pendingPlay = false;
+                    tentarPlay();
+                    window.setTimeout(tentarPlay, 120);
+                }
+            });
+        }
+        return false;
+    }
+
+    function checarAoVoltar(){
+        if(!player || typeof player.getPlayerState !== 'function'){
+            mostrarOverlay();
+            return;
+        }
+        try {
+            var st = player.getPlayerState();
+            if(st === YT.PlayerState.PLAYING || st === YT.PlayerState.BUFFERING){
+                esconderOverlay();
+                iniciarMonitoramentoTempo();
+            } else {
+                mostrarOverlay();
+                pararMonitoramentoTempo();
+            }
+            verificarTempoVideo();
+        } catch(e) {
+            mostrarOverlay();
+            pararMonitoramentoTempo();
+        }
+    }
+
+    function iniciarTudo(){
+        esconderPitchInicial();
+
+        var poster = document.getElementById('videoPoster');
+        var button = document.getElementById('customPlayButton');
         var blocker = document.getElementById('videoClickBlocker');
-        if(!frame || !container) return;
 
         if(blocker){
             ['click','dblclick','mousedown','mouseup','touchstart','touchend','pointerdown','pointerup','contextmenu'].forEach(function(evt){
@@ -391,57 +508,22 @@
             });
         }
 
-        carregarApiYoutube(function(){
-            player = new YT.Player('youtubePlayerContainer', {
-                width: '100%',
-                height: '100%',
-                videoId: 'knvHXerwgK4',
-                playerVars: {
-                    autoplay: 0,
-                    controls: 1,
-                    rel: 0,
-                    modestbranding: 1,
-                    playsinline: 1,
-                    fs: 0,
-                    iv_load_policy: 3,
-                    cc_load_policy: 0,
-                    origin: window.location.origin
-                },
-                events: {
-                    onReady: function() {
-                        esconderPitchInicial();
-                    },
-                    onStateChange: function(event) {
-                        if(event.data === YT.PlayerState.PLAYING || event.data === YT.PlayerState.BUFFERING){
-                            if(!started){
-                                started = true;
-                                frame.classList.add('is-started');
-                            }
-                            iniciarMonitoramentoTempo();
-                            verificarTempoVideo();
-                        } else if(event.data === YT.PlayerState.PAUSED){
-                            verificarTempoVideo();
-                        } else if(event.data === YT.PlayerState.ENDED){
-                            mostrarPitch();
-                            pararMonitoramentoTempo();
-                        }
-                    }
+        ['touchend','pointerup','click'].forEach(function(evt){
+            if(poster) poster.addEventListener(evt, clicarParaPlay, { passive:false });
+            if(button) button.addEventListener(evt, clicarParaPlay, { passive:false });
+        });
+
+        if(poster){
+            poster.addEventListener('keydown', function(e){
+                if(e.key === 'Enter' || e.key === ' ') {
+                    clicarParaPlay(e);
                 }
             });
-        });
-    }
-
-    function restaurarAoVoltar(){
-        if(!player) return;
-        verificarTempoVideo();
-        if(started){
-            iniciarMonitoramentoTempo();
         }
-    }
 
-    function iniciarTudo(){
-        esconderPitchInicial();
-        iniciarVideoNativo();
+        carregarApiYoutube(function(){
+            criarPlayer();
+        });
     }
 
     if(document.readyState === 'loading'){
@@ -454,12 +536,12 @@
         if(document.hidden){
             pararMonitoramentoTempo();
         } else {
-            restaurarAoVoltar();
+            window.setTimeout(checarAoVoltar, 150);
         }
     });
 
     window.addEventListener('pageshow', function(){
-        restaurarAoVoltar();
+        window.setTimeout(checarAoVoltar, 150);
     });
 
     window.addEventListener('pagehide', function(){
@@ -469,4 +551,5 @@
 </script>
 
 </body>
+
 </html>
