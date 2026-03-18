@@ -231,14 +231,7 @@
 
     <div class="video-wrapper">
         <div id="area-video" class="video-frame" data-video-id="7WSzKoPO2wE">
-            <div class="video-shell">
-                <div class="video-poster" id="videoPoster" role="button" aria-label="Dar play no vídeo" tabindex="0" style="background-image:url('https://img.youtube.com/vi/7WSzKoPO2wE/maxresdefault.jpg')">
-                    <div class="video-overlay-content">
-                        <button type="button" class="video-play-button" id="customPlayButton" aria-label="Dar play no vídeo"></button>
-                    </div>
-                </div>
-                <div id="youtubePlayerContainer"></div>
-            </div>
+            <div id="youtubePlayerContainer"></div>
         </div>
     </div>
 
@@ -343,14 +336,7 @@
             </div>
         </div>
 
-        <section class="info-sec">
-            <img class="info-img top" src="images/01.webp" alt="Selos de confiança" width="560" height="auto" loading="lazy">
-            <div class="info-text">
-                <p>Desenvolvido por médicos e cientistas para quem busca uma vida mais equilibrada, focada e saudável.</p>
-                <p class="apresentacao">Apresentação em <b>cápsulas</b><br>e <b>Gotas.</b></p>
-            </div>
-            <img class="info-img bottom" src="images/02.webp" alt="Faixa decorativa" width="520" height="auto" loading="lazy">
-        </section>
+        
 
     </div>
 </main>
@@ -364,7 +350,7 @@
     var player = null;
     var monitorInterval = null;
     var pitchLiberado = false;
-    var TEMPO_LIBERACAO = 352; // 5:52
+    var TEMPO_LIBERACAO = 342; // 5:52
 
     function mostrarPitch(){
         var elemento = document.getElementById('elementoOculto');
@@ -385,10 +371,7 @@
             var tempoAtual = player.getCurrentTime();
             if(tempoAtual >= TEMPO_LIBERACAO){
                 mostrarPitch();
-                if(monitorInterval){
-                    clearInterval(monitorInterval);
-                    monitorInterval = null;
-                }
+                pararMonitoramentoTempo();
             }
         }catch(e){}
     }
@@ -405,42 +388,41 @@
         }
     }
 
-    function iniciarVideoCustomizado(){
-        var frame = document.getElementById('area-video');
-        var poster = document.getElementById('videoPoster');
-        var button = document.getElementById('customPlayButton');
-        var container = document.getElementById('youtubePlayerContainer');
-        if(!frame || !poster || !button || !container) return;
-
-        var videoId = frame.getAttribute('data-video-id') || 'knvHXerwgK4';
-        var started = false;
-
-        function carregarApiYoutube(callback){
-            if(window.YT && window.YT.Player){
-                callback();
-                return;
-            }
-
-            var anterior = window.onYouTubeIframeAPIReady;
-            window.onYouTubeIframeAPIReady = function(){
-                if(typeof anterior === 'function'){
-                    try{ anterior(); }catch(e){}
-                }
-                callback();
-            };
-
-            if(!document.querySelector('script[src="https://www.youtube.com/iframe_api"]')){
-                var tag = document.createElement('script');
-                tag.src = 'https://www.youtube.com/iframe_api';
-                document.head.appendChild(tag);
-            }
+    function carregarApiYoutube(callback){
+        if(window.YT && window.YT.Player){
+            callback();
+            return;
         }
 
-        function criarPlayer(){
+        var anterior = window.onYouTubeIframeAPIReady;
+        window.onYouTubeIframeAPIReady = function(){
+            if(typeof anterior === 'function'){
+                try{ anterior(); }catch(e){}
+            }
+            callback();
+        };
+
+        if(!document.querySelector('script[src="https://www.youtube.com/iframe_api"]')){
+            var tag = document.createElement('script');
+            tag.src = 'https://www.youtube.com/iframe_api';
+            document.head.appendChild(tag);
+        }
+    }
+
+    function iniciarPlayerYoutube(){
+        var frame = document.getElementById('area-video');
+        var container = document.getElementById('youtubePlayerContainer');
+        if(!frame || !container) return;
+
+        var videoId = frame.getAttribute('data-video-id') || '7WSzKoPO2wE';
+
+        carregarApiYoutube(function(){
             player = new YT.Player('youtubePlayerContainer', {
+                width: '100%',
+                height: '100%',
                 videoId: videoId,
                 playerVars: {
-                    autoplay: 1,
+                    autoplay: 0,
                     controls: 1,
                     rel: 0,
                     modestbranding: 1,
@@ -451,8 +433,7 @@
                     origin: window.location.origin
                 },
                 events: {
-                    onReady: function(event){
-                        try{ event.target.playVideo(); }catch(e){}
+                    onReady: function(){
                         verificarTempoVideo();
                     },
                     onStateChange: function(event){
@@ -468,36 +449,12 @@
                     }
                 }
             });
-        }
-
-        function darPlay(){
-            if(started) return;
-            started = true;
-            frame.classList.add('is-playing');
-            carregarApiYoutube(criarPlayer);
-        }
-
-        [poster, button].forEach(function(el){
-            el.addEventListener('click', function(e){
-                if(el === button){
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-                darPlay();
-            });
-        });
-
-        poster.addEventListener('keydown', function(e){
-            if(e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                darPlay();
-            }
         });
     }
 
     function iniciarTudo(){
         esconderPitchInicial();
-        iniciarVideoCustomizado();
+        iniciarPlayerYoutube();
     }
 
     if (document.readyState === 'loading') {
