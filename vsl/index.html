@@ -309,15 +309,33 @@
 
 
 
+
 <script>
 (function(){
     var player = null;
+    var apiReady = false;
+    var queuedPlay = false;
     var monitorInterval = null;
     var pitchLiberado = false;
     var TEMPO_LIBERACAO = 352;
-    var started = false;
-    var apiReady = false;
-    var pendingPlay = false;
+
+    function getFrame(){
+        return document.getElementById('area-video');
+    }
+
+    function getPoster(){
+        return document.getElementById('videoPoster');
+    }
+
+    function mostrarOverlay(){
+        var frame = getFrame();
+        if(frame) frame.classList.remove('is-started');
+    }
+
+    function esconderOverlay(){
+        var frame = getFrame();
+        if(frame) frame.classList.add('is-started');
+    }
 
     function mostrarPitch(){
         var elemento = document.getElementById('elementoOculto');
@@ -345,7 +363,7 @@
 
     function iniciarMonitoramentoTempo(){
         if(monitorInterval) return;
-        monitorInterval = window.setInterval(verificarTempoVideo, 400);
+        monitorInterval = window.setInterval(verificarTempoVideo, 350);
     }
 
     function pararMonitoramentoTempo(){
@@ -353,16 +371,6 @@
             clearInterval(monitorInterval);
             monitorInterval = null;
         }
-    }
-
-    function mostrarOverlay(){
-        var frame = document.getElementById('area-video');
-        if(frame) frame.classList.remove('is-started');
-    }
-
-    function esconderOverlay(){
-        var frame = document.getElementById('area-video');
-        if(frame) frame.classList.add('is-started');
     }
 
     function bloquearInteracoes(e){
@@ -396,13 +404,31 @@
         }
     }
 
+    function tentarPlay(){
+        if(!player || typeof player.playVideo !== 'function') {
+            queuedPlay = true;
+            return;
+        }
+        try{ player.playVideo(); }catch(e){ queuedPlay = true; }
+        try{ player.unMute(); }catch(e){}
+        window.setTimeout(function(){
+            try{ player.playVideo(); }catch(e){}
+        }, 120);
+        window.setTimeout(function(){
+            try{ player.playVideo(); }catch(e){}
+        }, 260);
+    }
+
     function criarPlayer(){
         if(player) return;
+
+        var frame = getFrame();
+        var videoId = frame ? (frame.getAttribute('data-video-id') || 'knvHXerwgK4') : 'knvHXerwgK4';
 
         player = new YT.Player('youtubePlayerContainer', {
             width: '100%',
             height: '100%',
-            videoId: 'knvHXerwgK4',
+            videoId: videoId,
             playerVars: {
                 autoplay: 0,
                 controls: 1,
@@ -416,39 +442,33 @@
             },
             events: {
                 onReady: function(){
-                    if(pendingPlay){
-                        pendingPlay = false;
+                    if(queuedPlay){
+                        queuedPlay = false;
                         tentarPlay();
                     }
                     esconderPitchInicial();
                 },
                 onStateChange: function(event){
                     if(event.data === YT.PlayerState.PLAYING || event.data === YT.PlayerState.BUFFERING){
-                        started = true;
                         esconderOverlay();
                         iniciarMonitoramentoTempo();
                         verificarTempoVideo();
-                    } else if(event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.CUED || event.data === YT.PlayerState.UNSTARTED){
-                        pararMonitoramentoTempo();
+                    } else if(
+                        event.data === YT.PlayerState.PAUSED ||
+                        event.data === YT.PlayerState.CUED ||
+                        event.data === YT.PlayerState.UNSTARTED
+                    ){
                         mostrarOverlay();
+                        pararMonitoramentoTempo();
                         verificarTempoVideo();
                     } else if(event.data === YT.PlayerState.ENDED){
+                        mostrarOverlay();
                         mostrarPitch();
                         pararMonitoramentoTempo();
-                        mostrarOverlay();
                     }
                 }
             }
         });
-    }
-
-    function tentarPlay(){
-        if(!player || typeof player.playVideo !== 'function'){
-            pendingPlay = true;
-            return;
-        }
-        try{ player.playVideo(); }catch(e){ pendingPlay = true; }
-        try{ player.unMute(); }catch(e){}
     }
 
     function clicarParaPlay(e){
@@ -456,29 +476,23 @@
             e.preventDefault();
             e.stopPropagation();
         }
-        esconderOverlay();
-        pendingPlay = true;
-        if(apiReady && player){
-            pendingPlay = false;
-            tentarPlay();
-        } else {
-            carregarApiYoutube(function(){
-                criarPlayer();
-                if(pendingPlay){
-                    pendingPlay = false;
-                    tentarPlay();
-                    window.setTimeout(tentarPlay, 120);
-                }
-            });
+
+        if(!apiReady){
+            queuedPlay = true;
+            return false;
         }
+
+        criarPlayer();
+        tentarPlay();
         return false;
     }
 
-    function checarAoVoltar(){
+    function checarEstadoAoVoltar(){
         if(!player || typeof player.getPlayerState !== 'function'){
             mostrarOverlay();
             return;
         }
+
         try {
             var st = player.getPlayerState();
             if(st === YT.PlayerState.PLAYING || st === YT.PlayerState.BUFFERING){
@@ -497,8 +511,9 @@
 
     function iniciarTudo(){
         esconderPitchInicial();
+        mostrarOverlay();
 
-        var poster = document.getElementById('videoPoster');
+        var poster = getPoster();
         var button = document.getElementById('customPlayButton');
         var blocker = document.getElementById('videoClickBlocker');
 
@@ -536,12 +551,16 @@
         if(document.hidden){
             pararMonitoramentoTempo();
         } else {
-            window.setTimeout(checarAoVoltar, 150);
+            window.setTimeout(checarEstadoAoVoltar, 180);
         }
     });
 
     window.addEventListener('pageshow', function(){
-        window.setTimeout(checarAoVoltar, 150);
+        window.setTimeout(checarEstadoAoVoltar, 180);
+    });
+
+    window.addEventListener('focus', function(){
+        window.setTimeout(checarEstadoAoVoltar, 180);
     });
 
     window.addEventListener('pagehide', function(){
@@ -551,5 +570,6 @@
 </script>
 
 </body>
+
 
 </html>
