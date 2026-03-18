@@ -327,15 +327,20 @@
 
 
 
+
+
 <script>
 (function(){
     var player = null;
     var monitorInterval = null;
     var pitchLiberado = false;
     var TEMPO_LIBERACAO = 352; // 5:52
-    var startRequested = false;
-    var apiReadyQueue = [];
+    var apiReady = false;
     var apiLoading = false;
+    var apiReadyQueue = [];
+    var gestureLocked = false;
+    var started = false;
+    var pageHiddenAt = 0;
 
     function mostrarPitch(){
         var elemento = document.getElementById('elementoOculto');
@@ -347,7 +352,9 @@
     function esconderPitchInicial(){
         var elemento = document.getElementById('elementoOculto');
         if(!elemento) return;
-        elemento.style.display = 'none';
+        if(!pitchLiberado){
+            elemento.style.display = 'none';
+        }
     }
 
     function verificarTempoVideo(){
@@ -356,17 +363,14 @@
             var tempoAtual = player.getCurrentTime();
             if(tempoAtual >= TEMPO_LIBERACAO){
                 mostrarPitch();
-                if(monitorInterval){
-                    clearInterval(monitorInterval);
-                    monitorInterval = null;
-                }
+                pararMonitoramentoTempo();
             }
         }catch(e){}
     }
 
     function iniciarMonitoramentoTempo(){
         if(monitorInterval) return;
-        monitorInterval = window.setInterval(verificarTempoVideo, 350);
+        monitorInterval = window.setInterval(verificarTempoVideo, 300);
     }
 
     function pararMonitoramentoTempo(){
@@ -376,25 +380,24 @@
         }
     }
 
-    function carregarApiYoutube(callback){
-        if(window.YT && window.YT.Player){
+    function onApiReady(callback){
+        if(apiReady && window.YT && window.YT.Player){
             callback();
             return;
         }
-
         apiReadyQueue.push(callback);
-
         if(apiLoading) return;
-        apiLoading = true;
 
-        var anterior = window.onYouTubeIframeAPIReady;
+        apiLoading = true;
+        var prev = window.onYouTubeIframeAPIReady;
         window.onYouTubeIframeAPIReady = function(){
-            if(typeof anterior === 'function'){
-                try{ anterior(); }catch(e){}
+            apiReady = true;
+            if(typeof prev === 'function'){
+                try{ prev(); }catch(e){}
             }
-            var fila = apiReadyQueue.slice();
+            var queue = apiReadyQueue.slice();
             apiReadyQueue = [];
-            fila.forEach(function(fn){
+            queue.forEach(function(fn){
                 try{ fn(); }catch(e){}
             });
         };
@@ -415,7 +418,7 @@
         var blocker = frame ? frame.querySelector('.video-click-blocker') : null;
         if(!frame || !poster || !button || !container) return;
 
-        var videoId = frame.getAttribute('data-video-id') || 'knvHXerwgK4';
+        var videoId = frame.getAttribute('data-video-id') || 'FtzRHfncxkk';
 
         function bloquearInteracoes(e){
             if(e){
@@ -433,25 +436,24 @@
         });
 
         function forcarPlay(){
-            if(!player || typeof player.playVideo !== 'function') return;
-            try{
-                player.playVideo();
-            }catch(e){}
-            try{
-                player.unMute();
-            }catch(e){}
+            if(!player) return;
+            try{ player.playVideo(); }catch(e){}
+            try{ player.unMute(); }catch(e){}
         }
 
-        function marcarComoIniciado(){
+        function marcarIniciado(){
+            if(started) return;
+            started = true;
             frame.classList.add('is-started');
         }
 
         function criarPlayer(){
-            if(player) {
+            if(player){
                 forcarPlay();
                 return;
             }
 
+            container.innerHTML = '';
             player = new YT.Player('youtubePlayerContainer', {
                 videoId: videoId,
                 playerVars: {
@@ -468,69 +470,133 @@
                 },
                 events: {
                     onReady: function(event){
-                        try{ event.target.mute(); }catch(e){}
                         try{ event.target.playVideo(); }catch(e){}
-                        window.setTimeout(function(){
-                            try{ event.target.playVideo(); }catch(e){}
-                            try{ event.target.unMute(); }catch(e){}
-                        }, 120);
+                        try{ event.target.unMute(); }catch(e){}
                         verificarTempoVideo();
                     },
                     onStateChange: function(event){
                         if(event.data === YT.PlayerState.PLAYING){
-                            marcarComoIniciado();
+                            marcarIniciado();
                             iniciarMonitoramentoTempo();
                             verificarTempoVideo();
-                            window.setTimeout(function(){
-                                try{ event.target.unMute(); }catch(e){}
-                            }, 50);
                         } else if(event.data === YT.PlayerState.BUFFERING){
-                            if(startRequested){
-                                marcarComoIniciado();
-                            }
+                            marcarIniciado();
                             iniciarMonitoramentoTempo();
-                            verificarTempoVideo();
                         } else if(
                             event.data === YT.PlayerState.PAUSED ||
                             event.data === YT.PlayerState.CUED ||
                             event.data === YT.PlayerState.UNSTARTED
                         ){
-                            if(startRequested){
-                                window.setTimeout(function(){
-                                    forcarPlay();
-                                }, 30);
+                            if(gestureLocked && !document.hidden){
+                                window.setTimeout(forcarPlay, 10);
                             }
                             verificarTempoVideo();
                         } else if(event.data === YT.PlayerState.ENDED){
                             mostrarPitch();
                             pararMonitoramentoTempo();
                         }
+                    },
+                    onError: function(){
+                        gestureLocked = false;
+                        started = false;
+                        frame.classList.remove('is-started');
                     }
                 }
             });
         }
 
-        function darPlay(e){
+        function ativarComUmClique(e){
             if(e){
                 e.preventDefault();
                 e.stopPropagation();
             }
-            startRequested = true;
-            carregarApiYoutube(function(){
+            if(gestureLocked && started){
+                return false;
+            }
+            gestureLocked = true;
+            marcarIniciado();
+
+            onApiReady(function(){
                 criarPlayer();
                 forcarPlay();
+                window.setTimeout(forcarPlay, 80);
+                window.setTimeout(forcarPlay, 220);
             });
+
+            return false;
         }
 
-        ['click','touchstart','pointerdown'].forEach(function(evt){
-            poster.addEventListener(evt, darPlay, { passive:false });
-            button.addEventListener(evt, darPlay, { passive:false });
+        function restaurarAoVoltar(){
+            if(!gestureLocked) return;
+            window.setTimeout(function(){
+                if(player && typeof player.getPlayerState === 'function'){
+                    try{
+                        var st = player.getPlayerState();
+                        if(st !== YT.PlayerState.PLAYING && st !== YT.PlayerState.BUFFERING){
+                            forcarPlay();
+                            window.setTimeout(forcarPlay, 120);
+                        }
+                    }catch(e){
+                        forcarPlay();
+                    }
+                } else {
+                    onApiReady(function(){
+                        criarPlayer();
+                        forcarPlay();
+                    });
+                }
+                verificarTempoVideo();
+            }, 120);
+        }
+
+        function resetarEstadoSeNecessario(){
+            if(!gestureLocked && !started){
+                frame.classList.remove('is-started');
+            }
+        }
+
+        onApiReady(function(){});
+
+        ['touchend','pointerup','click'].forEach(function(evt){
+            poster.addEventListener(evt, ativarComUmClique, { passive:false });
+            button.addEventListener(evt, ativarComUmClique, { passive:false });
         });
 
         poster.addEventListener('keydown', function(e){
             if(e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                darPlay(e);
+                ativarComUmClique(e);
+            }
+        });
+
+        document.addEventListener('visibilitychange', function(){
+            if(document.hidden){
+                pageHiddenAt = Date.now();
+                pararMonitoramentoTempo();
+            } else {
+                if(gestureLocked){
+                    restaurarAoVoltar();
+                    iniciarMonitoramentoTempo();
+                }
+            }
+        });
+
+        window.addEventListener('pageshow', function(event){
+            if(event.persisted || pageHiddenAt){
+                resetarEstadoSeNecessario();
+                restaurarAoVoltar();
+                if(gestureLocked){
+                    iniciarMonitoramentoTempo();
+                }
+            }
+        });
+
+        window.addEventListener('pagehide', function(){
+            pararMonitoramentoTempo();
+        });
+
+        window.addEventListener('focus', function(){
+            if(gestureLocked && !document.hidden){
+                restaurarAoVoltar();
             }
         });
     }
@@ -540,7 +606,7 @@
         iniciarVideoCustomizado();
     }
 
-    if (document.readyState === 'loading') {
+    if(document.readyState === 'loading'){
         document.addEventListener('DOMContentLoaded', iniciarTudo);
     } else {
         iniciarTudo();
@@ -549,5 +615,7 @@
 </script>
 
 </body>
+
+
 
 </html>
