@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spectrum</title>
+    
+    
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        html,body{margin:0;padding:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;color:#000;background:#fff;overflow-x:hidden}
+        body{display:flex;flex-direction:column;min-height:100vh}
+        main{flex:1}
+        img{max-width:100%;height:auto}
+        
+        .parabens{background:#f5d316;color:#000;font-weight:700;padding:14px 0;text-align:center;font-size:1em;letter-spacing:.5px;margin-bottom:15px}
+        
+        .hl{max-width:min(980px,92vw);margin:0 auto;padding:clamp(12px,3vw,20px);text-align:center}
+        .hl-eyebrow{text-transform:uppercase;letter-spacing:.06em;font-weight:900;margin:0 0 clamp(6px,1.2vw,10px);font-size:clamp(20px,2.5vw,22px);line-height:1.5}
+        .hl-title{color:#d10000;font-weight:800;margin:0;line-height:1.12;font-size:clamp(20px,4.2vw,36px)}
+        
+        .video-wrapper{width:min(100%,860px);margin:0 auto 18px;padding:0 16px}
+        .video-frame{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:22px;overflow:hidden;box-shadow:0 10px 24px rgba(0,0,0,.12)}
+        .video-frame iframe,.video-frame .video-poster,.video-frame .video-click-blocker,.video-frame .video-safe-layer{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+        .video-shell{position:relative;width:100%;height:100%;overflow:hidden;background:#000}
+        .video-poster{display:flex;align-items:center;justify-content:center;background:#000 center/cover no-repeat;cursor:pointer;isolation:isolate}
+        .video-poster::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at center,rgba(255,255,255,.04),transparent 42%)}
+        .video-poster::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.18),rgba(0,0,0,.44))}
+        .video-overlay-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:24px;text-align:center;width:100%;height:100%}
+        .video-play-button{position:relative;display:flex;align-items:center;justify-content:center;width:140px;height:88px;border:none;border-radius:22px;background:#ff1f12;box-shadow:0 14px 34px rgba(0,0,0,.28);cursor:pointer;transition:transform .2s ease,box-shadow .2s ease;animation:pulsePlay 1.6s ease-in-out infinite}
+        .video-play-button::before{content:'';display:block;margin-left:8px;border-style:solid;border-width:18px 0 18px 30px;border-color:transparent transparent transparent #fff}
+        .video-play-button:hover{transform:scale(1.05);box-shadow:0 18px 42px rgba(0,0,0,.32)}
+        .video-play-label{display:none}
+        .video-puzzle-badge{display:none}
+        .video-puzzle-badge span{font-size:34px;line-height:1}
+        .video-click-blocker{display:none;z-index:5;background:transparent}
+        .video-safe-layer{display:none;z-index:4;background:transparent}
+        .video-frame.is-playing .video-poster{display:none}
+        .video-frame.is-playing .video-click-blocker,.video-frame.is-playing .video-safe-layer{display:block}
+        @keyframes pulsePuzzle{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+        @keyframes pulsePlay{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+        
+        .countdown-section{background:#0d48a1;padding:2rem 1rem;text-align:center}
+        .countdown-title{color:#fff;font-size:1.25rem;font-weight:700;line-height:1.25;margin-bottom:.5rem;max-width:42rem;margin-left:auto;margin-right:auto}
+        .countdown-timer{color:#fff;font-size:2.25rem;font-weight:700;margin-top:.5rem;letter-spacing:.05em}
+        
+        .ofertas-wrap{max-width:72rem;margin:0 auto;padding:3rem 1rem;display:grid;gap:1.5rem;grid-template-columns:repeat(3,1fr)}
+        .card-1{order:1}
+        .card-2{order:2}
+        .card-3{order:3}
+        
+        .card{background:#fff;border-radius:1.5rem;overflow:hidden;box-shadow:0 10px 15px -3px rgba(0,0,0,.1);padding:1.5rem;position:relative;border:4px solid #e5e7eb;transition:transform .3s ease}
+        .card-destaque{background:#faf4cf;border-color:#0d48a1;transform:scale(1.05)}
+        
+        .card-badge{position:absolute;top:0;left:0;right:0;padding:.5rem;text-align:center;border-radius:1rem 1rem 0 0;font-weight:700;font-size:1.25rem}
+        .badge-cinza{background:#e5e7eb;color:#374151}
+        .badge-azul{background:#0d48a1;color:#fff}
+        
+        .card-content{padding-top:3rem;text-align:center}
+        .card-title{font-size:2.25rem;font-weight:700;color:#0d48a1;margin-bottom:.25rem}
+        .card-subtitle{font-size:1.25rem;font-weight:700;color:#4b5563;margin-bottom:1rem}
+        .card-img{width:100%;max-width:200px;margin:0 auto 1rem;display:block}
+        
+        .price-de{font-size:1.125rem;font-weight:600;color:#061021}
+        .price-strike{text-decoration:line-through;color:#dc2626}
+        .price-parcela{display:flex;align-items:flex-end;justify-content:center;gap:.25rem;margin-top:.5rem}
+        .price-x{font-size:1.125rem;font-weight:700}
+        .price-cifrao{font-size:1.125rem;font-weight:800;color:#0d48a1}
+        .price-valor{font-size:3.75rem;font-weight:800;color:#0d48a1;line-height:1}
+        .price-centavos{font-size:1.5rem;font-weight:800;color:#0d48a1;padding-bottom:.25rem}
+        
+        .btn-comprar{display:block;width:100%;margin:1rem 0;cursor:pointer;transition:all .3s ease}
+        .btn-comprar:hover{transform:translateY(-2px);filter:brightness(1.05)}
+        .cards-img{width:auto;max-width:12rem;margin:0 auto;display:block}
+        
+        .price-vista{font-size:1.125rem;font-weight:700;color:#0d48a1;margin:1rem 0}
+        .price-vista-strike{text-decoration:line-through;color:#dc2626}
+        .frete-gratis{background:#0d48a1;color:#fff;font-size:1.25rem;font-weight:700;padding:.5rem;margin-top:.5rem}
+        
+        .selo-melhor{position:relative}
+        .cursor-animado{position:absolute;right:-2rem;bottom:-2rem;width:3.5rem;height:3.5rem;animation:bounce-diagonal 3s cubic-bezier(.4,0,.2,1) infinite;filter:drop-shadow(2px 2px 4px rgba(0,0,0,.15));pointer-events:none}
+        
+        @keyframes bounce-diagonal{0%,100%{transform:translate(0,0) scale(1);opacity:.95}50%{transform:translate(-12px,-12px) scale(1.05);opacity:1}}
+        
+        .garantia-section{max-width:56rem;margin:0 auto;padding:2rem 1rem;text-align:center}
+        .garantia-title{color:#0d48a1;font-size:1.875rem;font-weight:700;margin-bottom:1rem}
+        .garantia-subtitle{color:#0d48a1;font-size:1.5rem;font-weight:700;margin-bottom:2rem}
+        .garantia-content{display:flex;align-items:center;gap:2rem;margin-bottom:2rem}
+        .garantia-img{width:10rem;flex-shrink:0}
+        .garantia-text{text-align:left;font-size:1.125rem;line-height:1.75;color:#1f2937}
+        
+        .info-sec{max-width:1100px;margin:0 auto;padding:28px 16px 40px;text-align:center}
+        .info-img{display:block;margin:0 auto;max-width:100%}
+        .info-img.top{max-width:560px;margin-bottom:18px}
+        .info-img.bottom{max-width:520px;margin-top:22px}
+        .info-text p{margin:0;line-height:1.5;font-size:18px}
+        .info-text .apresentacao{margin-top:18px;font-weight:600}
+        
+        .site-footer{background:#000;color:#fff;padding:28px 16px 30px}
+        .site-footer-inner{width:min(100%,980px);margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
+        .site-footer .disclaimer{font-size:14px;line-height:1.7;max-width:760px;margin:0 auto;color:rgba(255,255,255,.92)}
+        .site-footer .copyright{font-size:16px;font-weight:700;line-height:1.5;margin:0}
+        
+        @media (max-width:768px){
+            .countdown-title{font-size:1.25rem}
+            .countdown-timer{font-size:2.25rem}
+            .ofertas-wrap{grid-template-columns:1fr;padding:1.5rem 1rem}
+            .card-1{order:3}
+            .card-2{order:1}
+            .card-3{order:2}
+            .card{padding:1rem}
+            .card-destaque{transform:scale(1)}
+            .card-title{font-size:2rem}
+            .card-subtitle{font-size:1.125rem}
+            .price-valor{font-size:3rem}
+            .garantia-content{flex-direction:column;text-align:center}
+            .garantia-text{text-align:center}
+            .garantia-img{width:8rem}
+            .cursor-animado{display:none}
+        }
+        
+        @media (max-width:480px){
+            .countdown-title{font-size:1rem}
+            .countdown-timer{font-size:1.875rem}
+            .card-title{font-size:1.75rem}
+            .price-valor{font-size:2.5rem}
+            .garantia-title{font-size:1.5rem}
+            .garantia-subtitle{font-size:1.25rem}
+            .video-wrapper{padding:0 10px}
+            .video-play-button{width:110px;height:70px}
+            .video-play-button::before{border-width:14px 0 14px 24px}
+            .video-puzzle-badge{width:58px;height:58px}
+            .video-puzzle-badge span{font-size:28px}
+            .video-play-label{font-size:13px}
+            .site-footer{padding:22px 14px 26px}
+            .site-footer .disclaimer{font-size:13px;line-height:1.6}
+            .site-footer .copyright{font-size:14px}
+        }
+    
+.video-click-blocker,.video-safe-layer{pointer-events:none!important}
+.video-frame.is-playing .video-click-blocker,.video-frame.is-playing .video-safe-layer{display:block!important;pointer-events:auto!important;cursor:default}
+</style>
+    
+  
+
+<script>
+    window.addEventListener('load', function() {
+        var utmParamQueryString = new URLSearchParams(window.location.search);
+      
+        if (utmParamQueryString.toString()) {
+            var navLinks = document.querySelectorAll('a');
+
+            navLinks.forEach(function (item) {
+                // Verifica se o link não tem um hash (#) e se o link não é o próprio URL da página
+                if (item.href.indexOf('#') === -1) {
+                  if (item.href.indexOf('?') === -1) {
+                    item.href += '?' + utmParamQueryString.toString();
+                  } else {
+                    item.href += '&' + utmParamQueryString.toString();
+                  }
+                } 
+            });
+        }
+    });
+</script>
+
+
+
+</head>
+
+<body>
+    <script>
+(function(w,d,s,t){
+    if(w._brpBstr)return;w._brpBstr=t;var f=d.getElementsByTagName(s)[0],j=d.createElement(s);
+    j.async=true;j.src="https://ev.braip.com/js/braip-booster.js?v="+t;
+    f.parentNode.insertBefore(j,f);
+})(window,document,'script',Date.now());
+</script>
+    
+ 
+<main>
+    <div class="parabens">ATENÇÃO: Assista Antes Que Tirem do Ar</div>
+
+    <div class="hl">
+        <p class="hl-eyebrow">NEUROLOGISTA REVELA:</p>
+        <h1 class="hl-title">Use esse truque do alho para regredir os transtornos do seu filho ainda nessa semana</h1>
+    </div>
+
+    <br>
+
+    <div class="video-wrapper">
+        <div id="area-video" class="video-frame" data-video-id="7WSzKoPO2wE">
+            <div class="video-shell">
+                <div class="video-poster" id="videoPoster" role="button" aria-label="Dar play no vídeo" tabindex="0" style="background-image:url('https://img.youtube.com/vi/7WSzKoPO2wE/maxresdefault.jpg')">
+                    <div class="video-overlay-content">
+                        <button type="button" class="video-play-button" id="customPlayButton" aria-label="Dar play no vídeo"></button>
+                    </div>
+                </div>
+                <div id="youtubePlayerContainer"></div>
+                <div class="video-safe-layer" aria-hidden="true"></div>
+                <div class="video-click-blocker" aria-hidden="true"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="elementoOculto" data-show-delay="120000" style="display:none"><!-- 120000 = 2 minutos. Altere este valor em milissegundos quando quiser. -->
+        
+        <div class="countdown-section">
+            <h2 class="countdown-title">Garanta seu Spectrum com desconto<br> enquanto durarem os estoques</h2>
+            <div class="countdown-timer">16:42</div>
+        </div>
+
+        <div class="ofertas-wrap">
+            
+            <div class="card card-1">
+                <div class="card-badge badge-cinza">POPULAR</div>
+                <div class="card-content">
+                    <h3 class="card-title">1 POTE</h3>
+                    <p class="card-subtitle">90 CÁPSULAS</p>
+                    <img src="images/pote1.webp" alt="1 Pote" width="200" height="250" class="card-img" loading="lazy">
+                    
+                    <div class="price-de">De <span class="price-strike">R$419,00</span> por</div>
+                    <div class="price-parcela">
+                        <span class="price-x">12x</span>
+                        <span class="price-cifrao">R$</span>
+                        <span class="price-valor">22</span>
+                        <span class="price-centavos">,65</span>
+                    </div>
+                    
+                    <a href="https://ev.braip.com/checkout/plaovow6/che7dlgw?currency=BRL">
+                        <img src="images/comprar-agora.webp" alt="Comprar Agora" width="300" height="60" class="btn-comprar" loading="lazy">
+                        <img src="images/cards.webp" alt="Formas de Pagamento" width="200" height="30" class="cards-img" loading="lazy">
+                    </a>
+                    
+                    <p class="price-vista"><span class="price-vista-strike">R$419,00</span> R$219,00</p>
+                    <div class="frete-gratis">FRETE GRÁTIS</div>
+                </div>
+            </div>
+
+            <div class="card card-destaque card-2">
+                <div class="card-badge badge-azul">MELHOR OFERTA</div>
+                <div class="card-content">
+                    <h3 class="card-title">5 POTES</h3>
+                    <p class="card-subtitle">450 CÁPSULAS</p>
+                    <img src="images/Gemini_Generated_Image_75qdqq75qdqq75qd.webp" alt="5 Potes" width="250" height="250" class="card-img" loading="lazy">
+                    
+                    <div class="price-de">De <span class="price-strike">R$1074</span> por</div>
+                    <div class="price-parcela">
+                        <span class="price-x">12x</span>
+                        <span class="price-cifrao">R$</span>
+                        <span class="price-valor">52</span>
+                        <span class="price-centavos">,13</span>
+                    </div>
+                    
+                    <div class="selo-melhor">
+                        <a href="https://ev.braip.com/checkout/plaq2ovl/che7dlgw?currency=BRL">
+                            <img src="images/comprar-agora.webp" alt="Comprar Agora" width="300" height="60" class="btn-comprar" loading="lazy">
+                            <img src="images/cursor.webp" alt="Clique aqui" width="56" height="56" class="cursor-animado" loading="lazy">
+                            <img src="images/cards.webp" alt="Formas de Pagamento" width="200" height="30" class="cards-img" loading="lazy">
+                        </a>
+                    </div>
+                    
+                    <p class="price-vista"><span class="price-vista-strike">R$1074</span> R$504,00</p>
+                    <div class="frete-gratis">FRETE GRÁTIS</div>
+                </div>
+            </div>
+
+            <div class="card card-3">
+                <div class="card-badge badge-cinza">MAIS POPULAR</div>
+                <div class="card-content">
+                    <h3 class="card-title">3 POTES</h3>
+                    <p class="card-subtitle">270 CÁPSULAS</p>
+                    <img src="images/pote3.webp" alt="3 Potes" width="220" height="250" class="card-img" loading="lazy">
+                    
+                    <div class="price-de">De <span class="price-strike">R$537</span> por</div>
+                    <div class="price-parcela">
+                        <span class="price-x">12x</span>
+                        <span class="price-cifrao">R$</span>
+                        <span class="price-valor">39</span>
+                        <span class="price-centavos">,09</span>
+                    </div>
+                    
+                    <a href="https://ev.braip.com/checkout/plapgoln/che7dlgw?currency=BRL">
+                        <img src="images/comprar-agora.webp" alt="Comprar Agora" width="300" height="60" class="btn-comprar" loading="lazy">
+                        <img src="images/cards.webp" alt="Formas de Pagamento" width="200" height="30" class="cards-img" loading="lazy">
+                    </a>
+                    
+                    <p class="price-vista"><span class="price-vista-strike">R$537</span> R$378,00</p>
+                    <div class="frete-gratis">FRETE GRÁTIS</div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="garantia-section">
+            <h2 class="garantia-title">100% SATISFAÇÃO</h2>
+            <h3 class="garantia-subtitle">60-DIAS GARANTIA DE DEVOLUÇÃO DO DINHEIRO</h3>
+            
+            <div class="garantia-content">
+                <img src="images/GARANTIA-60.avif" alt="Garantia 60 Dias" width="160" height="160" class="garantia-img" loading="lazy">
+                <div class="garantia-text">
+                    <p>Seu pedido hoje está protegido pela nossa <strong style="color:#0d48a1">garantia de devolução de 100% do dinheiro</strong> por 60 dias. Se você não ficar impressionado com a rapidez com que seu filho vai regredir o <strong>autismo</strong>, então, a qualquer momento dentro dos próximos <strong style="color:#0d48a1">60 dias</strong>, basta nos avisar e nós reembolsaremos cada centavo do seu investimento sem perguntas.</p>
+                </div>
+            </div>
+        </div>
+
+        <section class="info-sec">
+            <img class="info-img top" src="images/01.webp" alt="Selos de confiança" width="560" height="auto" loading="lazy">
+            <div class="info-text">
+                <p>Desenvolvido por médicos e cientistas para quem busca uma vida mais equilibrada, focada e saudável.</p>
+                <p class="apresentacao">Apresentação em <b>cápsulas</b><br>e <b>Gotas.</b></p>
+            </div>
+            <img class="info-img bottom" src="images/02.webp" alt="Faixa decorativa" width="520" height="auto" loading="lazy">
+        </section>
+
+    </div>
+</main>
+
+<footer class="site-footer">
+    <div class="site-footer-inner">
+        <p class="disclaimer">*As informações neste site não têm caráter de consulta e não substituem diagnóstico ou tratamentos médicos. **Este produto não tem a intenção de dar diagnósticos, tratamentos ou substituir medicamentos. O resultado pode variar de pessoa para pessoa.</p>
+        <p class="copyright">Copyright 2025 SpectrumVitta. Todos os direitos reservados.</p>
+    </div>
+</footer>
+
+
+
+<script>
+(function(){
+    var player = null;
+    var monitorInterval = null;
+    var pitchLiberado = false;
+    var TEMPO_LIBERACAO = 352; // 5:52
+
+    function mostrarPitch(){
+        var elemento = document.getElementById('elementoOculto');
+        if(!elemento || pitchLiberado) return;
+        pitchLiberado = true;
+        elemento.style.display = 'block';
+    }
+
+    function esconderPitchInicial(){
+        var elemento = document.getElementById('elementoOculto');
+        if(!elemento) return;
+        elemento.style.display = 'none';
+    }
+
+    function verificarTempoVideo(){
+        if(!player || typeof player.getCurrentTime !== 'function') return;
+        try{
+            var tempoAtual = player.getCurrentTime();
+            if(tempoAtual >= TEMPO_LIBERACAO){
+                mostrarPitch();
+                if(monitorInterval){
+                    clearInterval(monitorInterval);
+                    monitorInterval = null;
+                }
+            }
+        }catch(e){}
+    }
+
+    function iniciarMonitoramentoTempo(){
+        if(monitorInterval) return;
+        monitorInterval = window.setInterval(verificarTempoVideo, 500);
+    }
+
+    function pararMonitoramentoTempo(){
+        if(monitorInterval){
+            clearInterval(monitorInterval);
+            monitorInterval = null;
+        }
+    }
+
+    function iniciarVideoCustomizado(){
+        var frame = document.getElementById('area-video');
+        var poster = document.getElementById('videoPoster');
+        var button = document.getElementById('customPlayButton');
+        var container = document.getElementById('youtubePlayerContainer');
+        var safeLayer = frame ? frame.querySelector('.video-safe-layer') : null;
+        var blocker = frame ? frame.querySelector('.video-click-blocker') : null;
+        if(!frame || !poster || !button || !container) return;
+
+        var videoId = frame.getAttribute('data-video-id') || 'knvHXerwgK4';
+        var started = false;
+
+        function bloquearInteracoes(e){
+            if(e){
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            return false;
+        }
+
+        [safeLayer, blocker].forEach(function(layer){
+            if(!layer) return;
+            ['click','dblclick','mousedown','mouseup','touchstart','touchend','pointerdown','pointerup','contextmenu'].forEach(function(evt){
+                layer.addEventListener(evt, bloquearInteracoes, { passive:false });
+            });
+        });
+
+        function carregarApiYoutube(callback){
+            if(window.YT && window.YT.Player){
+                callback();
+                return;
+            }
+
+            var anterior = window.onYouTubeIframeAPIReady;
+            window.onYouTubeIframeAPIReady = function(){
+                if(typeof anterior === 'function'){
+                    try{ anterior(); }catch(e){}
+                }
+                callback();
+            };
+
+            if(!document.querySelector('script[src="https://www.youtube.com/iframe_api"]')){
+                var tag = document.createElement('script');
+                tag.src = 'https://www.youtube.com/iframe_api';
+                document.head.appendChild(tag);
+            }
+        }
+
+        function criarPlayer(){
+            player = new YT.Player('youtubePlayerContainer', {
+                videoId: videoId,
+                playerVars: {
+                    autoplay: 1,
+                    controls: 0,
+                    rel: 0,
+                    modestbranding: 1,
+                    playsinline: 1,
+                    disablekb: 1,
+                    fs: 0,
+                    iv_load_policy: 3,
+                    cc_load_policy: 0,
+                    origin: window.location.origin
+                },
+                events: {
+                    onReady: function(event){
+                        try{ event.target.playVideo(); }catch(e){}
+                        verificarTempoVideo();
+                    },
+                    onStateChange: function(event){
+                        if(event.data === YT.PlayerState.PLAYING || event.data === YT.PlayerState.BUFFERING){
+                            iniciarMonitoramentoTempo();
+                            verificarTempoVideo();
+                        } else if(event.data === YT.PlayerState.PAUSED){
+                            verificarTempoVideo();
+                        } else if(event.data === YT.PlayerState.ENDED){
+                            mostrarPitch();
+                            pararMonitoramentoTempo();
+                        }
+                    }
+                }
+            });
+        }
+
+        function darPlay(){
+            if(started) return;
+            started = true;
+            frame.classList.add('is-playing');
+            carregarApiYoutube(criarPlayer);
+        }
+
+        [poster, button].forEach(function(el){
+            el.addEventListener('click', function(e){
+                if(el === button){
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                darPlay();
+            });
+        });
+
+        poster.addEventListener('keydown', function(e){
+            if(e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                darPlay();
+            }
+        });
+    }
+
+    function iniciarTudo(){
+        esconderPitchInicial();
+        iniciarVideoCustomizado();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', iniciarTudo);
+    } else {
+        iniciarTudo();
+    }
+})();
+</script>
+
+
+</body>
+</html>
