@@ -21,26 +21,10 @@
         
         .video-wrapper{width:min(100%,860px);margin:0 auto 18px;padding:0 16px}
         .video-frame{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:22px;overflow:hidden;box-shadow:0 10px 24px rgba(0,0,0,.12)}
-        .video-frame iframe,.video-frame .video-poster,.video-frame .video-click-blocker,.video-frame .video-safe-layer{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+        .video-frame iframe,.video-frame .video-click-blocker{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
         .video-shell{position:relative;width:100%;height:100%;overflow:hidden;background:#000}
-        .video-poster{display:flex;align-items:center;justify-content:center;background:#000 center/cover no-repeat;cursor:pointer;isolation:isolate}
-        .video-poster::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at center,rgba(255,255,255,.04),transparent 42%)}
-        .video-poster::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.18),rgba(0,0,0,.44))}
-        .video-overlay-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:24px;text-align:center;width:100%;height:100%}
-        .video-play-button{position:relative;display:flex;align-items:center;justify-content:center;width:140px;height:88px;border:none;border-radius:22px;background:#ff1f12;box-shadow:0 14px 34px rgba(0,0,0,.28);cursor:pointer;transition:transform .2s ease,box-shadow .2s ease;animation:pulsePlay 1.6s ease-in-out infinite}
-        .video-play-button::before{content:'';display:block;margin-left:8px;border-style:solid;border-width:18px 0 18px 30px;border-color:transparent transparent transparent #fff}
-        .video-play-button:hover{transform:scale(1.05);box-shadow:0 18px 42px rgba(0,0,0,.32)}
-        .video-play-label{display:none}
-        .video-puzzle-badge{display:none}
-        .video-puzzle-badge span{font-size:34px;line-height:1}
-        .video-click-blocker{display:none;z-index:5;background:transparent}
-        .video-safe-layer{display:none;z-index:4;background:transparent}
-        .video-frame.is-started .video-poster{display:none}
-        .video-frame.is-started .video-click-blocker,.video-frame.is-started .video-safe-layer{display:block}
-        .video-frame iframe{pointer-events:none!important}
-        @keyframes pulsePuzzle{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
-        @keyframes pulsePlay{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
-        
+                                                                                        .video-click-blocker{display:none;position:absolute;inset:0;z-index:5;background:transparent}
+                                                
         .countdown-section{background:#0d48a1;padding:2rem 1rem;text-align:center}
         .countdown-title{color:#fff;font-size:1.25rem;font-weight:700;line-height:1.25;margin-bottom:.5rem;max-width:42rem;margin-left:auto;margin-right:auto}
         .countdown-timer{color:#fff;font-size:2.25rem;font-weight:700;margin-top:.5rem;letter-spacing:.05em}
@@ -138,8 +122,8 @@
             .site-footer .copyright{font-size:14px}
         }
     
-.video-click-blocker,.video-safe-layer{pointer-events:none!important}
-.video-frame.is-playing .video-click-blocker,.video-frame.is-playing .video-safe-layer{display:block!important;pointer-events:auto!important;cursor:default}
+.video-click-blocker{pointer-events:none!important}
+.video-frame.is-started .video-click-blocker{display:block!important;pointer-events:auto!important;cursor:default}
 </style>
     
   
@@ -180,7 +164,7 @@
     
  
 <main>
-    <div class="parabens">ATENÇÃO: sua compra ainda não está concluída. Não saia dessa página ainda!</div>
+    <div class="parabens">ATENÇÃO: Assista Antes Que Tirem do Ar</div>
 
     <div class="hl">
         <p class="hl-eyebrow">NEUROLOGISTA REVELA:</p>
@@ -192,16 +176,11 @@
     <div class="video-wrapper">
         <div id="area-video" class="video-frame" data-video-id="knvHXerwgK4">
             <div class="video-shell">
-                <div class="video-poster" id="videoPoster" role="button" aria-label="Dar play no vídeo" tabindex="0" style="background-image:url('https://img.youtube.com/vi/knvHXerwgK4/maxresdefault.jpg')">
-                    <div class="video-overlay-content">
-                        <button type="button" class="video-play-button" id="customPlayButton" aria-label="Dar play no vídeo"></button>
-                    </div>
-                </div>
                 <div id="youtubePlayerContainer"></div>
-                <div class="video-safe-layer" aria-hidden="true"></div>
-                <div class="video-click-blocker" aria-hidden="true"></div>
+                <div class="video-click-blocker" id="videoClickBlocker" aria-hidden="true"></div>
             </div>
         </div>
+    </div>
     </div>
 
     <div id="elementoOculto" data-show-delay="120000" style="display:none"><!-- 120000 = 2 minutos. Altere este valor em milissegundos quando quiser. -->
@@ -327,20 +306,13 @@
 
 
 
-
-
 <script>
 (function(){
     var player = null;
     var monitorInterval = null;
     var pitchLiberado = false;
-    var TEMPO_LIBERACAO = 352; // 5:52
-    var apiReady = false;
-    var apiLoading = false;
-    var apiReadyQueue = [];
-    var gestureLocked = false;
+    var TEMPO_LIBERACAO = 352;
     var started = false;
-    var pageHiddenAt = 0;
 
     function mostrarPitch(){
         var elemento = document.getElementById('elementoOculto');
@@ -351,26 +323,24 @@
 
     function esconderPitchInicial(){
         var elemento = document.getElementById('elementoOculto');
-        if(!elemento) return;
-        if(!pitchLiberado){
-            elemento.style.display = 'none';
-        }
+        if(!elemento || pitchLiberado) return;
+        elemento.style.display = 'none';
     }
 
     function verificarTempoVideo(){
         if(!player || typeof player.getCurrentTime !== 'function') return;
-        try{
+        try {
             var tempoAtual = player.getCurrentTime();
             if(tempoAtual >= TEMPO_LIBERACAO){
                 mostrarPitch();
                 pararMonitoramentoTempo();
             }
-        }catch(e){}
+        } catch(e) {}
     }
 
     function iniciarMonitoramentoTempo(){
         if(monitorInterval) return;
-        monitorInterval = window.setInterval(verificarTempoVideo, 300);
+        monitorInterval = window.setInterval(verificarTempoVideo, 400);
     }
 
     function pararMonitoramentoTempo(){
@@ -380,26 +350,26 @@
         }
     }
 
-    function onApiReady(callback){
-        if(apiReady && window.YT && window.YT.Player){
+    function bloquearInteracoes(e){
+        if(e){
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        return false;
+    }
+
+    function carregarApiYoutube(callback){
+        if(window.YT && window.YT.Player){
             callback();
             return;
         }
-        apiReadyQueue.push(callback);
-        if(apiLoading) return;
 
-        apiLoading = true;
-        var prev = window.onYouTubeIframeAPIReady;
+        var anterior = window.onYouTubeIframeAPIReady;
         window.onYouTubeIframeAPIReady = function(){
-            apiReady = true;
-            if(typeof prev === 'function'){
-                try{ prev(); }catch(e){}
+            if(typeof anterior === 'function'){
+                try{ anterior(); }catch(e){}
             }
-            var queue = apiReadyQueue.slice();
-            apiReadyQueue = [];
-            queue.forEach(function(fn){
-                try{ fn(); }catch(e){}
-            });
+            callback();
         };
 
         if(!document.querySelector('script[src="https://www.youtube.com/iframe_api"]')){
@@ -409,201 +379,69 @@
         }
     }
 
-    function iniciarVideoCustomizado(){
+    function iniciarVideoNativo(){
         var frame = document.getElementById('area-video');
-        var poster = document.getElementById('videoPoster');
-        var button = document.getElementById('customPlayButton');
         var container = document.getElementById('youtubePlayerContainer');
-        var safeLayer = frame ? frame.querySelector('.video-safe-layer') : null;
-        var blocker = frame ? frame.querySelector('.video-click-blocker') : null;
-        if(!frame || !poster || !button || !container) return;
+        var blocker = document.getElementById('videoClickBlocker');
+        if(!frame || !container) return;
 
-        var videoId = frame.getAttribute('data-video-id') || 'FtzRHfncxkk';
-
-        function bloquearInteracoes(e){
-            if(e){
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            return false;
-        }
-
-        [safeLayer, blocker].forEach(function(layer){
-            if(!layer) return;
+        if(blocker){
             ['click','dblclick','mousedown','mouseup','touchstart','touchend','pointerdown','pointerup','contextmenu'].forEach(function(evt){
-                layer.addEventListener(evt, bloquearInteracoes, { passive:false });
+                blocker.addEventListener(evt, bloquearInteracoes, { passive:false });
             });
-        });
-
-        function forcarPlay(){
-            if(!player) return;
-            try{ player.playVideo(); }catch(e){}
-            try{ player.unMute(); }catch(e){}
         }
 
-        function marcarIniciado(){
-            if(started) return;
-            started = true;
-            frame.classList.add('is-started');
-        }
-
-        function criarPlayer(){
-            if(player){
-                forcarPlay();
-                return;
-            }
-
-            container.innerHTML = '';
+        carregarApiYoutube(function(){
             player = new YT.Player('youtubePlayerContainer', {
-                videoId: videoId,
+                width: '100%',
+                height: '100%',
+                videoId: 'knvHXerwgK4',
                 playerVars: {
-                    autoplay: 1,
-                    controls: 0,
+                    autoplay: 0,
+                    controls: 1,
                     rel: 0,
                     modestbranding: 1,
                     playsinline: 1,
-                    disablekb: 1,
                     fs: 0,
                     iv_load_policy: 3,
                     cc_load_policy: 0,
                     origin: window.location.origin
                 },
                 events: {
-                    onReady: function(event){
-                        try{ event.target.playVideo(); }catch(e){}
-                        try{ event.target.unMute(); }catch(e){}
-                        verificarTempoVideo();
+                    onReady: function() {
+                        esconderPitchInicial();
                     },
-                    onStateChange: function(event){
-                        if(event.data === YT.PlayerState.PLAYING){
-                            marcarIniciado();
+                    onStateChange: function(event) {
+                        if(event.data === YT.PlayerState.PLAYING || event.data === YT.PlayerState.BUFFERING){
+                            if(!started){
+                                started = true;
+                                frame.classList.add('is-started');
+                            }
                             iniciarMonitoramentoTempo();
                             verificarTempoVideo();
-                        } else if(event.data === YT.PlayerState.BUFFERING){
-                            marcarIniciado();
-                            iniciarMonitoramentoTempo();
-                        } else if(
-                            event.data === YT.PlayerState.PAUSED ||
-                            event.data === YT.PlayerState.CUED ||
-                            event.data === YT.PlayerState.UNSTARTED
-                        ){
-                            if(gestureLocked && !document.hidden){
-                                window.setTimeout(forcarPlay, 10);
-                            }
+                        } else if(event.data === YT.PlayerState.PAUSED){
                             verificarTempoVideo();
                         } else if(event.data === YT.PlayerState.ENDED){
                             mostrarPitch();
                             pararMonitoramentoTempo();
                         }
-                    },
-                    onError: function(){
-                        gestureLocked = false;
-                        started = false;
-                        frame.classList.remove('is-started');
                     }
                 }
             });
+        });
+    }
+
+    function restaurarAoVoltar(){
+        if(!player) return;
+        verificarTempoVideo();
+        if(started){
+            iniciarMonitoramentoTempo();
         }
-
-        function ativarComUmClique(e){
-            if(e){
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            if(gestureLocked && started){
-                return false;
-            }
-            gestureLocked = true;
-            marcarIniciado();
-
-            onApiReady(function(){
-                criarPlayer();
-                forcarPlay();
-                window.setTimeout(forcarPlay, 80);
-                window.setTimeout(forcarPlay, 220);
-            });
-
-            return false;
-        }
-
-        function restaurarAoVoltar(){
-            if(!gestureLocked) return;
-            window.setTimeout(function(){
-                if(player && typeof player.getPlayerState === 'function'){
-                    try{
-                        var st = player.getPlayerState();
-                        if(st !== YT.PlayerState.PLAYING && st !== YT.PlayerState.BUFFERING){
-                            forcarPlay();
-                            window.setTimeout(forcarPlay, 120);
-                        }
-                    }catch(e){
-                        forcarPlay();
-                    }
-                } else {
-                    onApiReady(function(){
-                        criarPlayer();
-                        forcarPlay();
-                    });
-                }
-                verificarTempoVideo();
-            }, 120);
-        }
-
-        function resetarEstadoSeNecessario(){
-            if(!gestureLocked && !started){
-                frame.classList.remove('is-started');
-            }
-        }
-
-        onApiReady(function(){});
-
-        ['touchend','pointerup','click'].forEach(function(evt){
-            poster.addEventListener(evt, ativarComUmClique, { passive:false });
-            button.addEventListener(evt, ativarComUmClique, { passive:false });
-        });
-
-        poster.addEventListener('keydown', function(e){
-            if(e.key === 'Enter' || e.key === ' ') {
-                ativarComUmClique(e);
-            }
-        });
-
-        document.addEventListener('visibilitychange', function(){
-            if(document.hidden){
-                pageHiddenAt = Date.now();
-                pararMonitoramentoTempo();
-            } else {
-                if(gestureLocked){
-                    restaurarAoVoltar();
-                    iniciarMonitoramentoTempo();
-                }
-            }
-        });
-
-        window.addEventListener('pageshow', function(event){
-            if(event.persisted || pageHiddenAt){
-                resetarEstadoSeNecessario();
-                restaurarAoVoltar();
-                if(gestureLocked){
-                    iniciarMonitoramentoTempo();
-                }
-            }
-        });
-
-        window.addEventListener('pagehide', function(){
-            pararMonitoramentoTempo();
-        });
-
-        window.addEventListener('focus', function(){
-            if(gestureLocked && !document.hidden){
-                restaurarAoVoltar();
-            }
-        });
     }
 
     function iniciarTudo(){
         esconderPitchInicial();
-        iniciarVideoCustomizado();
+        iniciarVideoNativo();
     }
 
     if(document.readyState === 'loading'){
@@ -611,11 +449,24 @@
     } else {
         iniciarTudo();
     }
+
+    document.addEventListener('visibilitychange', function(){
+        if(document.hidden){
+            pararMonitoramentoTempo();
+        } else {
+            restaurarAoVoltar();
+        }
+    });
+
+    window.addEventListener('pageshow', function(){
+        restaurarAoVoltar();
+    });
+
+    window.addEventListener('pagehide', function(){
+        pararMonitoramentoTempo();
+    });
 })();
 </script>
 
 </body>
-
-
-
 </html>
