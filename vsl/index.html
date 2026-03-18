@@ -21,10 +21,8 @@
         
         .video-wrapper{width:min(100%,860px);margin:0 auto 18px;padding:0 16px}
         .video-frame{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:22px;overflow:hidden;box-shadow:0 10px 24px rgba(0,0,0,.12)}
-        .video-frame iframe,.video-frame .video-click-blocker{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
-        .video-shell{position:relative;width:100%;height:100%;overflow:hidden;background:#000}
-                                                                                        .video-click-blocker{display:none;position:absolute;inset:0;z-index:5;background:transparent}
-                                                
+        .video-frame iframe,.video-frame         .video-shell{position:relative;width:100%;height:100%;overflow:hidden;background:#000}
+                                                                                                                                        
         .countdown-section{background:#0d48a1;padding:2rem 1rem;text-align:center}
         .countdown-title{color:#fff;font-size:1.25rem;font-weight:700;line-height:1.25;margin-bottom:.5rem;max-width:42rem;margin-left:auto;margin-right:auto}
         .countdown-timer{color:#fff;font-size:2.25rem;font-weight:700;margin-top:.5rem;letter-spacing:.05em}
@@ -180,7 +178,7 @@
                         <button type="button" class="video-play-button" id="customPlayButton" aria-label="Dar play no vídeo"></button>
                     </div>
                 </div>
-                <div class="video-click-blocker" id="videoClickBlocker" aria-hidden="true"></div>
+                
             </div>
         </div>
     </div>
@@ -310,6 +308,7 @@
 
 
 
+
 <script>
 (function(){
     var player = null;
@@ -319,13 +318,8 @@
     var pitchLiberado = false;
     var TEMPO_LIBERACAO = 352;
 
-    function getFrame(){
-        return document.getElementById('area-video');
-    }
-
-    function getPoster(){
-        return document.getElementById('videoPoster');
-    }
+    function getFrame(){ return document.getElementById('area-video'); }
+    function getPoster(){ return document.getElementById('videoPoster'); }
 
     function mostrarOverlay(){
         var frame = getFrame();
@@ -335,6 +329,21 @@
     function esconderOverlay(){
         var frame = getFrame();
         if(frame) frame.classList.add('is-started');
+    }
+
+    function esconderPlayerVisual(){
+        var frame = getFrame();
+        if(frame) frame.classList.remove('is-player-visible');
+    }
+
+    function mostrarPlayerVisual(){
+        var frame = getFrame();
+        if(frame) frame.classList.add('is-player-visible');
+    }
+
+    function resetVisualInicial(){
+        mostrarOverlay();
+        esconderPlayerVisual();
     }
 
     function mostrarPitch(){
@@ -409,14 +418,11 @@
             queuedPlay = true;
             return;
         }
+        mostrarPlayerVisual();
         try{ player.playVideo(); }catch(e){ queuedPlay = true; }
         try{ player.unMute(); }catch(e){}
-        window.setTimeout(function(){
-            try{ player.playVideo(); }catch(e){}
-        }, 120);
-        window.setTimeout(function(){
-            try{ player.playVideo(); }catch(e){}
-        }, 260);
+        window.setTimeout(function(){ try{ player.playVideo(); }catch(e){} }, 120);
+        window.setTimeout(function(){ try{ player.playVideo(); }catch(e){} }, 260);
     }
 
     function criarPlayer(){
@@ -445,11 +451,14 @@
                     if(queuedPlay){
                         queuedPlay = false;
                         tentarPlay();
+                    } else {
+                        resetVisualInicial();
                     }
                     esconderPitchInicial();
                 },
                 onStateChange: function(event){
                     if(event.data === YT.PlayerState.PLAYING || event.data === YT.PlayerState.BUFFERING){
+                        mostrarPlayerVisual();
                         esconderOverlay();
                         iniciarMonitoramentoTempo();
                         verificarTempoVideo();
@@ -477,6 +486,8 @@
             e.stopPropagation();
         }
 
+        mostrarPlayerVisual();
+
         if(!apiReady){
             queuedPlay = true;
             return false;
@@ -489,29 +500,31 @@
 
     function checarEstadoAoVoltar(){
         if(!player || typeof player.getPlayerState !== 'function'){
-            mostrarOverlay();
+            resetVisualInicial();
             return;
         }
 
         try {
             var st = player.getPlayerState();
             if(st === YT.PlayerState.PLAYING || st === YT.PlayerState.BUFFERING){
+                mostrarPlayerVisual();
                 esconderOverlay();
                 iniciarMonitoramentoTempo();
             } else {
                 mostrarOverlay();
+                esconderPlayerVisual();
                 pararMonitoramentoTempo();
             }
             verificarTempoVideo();
         } catch(e) {
-            mostrarOverlay();
+            resetVisualInicial();
             pararMonitoramentoTempo();
         }
     }
 
     function iniciarTudo(){
         esconderPitchInicial();
-        mostrarOverlay();
+        resetVisualInicial();
 
         var poster = getPoster();
         var button = document.getElementById('customPlayButton');
@@ -538,6 +551,7 @@
 
         carregarApiYoutube(function(){
             criarPlayer();
+            resetVisualInicial();
         });
     }
 
@@ -570,6 +584,7 @@
 </script>
 
 </body>
+
 
 
 </html>
