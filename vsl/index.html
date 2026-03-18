@@ -138,6 +138,7 @@
         }
     
 .video-click-blocker,.video-safe-layer{pointer-events:none!important}
+.video-frame.is-playing .video-click-blocker,.video-frame.is-playing .video-safe-layer{display:block!important;pointer-events:auto!important;cursor:default}
 </style>
     
   
@@ -375,10 +376,27 @@
         var poster = document.getElementById('videoPoster');
         var button = document.getElementById('customPlayButton');
         var container = document.getElementById('youtubePlayerContainer');
+        var safeLayer = frame ? frame.querySelector('.video-safe-layer') : null;
+        var blocker = frame ? frame.querySelector('.video-click-blocker') : null;
         if(!frame || !poster || !button || !container) return;
 
         var videoId = frame.getAttribute('data-video-id') || 'knvHXerwgK4';
         var started = false;
+
+        function bloquearInteracoes(e){
+            if(e){
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            return false;
+        }
+
+        [safeLayer, blocker].forEach(function(layer){
+            if(!layer) return;
+            ['click','dblclick','mousedown','mouseup','touchstart','touchend','pointerdown','pointerup','contextmenu'].forEach(function(evt){
+                layer.addEventListener(evt, bloquearInteracoes, { passive:false });
+            });
+        });
 
         function carregarApiYoutube(callback){
             if(window.YT && window.YT.Player){
@@ -406,12 +424,12 @@
                 videoId: videoId,
                 playerVars: {
                     autoplay: 1,
-                    controls: 1,
+                    controls: 0,
                     rel: 0,
                     modestbranding: 1,
                     playsinline: 1,
-                    disablekb: 0,
-                    fs: 1,
+                    disablekb: 1,
+                    fs: 0,
                     iv_load_policy: 3,
                     cc_load_policy: 0,
                     origin: window.location.origin
