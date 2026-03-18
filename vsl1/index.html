@@ -21,7 +21,7 @@
         
         .video-wrapper{width:min(100%,860px);margin:0 auto 18px;padding:0 16px}
         .video-frame{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:22px;overflow:hidden;box-shadow:0 10px 24px rgba(0,0,0,.12)}
-        .video-frame iframe,.video-frame .video-poster,.video-frame .video-click-blocker,.video-frame .video-safe-layer{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+        .video-frame iframe,.video-frame .video-poster{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
         .video-shell{position:relative;width:100%;height:100%;overflow:hidden;background:#000}
         .video-poster{display:flex;align-items:center;justify-content:center;background:#000 center/cover no-repeat;cursor:pointer;isolation:isolate}
         .video-poster::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at center,rgba(255,255,255,.04),transparent 42%)}
@@ -33,10 +33,7 @@
         .video-play-label{display:none}
         .video-puzzle-badge{display:none}
         .video-puzzle-badge span{font-size:34px;line-height:1}
-        .video-click-blocker{display:none;z-index:5;background:transparent}
-        .video-safe-layer{display:none;z-index:4;background:transparent}
         .video-frame.is-playing .video-poster{display:none}
-        .video-frame.is-playing .video-click-blocker,.video-frame.is-playing .video-safe-layer{display:block}
         @keyframes pulsePuzzle{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
         @keyframes pulsePlay{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
         
@@ -136,10 +133,7 @@
             .site-footer .disclaimer{font-size:13px;line-height:1.6}
             .site-footer .copyright{font-size:14px}
         }
-    
-.video-click-blocker,.video-safe-layer{pointer-events:none!important}
-.video-frame.is-playing .video-click-blocker,.video-frame.is-playing .video-safe-layer{display:block!important;pointer-events:auto!important;cursor:default}
-</style>
+    </style>
     
   
 
@@ -181,10 +175,57 @@
 <main>
     <div class="parabens">ATENÇÃO: sua compra ainda não está concluída. Não saia dessa página ainda!</div>
 
-    <div class="hl">
-        <p class="hl-eyebrow">NEUROLOGISTA REVELA:</p>
-        <h1 class="hl-title">Use esse truque do alho para regredir os transtornos do seu filho ainda nessa semana</h1>
-    </div>
+      <section class="headline-section">
+  <h1 class="headline">
+    A dor de ouvir seu filho não falar… pode ter uma explicação que ninguém te contou.
+  </h1>
+
+  <p class="subheadline">
+    Não é só sobre estímulo — o cérebro precisa de suporte específico para desenvolver a fala.
+  </p>
+</section>
+
+<style>
+  .headline-section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px 16px;
+    text-align: center;
+  }
+
+  .headline {
+    font-size: clamp(24px, 5vw, 42px);
+    line-height: 1.25;
+    font-weight: 800;
+    color: #111;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+  }
+
+  .subheadline {
+    font-size: clamp(16px, 4vw, 22px);
+    line-height: 1.5;
+    color: #555;
+    max-width: 650px;
+    margin: 0 auto;
+  }
+
+  /* ajuste fino só pra mobile */
+  @media (max-width: 480px) {
+    .headline-section {
+      padding: 20px 14px;
+    }
+
+    .headline {
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .subheadline {
+      line-height: 1.45;
+    }
+  }
+</style>
 
     <br>
 
@@ -197,8 +238,6 @@
                     </div>
                 </div>
                 <div id="youtubePlayerContainer"></div>
-                <div class="video-safe-layer" aria-hidden="true"></div>
-                <div class="video-click-blocker" aria-hidden="true"></div>
             </div>
         </div>
     </div>
@@ -304,17 +343,19 @@
             </div>
         </div>
 
-        
+        <section class="info-sec">
+            <img class="info-img top" src="images/01.webp" alt="Selos de confiança" width="560" height="auto" loading="lazy">
+            <div class="info-text">
+                <p>Desenvolvido por médicos e cientistas para quem busca uma vida mais equilibrada, focada e saudável.</p>
+                <p class="apresentacao">Apresentação em <b>cápsulas</b><br>e <b>Gotas.</b></p>
+            </div>
+            <img class="info-img bottom" src="images/02.webp" alt="Faixa decorativa" width="520" height="auto" loading="lazy">
+        </section>
 
     </div>
 </main>
 
-<footer class="site-footer">
-    <div class="site-footer-inner">
-        <p class="disclaimer">*As informações neste site não têm caráter de consulta e não substituem diagnóstico ou tratamentos médicos. **Este produto não tem a intenção de dar diagnósticos, tratamentos ou substituir medicamentos. O resultado pode variar de pessoa para pessoa.</p>
-        <p class="copyright">Copyright 2025 SpectrumVitta. Todos os direitos reservados.</p>
-    </div>
-</footer>
+
 
 
 
@@ -323,7 +364,7 @@
     var player = null;
     var monitorInterval = null;
     var pitchLiberado = false;
-    var TEMPO_LIBERACAO = 340; // 5:52
+    var TEMPO_LIBERACAO = 352; // 5:52
 
     function mostrarPitch(){
         var elemento = document.getElementById('elementoOculto');
@@ -369,27 +410,10 @@
         var poster = document.getElementById('videoPoster');
         var button = document.getElementById('customPlayButton');
         var container = document.getElementById('youtubePlayerContainer');
-        var safeLayer = frame ? frame.querySelector('.video-safe-layer') : null;
-        var blocker = frame ? frame.querySelector('.video-click-blocker') : null;
         if(!frame || !poster || !button || !container) return;
 
         var videoId = frame.getAttribute('data-video-id') || 'knvHXerwgK4';
         var started = false;
-
-        function bloquearInteracoes(e){
-            if(e){
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            return false;
-        }
-
-        [safeLayer, blocker].forEach(function(layer){
-            if(!layer) return;
-            ['click','dblclick','mousedown','mouseup','touchstart','touchend','pointerdown','pointerup','contextmenu'].forEach(function(evt){
-                layer.addEventListener(evt, bloquearInteracoes, { passive:false });
-            });
-        });
 
         function carregarApiYoutube(callback){
             if(window.YT && window.YT.Player){
@@ -417,12 +441,11 @@
                 videoId: videoId,
                 playerVars: {
                     autoplay: 1,
-                    controls: 0,
+                    controls: 1,
                     rel: 0,
                     modestbranding: 1,
                     playsinline: 1,
-                    disablekb: 1,
-                    fs: 0,
+                    fs: 1,
                     iv_load_policy: 3,
                     cc_load_policy: 0,
                     origin: window.location.origin
