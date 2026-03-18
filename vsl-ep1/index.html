@@ -21,7 +21,7 @@
         
         .video-wrapper{width:min(100%,860px);margin:0 auto 18px;padding:0 16px}
         .video-frame{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:22px;overflow:hidden;box-shadow:0 10px 24px rgba(0,0,0,.12)}
-        .video-frame iframe,.video-frame .video-poster,.video-frame .video-click-blocker,.video-frame .video-safe-layer{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+        .video-frame iframe,.video-frame .video-poster{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
         .video-shell{position:relative;width:100%;height:100%;overflow:hidden;background:#000}
         .video-poster{display:flex;align-items:center;justify-content:center;background:#000 center/cover no-repeat;cursor:pointer;isolation:isolate}
         .video-poster::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at center,rgba(255,255,255,.04),transparent 42%)}
@@ -33,10 +33,9 @@
         .video-play-label{display:none}
         .video-puzzle-badge{display:none}
         .video-puzzle-badge span{font-size:34px;line-height:1}
-        .video-click-blocker{display:none;z-index:5;background:transparent}
-        .video-safe-layer{display:none;z-index:4;background:transparent}
+                        #youtubePlayerContainer{position:absolute;inset:0;width:100%;height:100%;opacity:0;visibility:hidden;transition:opacity .12s ease}
         .video-frame.is-playing .video-poster{display:none}
-        .video-frame.is-playing .video-click-blocker,.video-frame.is-playing .video-safe-layer{display:block}
+        .video-frame.is-playing #youtubePlayerContainer{opacity:1;visibility:visible}
         @keyframes pulsePuzzle{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
         @keyframes pulsePlay{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
         
@@ -137,8 +136,6 @@
             .site-footer .copyright{font-size:14px}
         }
     
-.video-click-blocker,.video-safe-layer{pointer-events:none!important}
-.video-frame.is-playing .video-click-blocker,.video-frame.is-playing .video-safe-layer{display:block!important;pointer-events:auto!important;cursor:default}
 </style>
     
   
@@ -181,10 +178,58 @@
 <main>
     <div class="parabens">ATENÇÃO: sua compra ainda não está concluída. Não saia dessa página ainda!</div>
 
-    <div class="hl">
-        <p class="hl-eyebrow">NEUROLOGISTA REVELA:</p>
-        <h1 class="hl-title"></h1>
-    </div>
+    <section class="headline-section">
+  <h1 class="headline">
+    O que a ciência está revelando sobre o TDAH vai além do comportamento.
+  </h1>
+
+  <p class="subheadline">
+    Alterações nutricionais e neuroquímicas podem impactar diretamente foco,
+    impulsividade e atenção — e já existem formas de apoiar isso.
+  </p>
+</section>
+
+<style>
+  .headline-section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px 16px;
+    text-align: center;
+  }
+
+  .headline {
+    font-size: clamp(24px, 5vw, 42px);
+    line-height: 1.25;
+    font-weight: 800;
+    color: #111;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+  }
+
+  .subheadline {
+    font-size: clamp(16px, 4vw, 22px);
+    line-height: 1.5;
+    color: #555;
+    max-width: 650px;
+    margin: 0 auto;
+  }
+
+  /* ajuste fino só pra mobile */
+  @media (max-width: 480px) {
+    .headline-section {
+      padding: 20px 14px;
+    }
+
+    .headline {
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .subheadline {
+      line-height: 1.45;
+    }
+  }
+</style>
 
     <br>
 
@@ -197,8 +242,8 @@
                     </div>
                 </div>
                 <div id="youtubePlayerContainer"></div>
-                <div class="video-safe-layer" aria-hidden="true"></div>
-                <div class="video-click-blocker" aria-hidden="true"></div>
+                
+                
             </div>
         </div>
     </div>
@@ -313,12 +358,7 @@
     </div>
 </main>
 
-<footer class="site-footer">
-    <div class="site-footer-inner">
-        <p class="disclaimer">*As informações neste site não têm caráter de consulta e não substituem diagnóstico ou tratamentos médicos. **Este produto não tem a intenção de dar diagnósticos, tratamentos ou substituir medicamentos. O resultado pode variar de pessoa para pessoa.</p>
-        <p class="copyright">Copyright 2025 SpectrumVitta. Todos os direitos reservados.</p>
-    </div>
-</footer>
+
 
 
 
@@ -327,7 +367,9 @@
     var player = null;
     var monitorInterval = null;
     var pitchLiberado = false;
-    var TEMPO_LIBERACAO = 307; // 5:52
+    var TEMPO_LIBERACAO = 307;
+
+    function getFrame(){ return document.getElementById('area-video'); }
 
     function mostrarPitch(){
         var elemento = document.getElementById('elementoOculto');
@@ -338,27 +380,24 @@
 
     function esconderPitchInicial(){
         var elemento = document.getElementById('elementoOculto');
-        if(!elemento) return;
+        if(!elemento || pitchLiberado) return;
         elemento.style.display = 'none';
     }
 
     function verificarTempoVideo(){
         if(!player || typeof player.getCurrentTime !== 'function') return;
-        try{
+        try {
             var tempoAtual = player.getCurrentTime();
             if(tempoAtual >= TEMPO_LIBERACAO){
                 mostrarPitch();
-                if(monitorInterval){
-                    clearInterval(monitorInterval);
-                    monitorInterval = null;
-                }
+                pararMonitoramentoTempo();
             }
-        }catch(e){}
+        } catch(e) {}
     }
 
     function iniciarMonitoramentoTempo(){
         if(monitorInterval) return;
-        monitorInterval = window.setInterval(verificarTempoVideo, 500);
+        monitorInterval = window.setInterval(verificarTempoVideo, 400);
     }
 
     function pararMonitoramentoTempo(){
@@ -368,127 +407,139 @@
         }
     }
 
-    function iniciarVideoCustomizado(){
-        var frame = document.getElementById('area-video');
-        var poster = document.getElementById('videoPoster');
-        var button = document.getElementById('customPlayButton');
-        var container = document.getElementById('youtubePlayerContainer');
-        var safeLayer = frame ? frame.querySelector('.video-safe-layer') : null;
-        var blocker = frame ? frame.querySelector('.video-click-blocker') : null;
-        if(!frame || !poster || !button || !container) return;
+    function carregarApiYoutube(callback){
+        if(window.YT && window.YT.Player){
+            callback();
+            return;
+        }
 
-        var videoId = frame.getAttribute('data-video-id') || 'FtzRHfncxkk';
-        var started = false;
-
-        function bloquearInteracoes(e){
-            if(e){
-                e.preventDefault();
-                e.stopPropagation();
+        var anterior = window.onYouTubeIframeAPIReady;
+        window.onYouTubeIframeAPIReady = function(){
+            if(typeof anterior === 'function'){
+                try{ anterior(); }catch(e){}
             }
+            callback();
+        };
+
+        if(!document.querySelector('script[src="https://www.youtube.com/iframe_api"]')){
+            var tag = document.createElement('script');
+            tag.src = 'https://www.youtube.com/iframe_api';
+            document.head.appendChild(tag);
+        }
+    }
+
+    function criarPlayer(){
+        if(player) return player;
+
+        var frame = getFrame();
+        var videoId = (frame && frame.getAttribute('data-video-id')) || 'FtzRHfncxkk';
+
+        player = new YT.Player('youtubePlayerContainer', {
+            width: '100%',
+            height: '100%',
+            videoId: videoId,
+            playerVars: {
+                autoplay: 1,
+                controls: 1,
+                rel: 0,
+                modestbranding: 1,
+                playsinline: 1,
+                fs: 1,
+                iv_load_policy: 3,
+                cc_load_policy: 0,
+                origin: window.location.origin
+            },
+            events: {
+                onReady: function(event){
+                    esconderPitchInicial();
+                    if(frame) frame.classList.add('is-playing');
+                    try{ event.target.playVideo(); }catch(e){}
+                    verificarTempoVideo();
+                },
+                onStateChange: function(event){
+                    if(event.data === YT.PlayerState.PLAYING || event.data === YT.PlayerState.BUFFERING){
+                        if(frame) frame.classList.add('is-playing');
+                        iniciarMonitoramentoTempo();
+                        verificarTempoVideo();
+                    } else if(event.data === YT.PlayerState.PAUSED) {
+                        pararMonitoramentoTempo();
+                        verificarTempoVideo();
+                    } else if(event.data === YT.PlayerState.ENDED) {
+                        mostrarPitch();
+                        pararMonitoramentoTempo();
+                    }
+                }
+            }
+        });
+
+        return player;
+    }
+
+    function darPlay(e){
+        if(e){
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        var frame = getFrame();
+        if(frame) frame.classList.add('is-playing');
+
+        if(player){
+            try{ player.playVideo(); }catch(err){}
             return false;
         }
 
-        [safeLayer, blocker].forEach(function(layer){
-            if(!layer) return;
-            ['click','dblclick','mousedown','mouseup','touchstart','touchend','pointerdown','pointerup','contextmenu'].forEach(function(evt){
-                layer.addEventListener(evt, bloquearInteracoes, { passive:false });
-            });
+        carregarApiYoutube(function(){
+            criarPlayer();
         });
 
-        function carregarApiYoutube(callback){
-            if(window.YT && window.YT.Player){
-                callback();
-                return;
-            }
-
-            var anterior = window.onYouTubeIframeAPIReady;
-            window.onYouTubeIframeAPIReady = function(){
-                if(typeof anterior === 'function'){
-                    try{ anterior(); }catch(e){}
-                }
-                callback();
-            };
-
-            if(!document.querySelector('script[src="https://www.youtube.com/iframe_api"]')){
-                var tag = document.createElement('script');
-                tag.src = 'https://www.youtube.com/iframe_api';
-                document.head.appendChild(tag);
-            }
-        }
-
-        function criarPlayer(){
-            player = new YT.Player('youtubePlayerContainer', {
-                videoId: videoId,
-                playerVars: {
-                    autoplay: 1,
-                    controls: 0,
-                    rel: 0,
-                    modestbranding: 1,
-                    playsinline: 1,
-                    disablekb: 1,
-                    fs: 0,
-                    iv_load_policy: 3,
-                    cc_load_policy: 0,
-                    origin: window.location.origin
-                },
-                events: {
-                    onReady: function(event){
-                        try{ event.target.playVideo(); }catch(e){}
-                        verificarTempoVideo();
-                    },
-                    onStateChange: function(event){
-                        if(event.data === YT.PlayerState.PLAYING || event.data === YT.PlayerState.BUFFERING){
-                            iniciarMonitoramentoTempo();
-                            verificarTempoVideo();
-                        } else if(event.data === YT.PlayerState.PAUSED){
-                            verificarTempoVideo();
-                        } else if(event.data === YT.PlayerState.ENDED){
-                            mostrarPitch();
-                            pararMonitoramentoTempo();
-                        }
-                    }
-                }
-            });
-        }
-
-        function darPlay(){
-            if(started) return;
-            started = true;
-            frame.classList.add('is-playing');
-            carregarApiYoutube(criarPlayer);
-        }
-
-        [poster, button].forEach(function(el){
-            el.addEventListener('click', function(e){
-                if(el === button){
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-                darPlay();
-            });
-        });
-
-        poster.addEventListener('keydown', function(e){
-            if(e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                darPlay();
-            }
-        });
+        return false;
     }
 
-    function iniciarTudo(){
+    function iniciar(){
         esconderPitchInicial();
-        iniciarVideoCustomizado();
+
+        var poster = document.getElementById('videoPoster');
+        var button = document.getElementById('customPlayButton');
+
+        ['click','touchend'].forEach(function(evt){
+            if(poster) poster.addEventListener(evt, darPlay, { passive:false });
+            if(button) button.addEventListener(evt, darPlay, { passive:false });
+        });
+
+        if(poster){
+            poster.addEventListener('keydown', function(e){
+                if(e.key === 'Enter' || e.key === ' ') {
+                    darPlay(e);
+                }
+            });
+        }
     }
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', iniciarTudo);
+    if(document.readyState === 'loading'){
+        document.addEventListener('DOMContentLoaded', iniciar);
     } else {
-        iniciarTudo();
+        iniciar();
     }
+
+    document.addEventListener('visibilitychange', function(){
+        if(document.hidden){
+            pararMonitoramentoTempo();
+        } else {
+            verificarTempoVideo();
+        }
+    });
+
+    window.addEventListener('pageshow', function(){
+        verificarTempoVideo();
+    });
+
+    window.addEventListener('pagehide', function(){
+        pararMonitoramentoTempo();
+    });
 })();
 </script>
 
-
 </body>
+
 </html>
