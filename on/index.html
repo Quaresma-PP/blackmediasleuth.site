@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>On Cloud – Click Noticia</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900&family=Roboto+Slab:100,300,400,500,700,900&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; padding: 0; }
+
+    /* ── TICKER ── */
+    .news-ticker-wrap {
+      position: relative;
+      left: 50%; right: 50%;
+      margin-left: -50vw; margin-right: -50vw;
+      width: 100vw;
+      display: flex;
+      align-items: stretch;
+      border-top: 1px solid #e6e6e6;
+      border-bottom: 1px solid #e6e6e6;
+      background: #ffffff;
+      font-family: Arial, Helvetica, sans-serif;
+      overflow: hidden;
+    }
+    .news-ticker-label {
+      background: #c40000;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      min-height: 42px;
+      flex-shrink: 0;
+    }
+    .news-ticker { flex: 1; overflow: hidden; display: flex; align-items: center; }
+    .news-ticker-track {
+      display: flex;
+      width: max-content;
+      animation: ticker-scroll 30s linear infinite;
+    }
+    .news-ticker-group { display: flex; align-items: center; }
+    .ticker-item {
+      display: inline-flex; align-items: center; gap: 8px;
+      white-space: nowrap; padding: 0 22px; min-height: 42px;
+      position: relative; font-size: 13px; color: #1a1a1a;
+    }
+    .ticker-item::after {
+      content: ""; position: absolute; right: 0; top: 50%;
+      width: 1px; height: 14px; background: #dddddd; transform: translateY(-50%);
+    }
+    .ticker-name { font-weight: 700; color: #111; }
+    .ticker-value { font-weight: 600; color: #222; }
+    .ticker-change { font-weight: 700; font-size: 12px; }
+    .ticker-change.up { color: #0b9444; }
+    .ticker-change.down { color: #c62828; }
+    .news-ticker:hover .news-ticker-track { animation-play-state: paused; }
+    @keyframes ticker-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    @media (max-width: 768px) {
+      .news-ticker-label { font-size: 12px; padding: 0 12px; min-height: 38px; }
+      .ticker-item { font-size: 12px; padding: 0 16px; min-height: 38px; gap: 6px; }
+      .ticker-change { font-size: 11px; }
+    }
+
+    /* ── HEADER ── */
+    .cn-header-full {
+      width: 100vw; margin-left: calc(-50vw + 50%);
+      font-family: Arial, sans-serif;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+    .cn-header-top {
+      background: #c40000; color: #fff; min-height: 70px;
+      padding: 14px 20px; position: relative;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cn-header-logo { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); }
+    .cn-header-logo img { height: 44px; }
+    .cn-header-title-wrap { display: flex; align-items: center; gap: 10px; }
+    .cn-live-badge {
+      background: #ffffff; color: #c40000; font-size: 11px;
+      font-weight: 700; padding: 5px 8px; border-radius: 999px;
+    }
+    .cn-header-title { font-size: 22px; font-weight: 700; }
+    .cn-header-readers {
+      position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
+      display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600;
+    }
+    .cn-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #fff; animation: cnPulse 1.4s infinite;
+    }
+    @keyframes cnPulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.55; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .cn-header-sub {
+      background: #6b0000; color: #fff; text-align: center;
+      padding: 10px; font-size: 14px; font-weight: 600;
+    }
+    @media (max-width: 600px) {
+      .cn-header-top { flex-direction: column; gap: 8px; padding: 16px 10px; }
+      .cn-header-logo, .cn-header-readers { position: static; transform: none; }
+      .cn-header-logo img { height: 38px; }
+      .cn-header-title { font-size: 18px; }
+      .cn-header-readers { font-size: 12px; }
+    }
+
+    /* ── HEADLINE ── */
+    .cn-headline-block { max-width: 860px; margin: 0 auto 28px; padding: 0 18px; }
+    .cn-headline-block h1 {
+      margin: 0; font-family: Georgia, "Times New Roman", serif;
+      font-size: 42px; line-height: 1.12; font-weight: 700;
+      color: #8f0000; letter-spacing: -0.4px;
+    }
+    @media (max-width: 768px) { .cn-headline-block h1 { font-size: 32px; line-height: 1.16; } }
+
+    /* ── SUBHEADLINE ── */
+    .cn-subheadline { max-width: 860px; margin: 0 auto 20px; padding: 0 18px; }
+    .cn-subheadline p {
+      margin: 0; font-family: Georgia, "Times New Roman", serif;
+      font-size: 22px; line-height: 1.5; color: #555;
+    }
+    @media (max-width: 768px) { .cn-subheadline p { font-size: 19px; } }
+
+    /* ── AUTHOR META ── */
+    .cn-meta-block {
+      max-width: 860px; margin: 0 auto 20px; padding: 0 18px;
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 12px; flex-wrap: wrap;
+    }
+    .cn-meta-left { display: flex; flex-direction: column; gap: 5px; font-family: Arial, sans-serif; }
+    .cn-author-wrap { display: flex; align-items: center; gap: 12px; }
+    .cn-author-img { width: 48px; height: 48px; border-radius: 10px; object-fit: cover; }
+    .cn-author-info { display: flex; flex-direction: column; gap: 4px; }
+    .cn-author { font-size: 14px; color: #444; line-height: 1.4; }
+    .cn-author-name { color: #c40000; font-weight: 700; }
+    .cn-author-badge {
+      background: #c40000; color: #fff; font-size: 10px; font-weight: 700;
+      padding: 3px 6px; border-radius: 4px; margin-left: 6px;
+      text-transform: uppercase; letter-spacing: 0.3px;
+    }
+    .cn-author-proof { font-size: 12px; color: #666; }
+    .cn-date { font-size: 13px; color: #777; }
+    .cn-update { font-size: 12px; color: #999; }
+    .cn-meta-social { display: flex; gap: 10px; }
+    .cn-meta-social a {
+      display: inline-flex; width: 34px; height: 34px; border-radius: 50%;
+      background: #f2f2f2; align-items: center; justify-content: center; transition: 0.2s;
+    }
+    .cn-meta-social a:hover { background: #e0e0e0; }
+    .cn-meta-social img { width: 18px; height: 18px; object-fit: contain; }
+    @media (max-width: 600px) {
+      .cn-meta-block { flex-direction: column; align-items: flex-start; }
+      .cn-meta-social { margin-top: 8px; }
+      .cn-author-img { width: 42px; height: 42px; }
+    }
+
+    /* ── EDITORIAL BLOCK ── */
+    .cn-editorial-block { max-width: 860px; margin: 0 auto 34px; padding: 0 18px; }
+    .cn-editorial-block h2 {
+      margin: 0 0 16px; font-family: Georgia, "Times New Roman", serif;
+      font-size: 31px; line-height: 1.2; color: #111; font-weight: 700;
+    }
+    .cn-editorial-block p {
+      margin: 0 0 16px; font-family: Georgia, "Times New Roman", serif;
+      font-size: 22px; line-height: 1.72; color: #222;
+    }
+    .cn-editorial-block p:last-child { margin-bottom: 0; }
+    @media (max-width: 768px) {
+      .cn-editorial-block h2 { font-size: 26px; }
+      .cn-editorial-block p { font-size: 19px; line-height: 1.66; }
+    }
+
+    /* ── MID BANNER ── */
+    .cn-mid-banner {
+      max-width: 860px; margin: 30px auto; background: #111; color: #fff;
+      font-family: Arial, sans-serif; border-left: 5px solid #ff0000;
+      overflow: hidden; position: relative; height: 50px; display: flex; align-items: center;
+    }
+    .cn-banner-text {
+      position: absolute; width: 100%; text-align: center;
+      font-size: 14px; font-weight: 600; opacity: 0;
+      transform: translateX(50px); transition: 0.5s;
+    }
+    .cn-banner-text.active { opacity: 1; transform: translateX(0); }
+
+    /* ── BREAKING BANNER ── */
+    .adv-breaking-banner {
+      max-width: 860px; margin: 24px auto; background: #ffffff;
+      border: 1px solid #d9d9d9; border-left: 6px solid #c40000;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+      overflow: hidden; display: flex; align-items: stretch; min-height: 78px;
+    }
+    .adv-breaking-label {
+      background: #c40000; color: #ffffff; font-family: Arial, Helvetica, sans-serif;
+      font-size: 13px; font-weight: 800; letter-spacing: 0.8px;
+      padding: 0 18px; display: flex; align-items: center; justify-content: center;
+      min-width: 120px; text-transform: uppercase;
+    }
+    .adv-breaking-text-wrap {
+      position: relative; flex: 1; padding: 18px 20px;
+      min-height: 78px; display: flex; align-items: center; background: #fff;
+    }
+    .adv-breaking-text {
+      position: absolute; left: 20px; right: 20px; top: 50%;
+      transform: translateY(calc(-50% + 14px)); opacity: 0; transition: all 0.45s ease;
+      font-family: Georgia, "Times New Roman", serif; font-size: 24px;
+      line-height: 1.3; font-weight: 700; color: #111111;
+    }
+    .adv-breaking-text.active { opacity: 1; transform: translateY(-50%); }
+    @media (max-width: 768px) {
+      .adv-breaking-banner { flex-direction: column; min-height: auto; }
+      .adv-breaking-label { min-width: 100%; padding: 10px 14px; font-size: 12px; }
+      .adv-breaking-text-wrap { padding: 16px; min-height: 92px; }
+      .adv-breaking-text { left: 16px; right: 16px; font-size: 18px; line-height: 1.35; }
+    }
+
+    /* ── STOCK OFFER BOX ── */
+    .stock-offer-box {
+      max-width: 760px; margin: 30px auto; padding: 28px 24px;
+      background: #ffffff; border: 1px solid #e6e6e6; border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.06); font-family: Arial, sans-serif;
+    }
+    .stock-offer-topline { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+    .stock-offer-badge { background: #8f0000; color: #fff; font-size: 12px; font-weight: 700; letter-spacing: .4px; padding: 7px 10px; border-radius: 999px; }
+    .stock-offer-live { font-size: 13px; color: #8f0000; font-weight: 700; text-transform: lowercase; }
+    .stock-offer-header h3 { margin: 0 0 14px; font-size: 30px; color: #8f0000; font-family: Georgia, serif; }
+    .stock-offer-header p { font-size: 17px; line-height: 1.6; margin-bottom: 12px; color: #222; }
+    .stock-offer-scarcity-box {
+      margin-top: 18px; padding: 16px;
+      background: linear-gradient(180deg, #fffaf7 0%, #fff5f5 100%);
+      border: 1px solid #f2d6d6; border-radius: 10px;
+    }
+    .stock-offer-scarcity-title { font-size: 20px; line-height: 1.3; color: #111; font-weight: 700; margin-bottom: 8px; font-family: Georgia, serif; }
+    .stock-offer-scarcity-text { font-size: 16px; line-height: 1.6; color: #333; margin-bottom: 14px; }
+    .stock-offer-scarcity-text strong { color: #c62828; }
+    .stock-offer-progress-wrap { margin-bottom: 0; }
+    .stock-offer-progress-bar { width: 100%; height: 14px; background: #ececec; border-radius: 999px; overflow: hidden; position: relative; }
+    .stock-offer-progress-fill {
+      width: 83%; height: 100%; border-radius: 999px;
+      background: linear-gradient(90deg, #ffb300 0%, #ff6f00 45%, #d32f2f 100%);
+      transition: width 0.6s ease; position: relative;
+    }
+    .stock-offer-progress-fill::after {
+      content: ""; position: absolute; top: 0; left: -40%; width: 40%; height: 100%;
+      background: rgba(255,255,255,0.35); transform: skewX(-20deg);
+      animation: stockShine 2.2s infinite;
+    }
+    @keyframes stockShine { 0% { left: -45%; } 100% { left: 120%; } }
+    .stock-offer-progress-info { margin-top: 8px; display: flex; justify-content: space-between; gap: 10px; font-size: 14px; color: #555; font-weight: 700; }
+    .stock-offer-timer-box { margin-top: 20px; padding: 18px; background: #fff5f5; border-radius: 10px; text-align: center; }
+    .stock-offer-label { font-size: 15px; font-weight: bold; color: #8f0000; display: block; margin-bottom: 10px; }
+    .stock-offer-timer { display: flex; justify-content: center; align-items: center; gap: 10px; }
+    .time-block { background: #8f0000; color: #fff; padding: 14px; border-radius: 8px; min-width: 85px; }
+    .time-block span { font-size: 34px; font-weight: bold; }
+    .time-block small { display: block; font-size: 11px; margin-top: 4px; }
+    .time-separator { font-size: 28px; font-weight: bold; color: #8f0000; }
+    .stock-offer-price-box { text-align: center; margin: 26px 0 18px; }
+    .stock-old-price { font-size: 20px; color: #888; text-decoration: line-through; margin-bottom: 8px; }
+    .stock-new-price { font-size: 50px; font-weight: 800; color: #00a650; line-height: 1; margin-bottom: 14px; }
+    .stock-payment-box { display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .stock-payment-item {
+      display: flex; align-items: center; gap: 8px; background: #f7f7f7;
+      border: 1px solid #ececec; border-radius: 999px; padding: 10px 14px;
+      font-size: 14px; color: #222; font-weight: 600;
+    }
+    .stock-payment-item img { width: 18px; height: 18px; display: block; }
+    .stock-offer-product-image { text-align: center; margin: 20px 0 18px; }
+    .stock-offer-product-image img { width: 100%; max-width: 420px; border-radius: 12px; display: inline-block; }
+    .stock-offer-btn {
+      display: block; text-align: center; margin: 28px auto 12px; padding: 22px 18px;
+      background: linear-gradient(180deg, #00c853, #00a650); color: #fff; text-decoration: none;
+      font-weight: 800; border-radius: 10px; width: 100%; max-width: 560px; font-size: 19px;
+      letter-spacing: 0.4px; box-shadow: 0 8px 24px rgba(0,200,83,0.45);
+      animation: pulseBtn 1.6s infinite;
+    }
+    .stock-offer-btn:hover { background: linear-gradient(180deg, #00e676, #00b248); transform: scale(1.03); }
+    @keyframes pulseBtn { 0% { transform: scale(1); } 50% { transform: scale(1.04); } 100% { transform: scale(1); } }
+    .stock-offer-note { text-align: center; font-size: 14px; color: #8f0000; margin-bottom: 10px; }
+    .stock-offer-warning {
+      margin: 16px 0 0; padding: 12px 14px; border-radius: 10px;
+      background: #fff3f3; border: 1px solid #ffd1d1; font-size: 14px;
+      line-height: 1.5; color: #7a1b1b; display: flex; align-items: flex-start; gap: 10px;
+    }
+    .stock-warning-dot {
+      width: 10px; height: 10px; min-width: 10px; border-radius: 50%;
+      background: #d32f2f; margin-top: 5px;
+      box-shadow: 0 0 0 0 rgba(211,47,47,0.6);
+      animation: stockPulseDot 1.5s infinite;
+    }
+    @keyframes stockPulseDot {
+      0% { box-shadow: 0 0 0 0 rgba(211,47,47,0.55); }
+      70% { box-shadow: 0 0 0 10px rgba(211,47,47,0); }
+      100% { box-shadow: 0 0 0 0 rgba(211,47,47,0); }
+    }
+    .stock-trust-icons { display: flex; justify-content: center; align-items: center; gap: 22px; margin-top: 22px; flex-wrap: wrap; width: 100%; box-sizing: border-box; }
+    .stock-trust-icons img { height: 28px; max-width: 100%; display: block; }
+    @media (max-width: 600px) {
+      .stock-offer-box { padding: 22px 16px; }
+      .stock-offer-header h3 { font-size: 26px; }
+      .stock-offer-header p { font-size: 16px; }
+      .stock-offer-btn { font-size: 16px; padding: 18px 14px; line-height: 1.4; }
+      .stock-offer-timer { gap: 6px; }
+      .time-block { min-width: 72px; padding: 12px 10px; }
+      .time-block span { font-size: 28px; }
+      .time-separator { font-size: 22px; }
+      .stock-new-price { font-size: 38px; }
+      .stock-payment-box { flex-direction: column; gap: 10px; }
+      .stock-payment-item { width: 100%; justify-content: center; border-radius: 10px; }
+      .stock-trust-icons { gap: 12px; padding: 0 8px; }
+      .stock-trust-icons img { height: 24px; }
+      .stock-offer-progress-info { font-size: 13px; }
+      .stock-offer-scarcity-title { font-size: 18px; }
+      .stock-offer-scarcity-text { font-size: 15px; }
+    }
+
+    /* ── REVIEWS ── */
+    .cn-reviews-section { max-width: 980px; margin: 40px auto; padding: 0 18px; font-family: Arial, sans-serif; }
+    .cn-reviews-title { text-align: center; font-size: 24px; font-weight: 700; margin-bottom: 22px; color: #111; }
+    .cn-reviews-wrapper { display: flex; align-items: center; gap: 12px; }
+    .cn-reviews-track-container { overflow: hidden; width: 100%; }
+    .cn-reviews-track { display: flex; gap: 16px; transition: transform 0.35s ease; will-change: transform; }
+    .cn-review-card {
+      flex: 0 0 calc((100% - 32px) / 3); background: #fff; border-radius: 12px;
+      padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); box-sizing: border-box;
+      min-height: 170px; display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .cn-review-stars { color: #ffb400; font-size: 16px; margin-bottom: 10px; line-height: 1; }
+    .cn-review-card p { margin: 0 0 12px; font-size: 14px; line-height: 1.5; color: #333; flex-grow: 1; }
+    .cn-review-card span { font-size: 13px; color: #777; font-weight: 600; }
+    .cn-review-arrow {
+      width: 42px; height: 42px; border: none; border-radius: 50%;
+      background: #b40000; color: #fff; font-size: 22px; cursor: pointer;
+      flex-shrink: 0; transition: background 0.2s ease, transform 0.2s ease;
+    }
+    .cn-review-arrow:hover { background: #8f0000; transform: scale(1.05); }
+    .cn-review-arrow:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+    @media (max-width: 768px) {
+      .cn-review-card { flex: 0 0 calc((100% - 16px) / 2); min-height: 185px; }
+      .cn-reviews-wrapper { gap: 8px; }
+      .cn-review-arrow { width: 36px; height: 36px; font-size: 18px; }
+    }
+
+    /* ── FOOTER ── */
+    .cn-footer-full {
+      width: 100vw; margin-left: calc(-50vw + 50%);
+      background: #b40000; color: #fff; padding: 50px 20px 40px;
+      font-family: Arial, sans-serif; position: relative;
+    }
+    .cn-footer-logo { position: absolute; top: 20px; left: 20px; }
+    .cn-footer-logo img { height: 40px; width: auto; }
+    .cn-footer-inner { max-width: 980px; margin: 0 auto; text-align: center; }
+    .cn-footer-inner p { font-size: 11px; line-height: 1.6; margin-bottom: 12px; opacity: 0.95; }
+    .cn-footer-title { font-size: 12px !important; font-weight: 700; margin-bottom: 16px !important; }
+    @media (max-width: 600px) {
+      .cn-footer-logo { position: static; text-align: center; margin-bottom: 15px; }
+      .cn-footer-logo img { height: 34px; }
+    }
+
+    /* ── NOTIFICATION ── */
+    .cn-notification {
+      position: fixed; bottom: 20px; left: 20px; background: #111; color: #fff;
+      padding: 12px 14px; border-radius: 8px; font-size: 13px; max-width: 280px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.25); opacity: 0; transform: translateY(20px);
+      transition: 0.4s; z-index: 9999; font-family: Arial, sans-serif;
+    }
+    .cn-notification.show { opacity: 1; transform: translateY(0); }
+    .cn-notification strong { color: #00ff88; }
+  </style>
+</head>
+<body>
+
+<!-- ── TICKER ── -->
+<div class="news-ticker-wrap">
+  <div class="news-ticker-label">Mercado</div>
+  <div class="news-ticker">
+    <div class="news-ticker-track">
+      <div class="news-ticker-group">
+        <span class="ticker-item"><span class="ticker-name">Dólar</span><span class="ticker-value">R$ 5,42</span><span class="ticker-change up">▲ 0,32%</span></span>
+        <span class="ticker-item"><span class="ticker-name">Euro</span><span class="ticker-value">R$ 6,01</span><span class="ticker-change down">▼ 0,18%</span></span>
+        <span class="ticker-item"><span class="ticker-name">Bitcoin</span><span class="ticker-value">R$ 342.120</span><span class="ticker-change up">▲ 1,24%</span></span>
+        <span class="ticker-item"><span class="ticker-name">Ibovespa</span><span class="ticker-value">128.430</span><span class="ticker-change up">▲ 0,87%</span></span>
+        <span class="ticker-item"><span class="ticker-name">Nasdaq</span><span class="ticker-value">18.220</span><span class="ticker-change down">▼ 0,41%</span></span>
+        <span class="ticker-item"><span class="ticker-name">Ouro</span><span class="ticker-value">US$ 2.348</span><span class="ticker-change up">▲ 0,21%</span></span>
+      </div>
+      <div class="news-ticker-group">
+        <span class="ticker-item"><span class="ticker-name">Dólar</span><span class="ticker-value">R$ 5,42</span><span class="ticker-change up">▲ 0,32%</span></span>
+        <span class="ticker-item"><span class="ticker-name">Euro</span><span class="ticker-value">R$ 6,01</span><span class="ticker-change down">▼ 0,18%</span></span>
+        <span class="ticker-item"><span class="ticker-name">Bitcoin</span><span class="ticker-value">R$ 342.120</span><span class="ticker-change up">▲ 1,24%</span></span>
+        <span class="ticker-item"><span class="ticker-name">Ibovespa</span><span class="ticker-value">128.430</span><span class="ticker-change up">▲ 0,87%</span></span>
+        <span class="ticker-item"><span class="ticker-name">Nasdaq</span><span class="ticker-value">18.220</span><span class="ticker-change down">▼ 0,41%</span></span>
+        <span class="ticker-item"><span class="ticker-name">Ouro</span><span class="ticker-value">US$ 2.348</span><span class="ticker-change up">▲ 0,21%</span></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── HEADER ── -->
+<div class="cn-header-full">
+  <div class="cn-header-top">
+    <div class="cn-header-logo">
+      <img src="assets/images/logo.png" alt="Click Notícias">
+    </div>
+    <div class="cn-header-title-wrap">
+      <span class="cn-live-badge">AO VIVO</span>
+      <div class="cn-header-title">Click Notícias</div>
+    </div>
+    <div class="cn-header-readers">
+      <span class="cn-dot"></span>
+      <span id="cn-readers-count">...</span>
+    </div>
+  </div>
+  <div class="cn-header-sub">Promoções únicas por tempo limitado</div>
+</div>
+
+<!-- ── HEADLINE ── -->
+<div class="cn-headline-block">
+  <h1>On Cloud surpreende ao comemorar aniversário histórico com lançamento que chama atenção no Brasil</h1>
+</div>
+
+<!-- ── SUBHEADLINE ── -->
+<div class="cn-subheadline">
+  <p>Modelo criado para celebrar a trajetória da marca já começa a ganhar destaque entre consumidores que buscam conforto e estilo no dia a dia</p>
+</div>
+
+<!-- ── AUTHOR META ── -->
+<div class="cn-meta-block">
+  <div class="cn-meta-left">
+    <div class="cn-author-wrap">
+      <img class="cn-author-img" src="assets/images/author.png" alt="Caio Cristian">
+      <div class="cn-author-info">
+        <span class="cn-author">Por <strong class="cn-author-name">Caio Cristian</strong><span class="cn-author-badge">Moda &amp; Tendências</span> — São Paulo</span>
+        <span class="cn-author-proof">Jornalista especializado em moda, lançamentos e tendências do setor.</span>
+        <span class="cn-date" id="cn-current-date"></span>
+        <span class="cn-update">Atualizado há 30 minutos</span>
+      </div>
+    </div>
+  </div>
+  <div class="cn-meta-social">
+    <a href="#" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp"></a>
+    <a href="#" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook"></a>
+    <a href="#" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/733/733558.png" alt="Instagram"></a>
+  </div>
+</div>
+
+<!-- ── HERO IMAGE ── -->
+<div style="max-width:860px;margin:0 auto 28px;padding:0 18px;">
+  <img fetchpriority="high" src="assets/images/hero.jpeg" style="width:100%;display:block;border-radius:10px;" alt="Tênis On Cloud">
+</div>
+
+<!-- ── HISTÓRICO ── -->
+<div class="cn-editorial-block">
+  <h2>Histórico sobre a empresa</h2>
+  <p>A On Cloud, uma das maiores fabricantes de artigos esportivos do mundo, é reconhecida globalmente por desenvolver alguns dos tênis mais tecnológicos, leves e confortáveis do mercado.</p>
+  <p>Presente em diversos países e com décadas de inovação, a marca construiu sua reputação ao combinar performance, design moderno e qualidade premium em seus produtos.</p>
+  <p>Ao longo dos anos, tornou-se referência não apenas no esporte, mas também no uso diário, sendo escolhida por milhões de pessoas em todo o mundo.</p>
+</div>
+
+<!-- ── MID BANNER ── -->
+<div class="cn-mid-banner">
+  <div class="cn-banner-text active">CLICK NOTÍCIAS • ATUALIZAÇÃO AO VIVO</div>
+  <div class="cn-banner-text">Leitores estão acompanhando essa matéria agora</div>
+</div>
+
+<!-- ── PRODUTO IMAGE ── -->
+<div style="max-width:860px;margin:0 auto 28px;padding:0 18px;">
+  <img src="assets/images/produto.webp" style="width:100%;display:block;border-radius:10px;" alt="On Cloud Knit Premium">
+</div>
+
+<!-- ── MEGA LIQUIDAÇÃO ── -->
+<div class="cn-editorial-block">
+  <h2>Mega liquidação em comemoração ao aniversário da marca</h2>
+  <p>Para celebrar mais um marco importante em sua trajetória, a On Cloud decidiu surpreender o público com uma ação inédita no Brasil:</p>
+  <p>uma mega liquidação especial de um dos seus modelos mais procurados atualmente — o Tênis Unissex On Cloud Knit Premium.</p>
+  <p>O impacto foi imediato.</p>
+  <p>A procura aumentou rapidamente, fazendo com que o modelo ganhasse ainda mais destaque entre consumidores que buscavam conforto, leveza e estilo no dia a dia.</p>
+</div>
+
+<!-- ── BREAKING BANNER ── -->
+<div class="adv-breaking-banner">
+  <div class="adv-breaking-label">URGENTE</div>
+  <div class="adv-breaking-text-wrap">
+    <div class="adv-breaking-text active">Oferta do tênis entrou em condição fora do padrão nas últimas horas</div>
+    <div class="adv-breaking-text">Quem viu primeiro já está tentando aproveitar antes que a condição saia do ar</div>
+  </div>
+</div>
+
+<!-- ── PROMO IMAGE ── -->
+<div style="max-width:860px;margin:0 auto 28px;padding:0 18px;">
+  <img src="assets/images/promo.jpeg" style="width:100%;display:block;border-radius:10px;" alt="On Cloud Mega Liquidação">
+</div>
+
+<!-- ── ALTA PROCURA ── -->
+<div class="cn-editorial-block">
+  <h2>Alta procura e estoque limitado</h2>
+  <p>Com a alta demanda gerada pela campanha, algumas numerações já começaram a apresentar disponibilidade reduzida.</p>
+  <p>Essa condição especial foi liberada por tempo limitado, e novas unidades não são garantidas enquanto durar a promoção.</p>
+  <p>Se você está vendo essa página agora, ainda pode haver estoque disponível — mas não por muito tempo.</p>
+</div>
+
+<!-- ── STOCK OFFER BOX ── -->
+<div class="stock-offer-box">
+  <div class="stock-offer-topline">
+    <span class="stock-offer-badge">OFERTA ATIVA</span>
+    <span class="stock-offer-live">alta procura agora</span>
+  </div>
+  <div class="stock-offer-header">
+    <h3>Como verificar disponibilidade de estoque</h3>
+    <p>Disponibilizamos o acesso à página oficial onde é possível verificar se ainda existem unidades disponíveis no seu tamanho.</p>
+    <p>Caso ainda haja estoque, a recomendação é garantir o seu enquanto essa condição especial permanece ativa.</p>
+  </div>
+  <div class="stock-offer-scarcity-box">
+    <div class="stock-offer-scarcity-title">Estoque promocional quase no fim</div>
+    <div class="stock-offer-scarcity-text">
+      Restam apenas <strong id="adv-stock-count">17</strong> unidades liberadas nesta condição especial.
+      Quando esse lote acabar, a oferta pode ser encerrada sem aviso.
+    </div>
+    <div class="stock-offer-progress-wrap">
+      <div class="stock-offer-progress-bar">
+        <div id="adv-stock-progress" class="stock-offer-progress-fill"></div>
+      </div>
+      <div class="stock-offer-progress-info">
+        <span id="adv-stock-left">17 disponíveis</span>
+        <span id="adv-stock-sold">83% reservado</span>
+      </div>
+    </div>
+  </div>
+  <div class="stock-offer-timer-box">
+    <span class="stock-offer-label">Essa condição expira em:</span>
+    <div class="stock-offer-timer">
+      <div class="time-block"><span id="hours">00</span><small>Horas</small></div>
+      <div class="time-separator">:</div>
+      <div class="time-block"><span id="minutes">15</span><small>Min</small></div>
+      <div class="time-separator">:</div>
+      <div class="time-block"><span id="seconds">00</span><small>Seg</small></div>
+    </div>
+  </div>
+  <div class="stock-offer-price-box">
+    <div class="stock-old-price">De R$ 499,90</div>
+    <div class="stock-new-price">R$ 269,90</div>
+    <div class="stock-payment-box">
+      <div class="stock-payment-item">
+        <img src="https://cdn.shopify.com/s/files/1/0668/7191/8691/files/download_7cf19740-6685-4656-a6d0-24a1ae1778e6.svg?v=1775053650" alt="Cartão">
+        <span>em até 12x no cartão</span>
+      </div>
+      <div class="stock-payment-item">
+        <img src="https://cdn.shopify.com/s/files/1/0668/7191/8691/files/download.svg?v=1775053646" alt="PIX">
+        <span>5% OFF no PIX</span>
+      </div>
+    </div>
+  </div>
+  <div class="stock-offer-product-image">
+    <img src="assets/images/produto2.webp" alt="Produto">
+  </div>
+  <a class="stock-offer-btn" id="stock-offer-btn" href="https://calcadosaxion.com/products/tenis-unissex-on-cloud-knit">
+    QUERO AGORA COM DESCONTO + FRETE GRÁTIS
+  </a>
+  <div class="stock-offer-note">Aproveite enquanto essa condição especial ainda está ativa</div>
+  <div class="stock-offer-warning">
+    <span class="stock-warning-dot"></span>
+    Usuários que visualizaram esta oferta nos últimos minutos também avançaram para a página do produto.
+  </div>
+  <div class="stock-trust-icons">
+    <img src="https://cdn.shopify.com/s/files/1/0886/5346/3922/files/imgi_40_default.svg?v=1773957747" alt="">
+    <img src="https://cdn.shopify.com/s/files/1/0886/5346/3922/files/imgi_41_default.svg?v=1773957747" alt="">
+    <img src="https://cdn.shopify.com/s/files/1/0886/5346/3922/files/imgi_42_default.svg?v=1773957747" alt="">
+  </div>
+</div>
+
+<!-- ── REVIEWS ── -->
+<div class="cn-reviews-section">
+  <h3 class="cn-reviews-title">Avaliações de quem comprou!</h3>
+  <div class="cn-reviews-wrapper">
+    <button class="cn-review-arrow cn-review-arrow-left" aria-label="Avaliações anteriores">&#10094;</button>
+    <div class="cn-reviews-track-container" id="cnReviewsContainer2">
+      <div class="cn-reviews-track" id="cnReviewsTrack2">
+        <div class="cn-review-card"><div class="cn-review-stars">★★★★★</div><p>Muito melhor do que eu imaginava. Conforto absurdo e bem leve no pé.</p><span>— Eduardo P.</span></div>
+        <div class="cn-review-card"><div class="cn-review-stars">★★★★★</div><p>Comprei pra usar no dia a dia e virou meu favorito. Não cansa o pé.</p><span>— Larissa G.</span></div>
+        <div class="cn-review-card"><div class="cn-review-stars">★★★★★</div><p>Qualidade excelente. Pelo valor, achei que não seria tudo isso.</p><span>— Felipe N.</span></div>
+        <div class="cn-review-card"><div class="cn-review-stars">★★★★★</div><p>Chegou rápido e já usei várias vezes. Continua confortável como no primeiro dia.</p><span>— Camila S.</span></div>
+        <div class="cn-review-card"><div class="cn-review-stars">★★★★★</div><p>Bonito, leve e combina com tudo. Uso direto pra sair.</p><span>— Rafael T.</span></div>
+        <div class="cn-review-card"><div class="cn-review-stars">★★★★★</div><p>Gostei muito do acabamento. Parece um produto bem mais caro.</p><span>— Juliano F.</span></div>
+        <div class="cn-review-card"><div class="cn-review-stars">★★★★★</div><p>Super confortável pra trabalhar o dia inteiro. Não incomoda em nada.</p><span>— Priscila M.</span></div>
+        <div class="cn-review-card"><div class="cn-review-stars">★★★★★</div><p>Me surpreendeu bastante. Não esperava tanta qualidade.</p><span>— Diego L.</span></div>
+        <div class="cn-review-card"><div class="cn-review-stars">★★★★★</div><p>Visual bonito e confortável desde o primeiro uso. Recomendo.</p><span>— Mariana R.</span></div>
+        <div class="cn-review-card"><div class="cn-review-stars">★★★★★</div><p>Valeu cada centavo. Produto muito bom mesmo.</p><span>— Bruno A.</span></div>
+      </div>
+    </div>
+    <button class="cn-review-arrow cn-review-arrow-right" aria-label="Próximas avaliações">&#10095;</button>
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<div class="cn-footer-full">
+  <div class="cn-footer-logo">
+    <img src="assets/images/logo.png" alt="Click Notícias">
+  </div>
+  <div class="cn-footer-inner">
+    <p class="cn-footer-title">© Copyright 2026 Click Notícias.</p>
+    <p>As marcas e nomes comerciais apresentados neste site são de titularidade exclusiva de seus respectivos proprietários, não implicando, sob qualquer hipótese, associação, afiliação ou endosso — seja de forma explícita ou tácita — aos conteúdos ou serviços aqui disponibilizados.</p>
+    <p>As avaliações e recomendações contidas neste portal são fruto de pesquisas minuciosas e da atuação criteriosa de uma equipe editorial altamente qualificada. Mantemos absoluta independência editorial, e as opiniões aqui manifestadas refletem exclusivamente nosso juízo analítico.</p>
+    <p>Este site constitui um serviço autônomo de comparação e análise técnica, cuja manutenção é viabilizada por comissões de referência oriundas de parcerias com os produtos e plataformas nele mencionados.</p>
+  </div>
+</div>
+
+<!-- ── NOTIFICATION ── -->
+<div id="cn-notification" class="cn-notification"></div>
+
+<!-- ════════════════════════════════════════════
+     SCRIPTS — SEM RASTREADORES
+════════════════════════════════════════════ -->
+<script>
+/* DATA */
+(function () {
+  const now = new Date();
+  const d = String(now.getDate()).padStart(2,'0');
+  const m = String(now.getMonth()+1).padStart(2,'0');
+  const y = now.getFullYear();
+  document.getElementById('cn-current-date').textContent = d+'/'+m+'/'+y;
+})();
+
+/* LEITORES */
+const minimo = 500, maximo = 2000;
+function gerarBaseUsuario() {
+  let salvo = localStorage.getItem("cn_leitores_base");
+  if (salvo) return parseInt(salvo);
+  let base = Math.floor(Math.random()*(maximo-minimo))+minimo;
+  localStorage.setItem("cn_leitores_base", base);
+  return base;
+}
+let leitores = gerarBaseUsuario();
+function formatarNumero(n){ return n.toLocaleString('pt-BR'); }
+function renderLeitores(v){ document.getElementById("cn-readers-count").innerText = formatarNumero(v||leitores)+" lendo agora"; }
+function animarContador(novoValor){
+  let atual=leitores, dif=novoValor-atual, passos=25, inc=dif/passos, i=0;
+  let iv=setInterval(()=>{
+    atual+=inc; i++;
+    renderLeitores(Math.round(atual));
+    if(i>=passos){ clearInterval(iv); leitores=novoValor; renderLeitores(); }
+  },40);
+}
+function gerarVariacao(){ return Math.random()<0.75 ? Math.floor(Math.random()*40)+5 : -Math.floor(Math.random()*20); }
+function atualizarLeitores(){
+  let novo=leitores+gerarVariacao();
+  if(novo<minimo) novo=minimo+Math.floor(Math.random()*50);
+  if(novo>maximo) novo=maximo-Math.floor(Math.random()*50);
+  animarContador(novo);
+}
+renderLeitores();
+setTimeout(atualizarLeitores,3000);
+setTimeout(atualizarLeitores,9000);
+setInterval(atualizarLeitores,30000);
+
+/* MID BANNER */
+const texts2 = document.querySelectorAll('.cn-mid-banner .cn-banner-text');
+let j=0;
+setInterval(()=>{ texts2[j].classList.remove('active'); j=(j+1)%texts2.length; texts2[j].classList.add('active'); }, 2200);
+
+/* BREAKING BANNER */
+(function(){
+  const texts=document.querySelectorAll('.adv-breaking-banner .adv-breaking-text');
+  let current=0;
+  setInterval(()=>{ texts[current].classList.remove('active'); current=(current+1)%texts.length; texts[current].classList.add('active'); }, 2800);
+})();
+
+/* COUNTDOWN */
+function startCountdown(duration){
+  let timer=duration;
+  setInterval(function(){
+    let minutes=Math.floor(timer/60), seconds=timer%60;
+    minutes=minutes<10?"0"+minutes:minutes;
+    seconds=seconds<10?"0"+seconds:seconds;
+    document.getElementById("hours").innerText="00";
+    document.getElementById("minutes").innerText=minutes;
+    document.getElementById("seconds").innerText=seconds;
+    timer--;
+    if(timer<0) timer=duration;
+  },1000);
+}
+startCountdown(15*60);
+
+/* STOCK COUNTER */
+(function(){
+  const stockCount=document.getElementById('adv-stock-count');
+  const stockLeft=document.getElementById('adv-stock-left');
+  const stockSold=document.getElementById('adv-stock-sold');
+  const progress=document.getElementById('adv-stock-progress');
+  let remaining=17;
+  const total=100;
+  function updateBar(){
+    const reserved=total-remaining;
+    const percent=Math.min(96,Math.max(65,reserved));
+    progress.style.width=percent+'%';
+    stockCount.textContent=remaining;
+    stockLeft.textContent=remaining+' disponíveis';
+    stockSold.textContent=percent+'% reservado';
+  }
+  updateBar();
+  setInterval(()=>{ if(remaining>6&&Math.random()>0.45){ remaining--; updateBar(); } }, 4500);
+})();
+
+/* REVIEWS CAROUSEL */
+(function(){
+  const track=document.getElementById("cnReviewsTrack2");
+  const leftBtn=document.querySelector(".cn-review-arrow-left");
+  const rightBtn=document.querySelector(".cn-review-arrow-right");
+  if(!track||!leftBtn||!rightBtn) return;
+  const cards=Array.from(track.children);
+  let currentIndex=0;
+  function getVisible(){ return window.innerWidth<=768?2:3; }
+  function getMax(){ return Math.max(0,cards.length-getVisible()); }
+  function updateCarousel(){
+    const w=cards[0].getBoundingClientRect().width;
+    const gap=parseFloat(window.getComputedStyle(track).gap)||16;
+    track.style.transform=`translateX(-${currentIndex*(w+gap)}px)`;
+    leftBtn.disabled=currentIndex<=0;
+    rightBtn.disabled=currentIndex>=getMax();
+  }
+  leftBtn.addEventListener("click",()=>{ if(currentIndex>0){ currentIndex-=getVisible(); if(currentIndex<0)currentIndex=0; updateCarousel(); } });
+  rightBtn.addEventListener("click",()=>{ if(currentIndex<getMax()){ currentIndex+=getVisible(); if(currentIndex>getMax())currentIndex=getMax(); updateCarousel(); } });
+  window.addEventListener("resize",()=>{ if(currentIndex>getMax())currentIndex=getMax(); updateCarousel(); });
+  updateCarousel();
+})();
+
+/* NOTIFICATION */
+const names=["Vitor","Elaine","Sérgio","Monique","Alexandre","Cintia","Robson","Denise","Igor","Tatiana"];
+const cities=["São Luís","Maceió","Aracaju","Ribeirão Preto","Londrina","Cuiabá","Joinville"];
+function showNotification(){
+  const name=names[Math.floor(Math.random()*names.length)];
+  const city=cities[Math.floor(Math.random()*cities.length)];
+  const messages=[
+    `${name} de ${city} acabou de conferir a oferta`,
+    `${name} de ${city} entrou pra ver os detalhes`,
+    `${name} de ${city} está analisando essa condição`,
+    `${name} de ${city} abriu agora para verificar`,
+    `${name} de ${city} voltou para conferir novamente`,
+    `${name} de ${city} acessou há ${Math.floor(Math.random()*6+1)} minutos`,
+    `${name} de ${city} está vendo o preço neste momento`
+  ];
+  const el=document.getElementById("cn-notification");
+  el.innerHTML=`<strong>Agora:</strong> ${messages[Math.floor(Math.random()*messages.length)]}`;
+  el.classList.add("show");
+  setTimeout(()=>el.classList.remove("show"),4000);
+}
+function startNotifications(){
+  showNotification();
+  let next=Math.floor(Math.random()*(25000-12000)+12000);
+  if(Math.random()<0.25) next+=Math.floor(Math.random()*15000);
+  setTimeout(startNotifications,next);
+}
+setTimeout(startNotifications,8000);
+</script>
+
+</body>
+</html>

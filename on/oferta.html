@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Tênis On Cloud Knit Premium – Oferta Exclusiva</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #fff; color: #111; }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+
+    /* ── ANNOUNCEMENT BAR ── */
+    .ann-bar {
+      background: #0a0a0a;
+      color: #fff;
+      text-align: center;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+    .ann-bar strong { color: #f5c842; }
+    .ann-bar .ann-link { color: #f5c842; text-decoration: underline; margin-left: 8px; cursor: pointer; }
+
+    /* ── COUNTDOWN IN BAR ── */
+    .ann-countdown { display: inline-flex; gap: 6px; align-items: center; margin-left: 12px; }
+    .ann-cd-block {
+      background: #f5c842; color: #0a0a0a; font-size: 13px; font-weight: 800;
+      padding: 2px 7px; border-radius: 4px; min-width: 32px; text-align: center;
+    }
+    .ann-cd-sep { color: #f5c842; font-weight: 700; }
+
+    /* ── HEADER ── */
+    .site-header {
+      background: #fff;
+      border-bottom: 1px solid #e8e8e8;
+      padding: 0 24px;
+      height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+    }
+    .site-header-logo img { height: 40px; }
+    .site-header-nav { display: flex; gap: 24px; }
+    .site-header-nav a { font-size: 14px; color: #333; font-weight: 500; }
+    .site-header-nav a:hover { color: #000; }
+    .site-header-right { display: flex; align-items: center; gap: 16px; }
+    .header-cart-btn {
+      background: #111; color: #fff; border: none; cursor: pointer;
+      padding: 9px 18px; border-radius: 6px; font-size: 13px; font-weight: 600;
+    }
+    @media (max-width: 768px) {
+      .site-header-nav { display: none; }
+      .site-header { padding: 0 16px; }
+    }
+
+    /* ── BREADCRUMB ── */
+    .breadcrumb {
+      padding: 12px 24px; font-size: 12px; color: #888;
+      max-width: 1200px; margin: 0 auto;
+    }
+    .breadcrumb a { color: #888; }
+    .breadcrumb a:hover { color: #111; }
+    .breadcrumb span { margin: 0 6px; }
+
+    /* ── PRODUCT SECTION ── */
+    .product-section {
+      max-width: 1200px; margin: 0 auto; padding: 0 24px 60px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
+    }
+    @media (max-width: 900px) {
+      .product-section { grid-template-columns: 1fr; gap: 32px; padding: 0 16px 40px; }
+    }
+
+    /* GALLERY */
+    .gallery-main {
+      width: 100%; aspect-ratio: 1/1; border-radius: 14px;
+      overflow: hidden; background: #f8f8f8;
+      border: 1px solid #eee; position: relative;
+    }
+    .gallery-main img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: opacity 0.3s;
+    }
+    .gallery-thumbs {
+      display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;
+    }
+    .gallery-thumb {
+      width: 70px; height: 70px; border-radius: 8px; overflow: hidden;
+      border: 2px solid transparent; cursor: pointer; background: #f5f5f5;
+      transition: border-color 0.2s;
+    }
+    .gallery-thumb.active { border-color: #111; }
+    .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .gallery-thumb:hover { border-color: #888; }
+    @media (max-width: 500px) {
+      .gallery-thumb { width: 56px; height: 56px; }
+    }
+
+    /* PRODUCT INFO */
+    .product-info { display: flex; flex-direction: column; gap: 0; }
+
+    .prod-badge-row { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+    .prod-badge {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+      padding: 4px 10px; border-radius: 999px; text-transform: uppercase;
+    }
+    .badge-sale { background: #c00; color: #fff; }
+    .badge-limited { background: #fff3cd; color: #856404; border: 1px solid #ffc107; }
+    .badge-popular { background: #e8f5e9; color: #2e7d32; border: 1px solid #66bb6a; }
+
+    .prod-title {
+      font-size: 28px; font-weight: 800; line-height: 1.2; color: #0a0a0a;
+      margin-bottom: 10px;
+    }
+    @media (max-width: 600px) { .prod-title { font-size: 22px; } }
+
+    .prod-rating-row {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .prod-stars { color: #f5a623; font-size: 17px; letter-spacing: 1px; }
+    .prod-rating-num { font-size: 14px; font-weight: 700; color: #111; }
+    .prod-rating-count { font-size: 13px; color: #666; }
+    .prod-trust-pill {
+      display: flex; align-items: center; gap: 5px; background: #f0faf4;
+      border: 1px solid #b2dfdb; border-radius: 999px; padding: 4px 10px;
+      font-size: 12px; color: #1b5e20; font-weight: 600;
+    }
+    .prod-trust-pill::before { content: "✔"; color: #2e7d32; font-size: 10px; }
+
+    .prod-price-row { display: flex; align-items: baseline; gap: 12px; margin-bottom: 8px; flex-wrap: wrap; }
+    .prod-price { font-size: 38px; font-weight: 900; color: #00a650; }
+    .prod-price-old { font-size: 20px; color: #aaa; text-decoration: line-through; font-weight: 400; }
+    .prod-price-save {
+      font-size: 14px; font-weight: 700; color: #fff;
+      background: #c00; padding: 4px 10px; border-radius: 999px;
+    }
+    @media (max-width: 600px) { .prod-price { font-size: 30px; } .prod-price-old { font-size: 16px; } }
+
+    .prod-pix-note {
+      font-size: 13px; color: #1a7c3a; font-weight: 600; margin-bottom: 18px;
+      background: #f0faf4; border: 1px solid #b2dfdb; padding: 8px 12px; border-radius: 8px;
+      display: inline-block;
+    }
+
+    /* STOCK BAR */
+    .prod-stock-wrap { margin-bottom: 18px; }
+    .prod-stock-label { font-size: 13px; font-weight: 700; color: #c00; margin-bottom: 6px; }
+    .prod-stock-bar { width: 100%; height: 7px; background: #eee; border-radius: 99px; overflow: hidden; }
+    .prod-stock-fill {
+      height: 100%; width: 82%; border-radius: 99px;
+      background: linear-gradient(90deg, #f59e0b, #ef4444);
+    }
+    .prod-stock-sub { font-size: 12px; color: #666; margin-top: 5px; }
+
+    /* COLOR SELECTOR */
+    .prod-selector-label { font-size: 13px; font-weight: 700; color: #333; margin-bottom: 8px; }
+    .prod-selector-label span { font-weight: 400; color: #666; margin-left: 4px; }
+    .prod-colors { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+    .prod-color-btn {
+      width: 36px; height: 36px; border-radius: 50%; border: 3px solid transparent;
+      cursor: pointer; transition: 0.2s; outline: none;
+    }
+    .prod-color-btn.active { border-color: #111; box-shadow: 0 0 0 2px #fff, 0 0 0 4px #111; }
+    .prod-color-btn:hover { transform: scale(1.1); }
+
+    /* SIZE SELECTOR */
+    .prod-sizes { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+    .prod-size-btn {
+      min-width: 50px; height: 44px; border-radius: 8px; border: 1.5px solid #ddd;
+      background: #fff; font-size: 14px; font-weight: 600; cursor: pointer;
+      transition: 0.15s; display: flex; align-items: center; justify-content: center;
+    }
+    .prod-size-btn:hover { border-color: #111; }
+    .prod-size-btn.active { border-color: #111; background: #111; color: #fff; }
+    .prod-size-btn.unavailable { color: #ccc; cursor: not-allowed; text-decoration: line-through; }
+    .prod-size-guide { font-size: 12px; color: #555; text-decoration: underline; cursor: pointer; margin-top: -12px; margin-bottom: 20px; display: inline-block; }
+
+    /* BUY BUTTON */
+    .prod-buy-btn {
+      display: block; width: 100%; padding: 18px 24px; border-radius: 10px;
+      background: linear-gradient(180deg, #00c853, #009e43); color: #fff;
+      font-size: 18px; font-weight: 800; text-align: center; border: none; cursor: pointer;
+      letter-spacing: 0.4px; box-shadow: 0 6px 20px rgba(0,180,80,0.4);
+      animation: buyPulse 2s infinite; transition: transform 0.15s;
+      margin-bottom: 12px;
+    }
+    .prod-buy-btn:hover { transform: scale(1.02); background: linear-gradient(180deg, #00e676, #00b248); }
+    @keyframes buyPulse { 0%,100% { box-shadow: 0 6px 20px rgba(0,180,80,0.4); } 50% { box-shadow: 0 8px 28px rgba(0,180,80,0.65); } }
+
+    .prod-buy-sub {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      font-size: 13px; color: #555; margin-bottom: 20px;
+    }
+    .prod-buy-sub::before { content: "🔒"; font-size: 14px; }
+
+    /* TRUST BADGES */
+    .prod-trust-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px;
+    }
+    .prod-trust-item {
+      display: flex; align-items: center; gap: 10px; background: #fafafa;
+      border: 1px solid #eee; border-radius: 10px; padding: 10px 12px;
+    }
+    .prod-trust-icon { font-size: 22px; }
+    .prod-trust-text { font-size: 12px; color: #333; line-height: 1.4; }
+    .prod-trust-text strong { display: block; font-size: 13px; font-weight: 700; color: #111; }
+
+    /* PAYMENT ICONS */
+    .prod-payment-icons {
+      display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+      padding-top: 16px; border-top: 1px solid #f0f0f0; margin-top: 4px;
+    }
+    .prod-payment-icons span { font-size: 12px; color: #888; margin-right: 4px; }
+    .pay-pill {
+      background: #f4f4f4; border: 1px solid #e0e0e0; border-radius: 6px;
+      padding: 5px 10px; font-size: 12px; font-weight: 600; color: #333;
+    }
+
+    /* ── FULL-WIDTH DIVIDER ── */
+    .section-divider { border: none; border-top: 1px solid #f0f0f0; margin: 0; }
+
+    /* ── DESCRIPTION SECTION ── */
+    .desc-section { max-width: 1200px; margin: 0 auto; padding: 48px 24px; }
+    .desc-section h2 { font-size: 26px; font-weight: 800; color: #0a0a0a; margin-bottom: 20px; }
+    .desc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+    .desc-grid img { width: 100%; border-radius: 12px; object-fit: cover; }
+    .desc-content { display: flex; flex-direction: column; gap: 14px; }
+    .desc-content p { font-size: 16px; line-height: 1.75; color: #333; }
+    .desc-features { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .desc-features li { display: flex; align-items: flex-start; gap: 10px; font-size: 15px; color: #222; line-height: 1.5; }
+    .desc-features li::before { content: "✓"; color: #00a650; font-weight: 800; font-size: 16px; margin-top: 1px; }
+    @media (max-width: 768px) { .desc-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 768px) { .desc-section { padding: 32px 16px; } }
+
+    /* ── SIZE GUIDE ── */
+    .size-section { max-width: 900px; margin: 0 auto; padding: 0 24px 48px; }
+    .size-section h2 { font-size: 22px; font-weight: 800; margin-bottom: 18px; color: #0a0a0a; }
+    .size-table-wrap { overflow-x: auto; }
+    .size-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .size-table th { background: #0a0a0a; color: #fff; padding: 12px 16px; text-align: center; font-weight: 600; }
+    .size-table td { padding: 11px 16px; text-align: center; border-bottom: 1px solid #f0f0f0; color: #333; }
+    .size-table tr:nth-child(even) td { background: #fafafa; }
+    .size-note { font-size: 12px; color: #888; margin-top: 10px; font-style: italic; }
+    @media (max-width: 600px) { .size-section { padding: 0 16px 40px; } }
+
+    /* ── CUSTOMER PHOTOS ── */
+    .photos-section { max-width: 1200px; margin: 0 auto; padding: 48px 24px; }
+    .photos-section h2 { font-size: 26px; font-weight: 800; color: #0a0a0a; margin-bottom: 8px; }
+    .photos-sub { font-size: 15px; color: #666; margin-bottom: 24px; }
+    .photos-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+    }
+    .photos-grid-item { border-radius: 10px; overflow: hidden; aspect-ratio: 1/1; background: #f5f5f5; }
+    .photos-grid-item img { width: 100%; height: 100%; object-fit: cover; }
+    @media (max-width: 768px) { .photos-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px) { .photos-section { padding: 32px 16px; } }
+
+    /* ── REVIEWS ── */
+    .reviews-section { max-width: 1200px; margin: 0 auto; padding: 48px 24px; }
+    .reviews-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; flex-wrap: wrap; gap: 16px; }
+    .reviews-header h2 { font-size: 26px; font-weight: 800; color: #0a0a0a; }
+    .reviews-summary { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+    .reviews-score { font-size: 56px; font-weight: 900; color: #0a0a0a; line-height: 1; }
+    .reviews-score-details { display: flex; flex-direction: column; gap: 4px; }
+    .reviews-stars-big { color: #f5a623; font-size: 22px; }
+    .reviews-count { font-size: 14px; color: #666; }
+    .reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    @media (max-width: 900px) { .reviews-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px) { .reviews-grid { grid-template-columns: 1fr; } .reviews-section { padding: 32px 16px; } }
+    .review-card {
+      background: #fff; border: 1px solid #eee; border-radius: 14px; padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .review-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .review-avatar {
+      width: 44px; height: 44px; border-radius: 50%; object-fit: cover; background: #f0f0f0;
+      overflow: hidden; flex-shrink: 0;
+    }
+    .review-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .review-meta { display: flex; flex-direction: column; gap: 2px; }
+    .review-name { font-size: 14px; font-weight: 700; color: #111; }
+    .review-date { font-size: 12px; color: #888; }
+    .review-verified { font-size: 11px; color: #1a7c3a; font-weight: 600; }
+    .review-stars { color: #f5a623; font-size: 14px; margin-bottom: 8px; }
+    .review-title { font-size: 14px; font-weight: 700; color: #111; margin-bottom: 6px; }
+    .review-text { font-size: 14px; color: #444; line-height: 1.6; }
+    @media (max-width: 600px) { .reviews-header h2 { font-size: 22px; } }
+
+    /* ── FAQ ── */
+    .faq-section { max-width: 800px; margin: 0 auto; padding: 48px 24px 60px; }
+    .faq-section h2 { font-size: 26px; font-weight: 800; color: #0a0a0a; margin-bottom: 24px; text-align: center; }
+    .faq-item { border-bottom: 1px solid #efefef; }
+    .faq-question {
+      width: 100%; background: none; border: none; cursor: pointer;
+      padding: 18px 0; display: flex; justify-content: space-between; align-items: center;
+      font-size: 15px; font-weight: 600; color: #111; text-align: left; gap: 16px;
+    }
+    .faq-icon { font-size: 20px; color: #aaa; flex-shrink: 0; transition: transform 0.25s; }
+    .faq-item.open .faq-icon { transform: rotate(45deg); color: #111; }
+    .faq-answer { font-size: 14px; color: #555; line-height: 1.7; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s; }
+    .faq-item.open .faq-answer { max-height: 300px; padding-bottom: 18px; }
+    @media (max-width: 600px) { .faq-section { padding: 32px 16px 48px; } }
+
+    /* ── CTA BOTTOM ── */
+    .cta-bottom {
+      background: linear-gradient(135deg, #0a0a0a 0%, #1c1c1c 100%);
+      padding: 60px 24px; text-align: center; color: #fff;
+    }
+    .cta-bottom h2 { font-size: 30px; font-weight: 900; margin-bottom: 12px; }
+    .cta-bottom p { font-size: 16px; color: #ccc; margin-bottom: 28px; max-width: 540px; margin-left: auto; margin-right: auto; }
+    .cta-bottom-timer { display: flex; justify-content: center; gap: 10px; margin-bottom: 28px; }
+    .cta-td {
+      background: #f5c842; color: #0a0a0a; border-radius: 8px;
+      padding: 10px 14px; min-width: 60px; text-align: center;
+    }
+    .cta-td span { display: block; font-size: 28px; font-weight: 900; line-height: 1; }
+    .cta-td small { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .cta-td-sep { color: #f5c842; font-size: 28px; font-weight: 900; display: flex; align-items: center; }
+    .cta-bottom-btn {
+      display: inline-block; background: linear-gradient(180deg, #00c853, #009e43);
+      color: #fff; font-size: 19px; font-weight: 800; padding: 20px 48px; border-radius: 10px;
+      border: none; cursor: pointer; letter-spacing: 0.4px;
+      box-shadow: 0 8px 24px rgba(0,200,83,0.5); animation: buyPulse 2s infinite;
+    }
+    .cta-bottom-btn:hover { transform: scale(1.02); }
+    .cta-bottom-note { font-size: 13px; color: #888; margin-top: 14px; }
+    @media (max-width: 600px) { .cta-bottom h2 { font-size: 22px; } .cta-bottom-btn { font-size: 16px; padding: 16px 28px; width: 100%; display: block; } }
+
+    /* ── FOOTER ── */
+    .site-footer { background: #0a0a0a; color: #ccc; padding: 40px 24px; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-top { display: flex; justify-content: space-between; gap: 40px; flex-wrap: wrap; margin-bottom: 32px; padding-bottom: 32px; border-bottom: 1px solid #222; }
+    .footer-logo img { height: 36px; filter: brightness(0) invert(1); margin-bottom: 12px; }
+    .footer-desc { font-size: 13px; color: #888; line-height: 1.6; max-width: 260px; }
+    .footer-col h4 { font-size: 13px; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 14px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .footer-col ul li a { font-size: 13px; color: #888; transition: color 0.2s; }
+    .footer-col ul li a:hover { color: #fff; }
+    .footer-bottom { text-align: center; font-size: 12px; color: #555; }
+
+    /* ── NOTIFICATION ── */
+    .notif-popup {
+      position: fixed; bottom: 20px; left: 20px; background: #fff; color: #111;
+      padding: 14px 16px; border-radius: 10px; font-size: 13px; max-width: 290px;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.15); opacity: 0; transform: translateY(20px);
+      transition: 0.4s; z-index: 9999; border-left: 4px solid #00c853;
+      font-family: 'Inter', sans-serif;
+    }
+    .notif-popup.show { opacity: 1; transform: translateY(0); }
+    .notif-popup strong { color: #00a650; }
+    .notif-name { font-weight: 700; }
+
+    /* ── STICKY FOOTER BAR (mobile) ── */
+    .sticky-buy-bar {
+      display: none; position: fixed; bottom: 0; left: 0; right: 0;
+      background: #fff; border-top: 1px solid #e0e0e0;
+      padding: 12px 16px; z-index: 200;
+      box-shadow: 0 -4px 16px rgba(0,0,0,0.1);
+      align-items: center; gap: 12px;
+    }
+    .sticky-buy-bar .sticky-price { font-size: 18px; font-weight: 900; color: #00a650; white-space: nowrap; }
+    .sticky-buy-bar .sticky-btn {
+      flex: 1; background: linear-gradient(180deg, #00c853, #009e43); color: #fff;
+      border: none; padding: 14px; border-radius: 8px; font-size: 15px; font-weight: 800;
+      cursor: pointer; text-align: center;
+    }
+    @media (max-width: 768px) { .sticky-buy-bar { display: flex; } body { padding-bottom: 80px; } }
+
+    /* SIZE MODAL */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 500;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: #fff; border-radius: 14px; padding: 28px 24px; max-width: 540px;
+      width: calc(100% - 32px); max-height: 80vh; overflow-y: auto;
+    }
+    .modal-box h3 { font-size: 18px; font-weight: 800; margin-bottom: 16px; }
+    .modal-close {
+      float: right; background: none; border: none; font-size: 22px; cursor: pointer; color: #888; margin-top: -4px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── ANNOUNCEMENT BAR ── -->
+<div class="ann-bar">
+  <strong>OFERTA LIMITADA</strong> — Desconto especial de aniversário ativo agora
+  <span class="ann-countdown">
+    <span class="ann-cd-block" id="ann-h">00</span>
+    <span class="ann-cd-sep">:</span>
+    <span class="ann-cd-block" id="ann-m">14</span>
+    <span class="ann-cd-sep">:</span>
+    <span class="ann-cd-block" id="ann-s">59</span>
+  </span>
+  <a class="ann-link" href="#prod-buy">GARANTA O SEU</a>
+</div>
+
+<!-- ── HEADER ── -->
+<header class="site-header">
+  <div class="site-header-logo">
+    <img src="assets/images/logo.png" alt="Click Notícias">
+  </div>
+  <nav class="site-header-nav">
+    <a href="#">Início</a>
+    <a href="#">Tendências</a>
+    <a href="#">Ofertas</a>
+    <a href="#">Contato</a>
+  </nav>
+  <div class="site-header-right">
+    <button class="header-cart-btn" onclick="document.getElementById('prod-buy').click()">Comprar Agora</button>
+  </div>
+</header>
+
+<!-- ── BREADCRUMB ── -->
+<div class="breadcrumb">
+  <a href="#">Início</a><span>›</span>
+  <a href="#">Tênis</a><span>›</span>
+  Tênis Unissex On Cloud Knit Premium
+</div>
+
+<!-- ── PRODUCT SECTION ── -->
+<section class="product-section">
+
+  <!-- GALLERY -->
+  <div class="gallery-col">
+    <div class="gallery-main" id="galleryMain">
+      <img id="mainImg" src="assets/images/produto.webp" alt="Tênis On Cloud Knit Premium">
+    </div>
+    <div class="gallery-thumbs">
+      <div class="gallery-thumb active" onclick="changeImg(this,'assets/images/produto.webp')">
+        <img src="assets/images/produto.webp" alt="">
+      </div>
+      <div class="gallery-thumb" onclick="changeImg(this,'assets/images/hero.jpeg')">
+        <img src="assets/images/hero.jpeg" alt="">
+      </div>
+      <div class="gallery-thumb" onclick="changeImg(this,'assets/images/produto2.webp')">
+        <img src="assets/images/produto2.webp" alt="">
+      </div>
+      <div class="gallery-thumb" onclick="changeImg(this,'assets/images/promo.jpeg')">
+        <img src="assets/images/promo.jpeg" alt="">
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCT INFO -->
+  <div class="product-info">
+
+    <div class="prod-badge-row">
+      <span class="prod-badge badge-sale">-46% OFF</span>
+      <span class="prod-badge badge-limited">Estoque Limitado</span>
+      <span class="prod-badge badge-popular">🔥 Mais Vendido</span>
+    </div>
+
+    <h1 class="prod-title">Tênis Unissex On Cloud Knit Premium — Edição Aniversário</h1>
+
+    <div class="prod-rating-row">
+      <span class="prod-stars">★★★★★</span>
+      <span class="prod-rating-num">4.9</span>
+      <span class="prod-rating-count">· 600+ avaliações</span>
+      <span class="prod-trust-pill">Loja Verificada</span>
+    </div>
+
+    <div class="prod-price-row">
+      <span class="prod-price">R$ 269,90</span>
+      <span class="prod-price-old">R$ 499,90</span>
+      <span class="prod-price-save">ECONOMIZE R$ 230</span>
+    </div>
+    <div class="prod-pix-note">💰 5% de desconto pagando via PIX — R$ 256,41</div>
+
+    <div class="prod-stock-wrap">
+      <div class="prod-stock-label">⚠ Restam apenas <span id="stock-num">17</span> unidades nesta condição</div>
+      <div class="prod-stock-bar"><div class="prod-stock-fill" id="stock-fill"></div></div>
+      <div class="prod-stock-sub">83% do estoque promocional já foi reservado</div>
+    </div>
+
+    <!-- COLOR -->
+    <div class="prod-selector-label">Cor: <span id="selected-color">Branco</span></div>
+    <div class="prod-colors">
+      <button class="prod-color-btn active" style="background:#f5f5f5;border:1.5px solid #ccc;" data-color="Branco" onclick="selectColor(this)"></button>
+      <button class="prod-color-btn" style="background:#1a1a1a;" data-color="Preto" onclick="selectColor(this)"></button>
+      <button class="prod-color-btn" style="background:#3a5a8a;" data-color="Azul Marinho" onclick="selectColor(this)"></button>
+      <button class="prod-color-btn" style="background:#8a8a8a;" data-color="Cinza" onclick="selectColor(this)"></button>
+    </div>
+
+    <!-- SIZE -->
+    <div class="prod-selector-label">Tamanho: <span id="selected-size">Selecione</span></div>
+    <div class="prod-sizes">
+      <button class="prod-size-btn" data-size="36" onclick="selectSize(this)">36</button>
+      <button class="prod-size-btn" data-size="37" onclick="selectSize(this)">37</button>
+      <button class="prod-size-btn" data-size="38" onclick="selectSize(this)">38</button>
+      <button class="prod-size-btn" data-size="39" onclick="selectSize(this)">39</button>
+      <button class="prod-size-btn" data-size="40" onclick="selectSize(this)">40</button>
+      <button class="prod-size-btn" data-size="41" onclick="selectSize(this)">41</button>
+      <button class="prod-size-btn" data-size="42" onclick="selectSize(this)">42</button>
+      <button class="prod-size-btn unavailable" data-size="43" disabled>43</button>
+    </div>
+    <a href="#size-guide" class="prod-size-guide" onclick="openSizeModal()">📏 Guia de Tamanhos</a>
+
+    <!-- BUY BTN -->
+    <a href="https://calcadosaxion.com/products/tenis-unissex-on-cloud-knit" id="prod-buy" class="prod-buy-btn">
+      🛒 COMPRAR COM DESCONTO + FRETE GRÁTIS
+    </a>
+    <div class="prod-buy-sub">Pagamento 100% seguro · Compra protegida</div>
+
+    <!-- TRUST GRID -->
+    <div class="prod-trust-grid">
+      <div class="prod-trust-item">
+        <span class="prod-trust-icon">🚚</span>
+        <div class="prod-trust-text"><strong>Frete Grátis</strong>Entrega em 5–9 dias úteis</div>
+      </div>
+      <div class="prod-trust-item">
+        <span class="prod-trust-icon">🛡️</span>
+        <div class="prod-trust-text"><strong>Garantia 1 Ano</strong>Troca sem burocracia</div>
+      </div>
+      <div class="prod-trust-item">
+        <span class="prod-trust-icon">↩️</span>
+        <div class="prod-trust-text"><strong>30 dias para devolver</strong>Sem perguntas</div>
+      </div>
+      <div class="prod-trust-item">
+        <span class="prod-trust-icon">⭐</span>
+        <div class="prod-trust-text"><strong>4.9 no Google</strong>600+ avaliações verificadas</div>
+      </div>
+    </div>
+
+    <!-- PAYMENT ICONS -->
+    <div class="prod-payment-icons">
+      <span>Aceita:</span>
+      <span class="pay-pill">Pix</span>
+      <span class="pay-pill">Visa</span>
+      <span class="pay-pill">Mastercard</span>
+      <span class="pay-pill">Elo</span>
+      <span class="pay-pill">Boleto</span>
+      <span class="pay-pill">12x s/ juros</span>
+    </div>
+
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ── DESCRIPTION ── -->
+<section class="desc-section">
+  <h2>Por que o On Cloud Knit Premium é diferente?</h2>
+  <div class="desc-grid">
+    <img src="assets/images/hero.jpeg" alt="On Cloud Knit Premium">
+    <div class="desc-content">
+      <p>Desenvolvido com tecnologia exclusiva de amortecimento, o Tênis Unissex On Cloud Knit Premium combina performance de alta qualidade com design minimalista que se adapta a qualquer ocasião.</p>
+      <p>Ideal para uso diário, academia, caminhadas e trabalho — leveza e conforto que você sente desde o primeiro passo.</p>
+      <ul class="desc-features">
+        <li>Solado com tecnologia CloudTec® — amortecimento excepcional em cada passada</li>
+        <li>Cabedal em malha respirável Knit — conforto e frescor durante todo o dia</li>
+        <li>Peso ultralow — você mal sente o tênis no pé</li>
+        <li>Design unissex — perfeito para qualquer estilo e ocasião</li>
+        <li>Durabilidade premium — material de qualidade para longa vida útil</li>
+        <li>Disponível em múltiplas cores e numerações</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ── SECOND PRODUCT IMAGE ── -->
+<section style="max-width:1200px;margin:0 auto;padding:48px 24px;">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+    <img src="assets/images/produto2.webp" alt="On Cloud detalhe" style="border-radius:14px;width:100%;object-fit:cover;aspect-ratio:1/1;">
+    <img src="assets/images/promo.jpeg" alt="On Cloud lifestyle" style="border-radius:14px;width:100%;object-fit:cover;aspect-ratio:1/1;">
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ── SIZE GUIDE ── -->
+<section class="size-section" id="size-guide">
+  <h2>📏 Guia de Tamanhos</h2>
+  <div class="size-table-wrap">
+    <table class="size-table">
+      <thead>
+        <tr>
+          <th>BR</th>
+          <th>EU</th>
+          <th>Comprimento do Pé (cm)</th>
+          <th>Largura (cm)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>36</td><td>36</td><td>22,5 cm</td><td>8,5 cm</td></tr>
+        <tr><td>37</td><td>37</td><td>23,2 cm</td><td>8,8 cm</td></tr>
+        <tr><td>38</td><td>38</td><td>24,0 cm</td><td>9,0 cm</td></tr>
+        <tr><td>39</td><td>39</td><td>24,8 cm</td><td>9,2 cm</td></tr>
+        <tr><td>40</td><td>40</td><td>25,5 cm</td><td>9,5 cm</td></tr>
+        <tr><td>41</td><td>41</td><td>26,2 cm</td><td>9,7 cm</td></tr>
+        <tr><td>42</td><td>42</td><td>27,0 cm</td><td>10,0 cm</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="size-note">* As medidas podem variar ±0,5 cm. Em caso de dúvida entre dois tamanhos, recomendamos o maior.</p>
+</section>
+
+<hr class="section-divider">
+
+<!-- ── CUSTOMER PHOTOS ── -->
+<section class="photos-section">
+  <h2>Fotos de Clientes</h2>
+  <p class="photos-sub">Veja quem já está usando e aprovando</p>
+  <div class="photos-grid">
+    <div class="photos-grid-item"><img src="assets/images/produto.webp" alt="Cliente 1"></div>
+    <div class="photos-grid-item"><img src="assets/images/hero.jpeg" alt="Cliente 2"></div>
+    <div class="photos-grid-item"><img src="assets/images/produto2.webp" alt="Cliente 3"></div>
+    <div class="photos-grid-item"><img src="assets/images/promo.jpeg" alt="Cliente 4"></div>
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ── REVIEWS ── -->
+<section class="reviews-section">
+  <div class="reviews-header">
+    <h2>Avaliações de Clientes</h2>
+    <div class="reviews-summary">
+      <div class="reviews-score">4.9</div>
+      <div class="reviews-score-details">
+        <div class="reviews-stars-big">★★★★★</div>
+        <div class="reviews-count">Baseado em 600+ avaliações verificadas</div>
+      </div>
+    </div>
+  </div>
+  <div class="reviews-grid">
+
+    <div class="review-card">
+      <div class="review-card-header">
+        <div class="review-avatar"><img src="assets/images/author.png" alt="Eduardo P."></div>
+        <div class="review-meta">
+          <span class="review-name">Eduardo P.</span>
+          <span class="review-date">há 2 semanas</span>
+          <span class="review-verified">✔ Compra verificada</span>
+        </div>
+      </div>
+      <div class="review-stars">★★★★★</div>
+      <div class="review-title">Conforto que surpreende</div>
+      <p class="review-text">Muito melhor do que eu imaginava. Conforto absurdo desde o primeiro uso e extremamente leve no pé. Valeu cada centavo.</p>
+    </div>
+
+    <div class="review-card">
+      <div class="review-card-header">
+        <div class="review-avatar" style="background:#f0e6ff;display:flex;align-items:center;justify-content:center;font-size:20px;">👩</div>
+        <div class="review-meta">
+          <span class="review-name">Larissa G.</span>
+          <span class="review-date">há 3 semanas</span>
+          <span class="review-verified">✔ Compra verificada</span>
+        </div>
+      </div>
+      <div class="review-stars">★★★★★</div>
+      <div class="review-title">Meu favorito do dia a dia</div>
+      <p class="review-text">Comprei para usar no trabalho e virou meu tênis favorito. Não cansa o pé, mesmo depois de horas em pé. Recomendo muito!</p>
+    </div>
+
+    <div class="review-card">
+      <div class="review-card-header">
+        <div class="review-avatar" style="background:#e6f0ff;display:flex;align-items:center;justify-content:center;font-size:20px;">👨</div>
+        <div class="review-meta">
+          <span class="review-name">Felipe N.</span>
+          <span class="review-date">há 1 mês</span>
+          <span class="review-verified">✔ Compra verificada</span>
+        </div>
+      </div>
+      <div class="review-stars">★★★★★</div>
+      <div class="review-title">Qualidade excepcional</div>
+      <p class="review-text">Pelo valor que paguei, não esperava tanta qualidade. O acabamento é impecável, parece um produto muito mais caro.</p>
+    </div>
+
+    <div class="review-card">
+      <div class="review-card-header">
+        <div class="review-avatar" style="background:#e6fff0;display:flex;align-items:center;justify-content:center;font-size:20px;">👩</div>
+        <div class="review-meta">
+          <span class="review-name">Camila S.</span>
+          <span class="review-date">há 1 mês</span>
+          <span class="review-verified">✔ Compra verificada</span>
+        </div>
+      </div>
+      <div class="review-stars">★★★★★</div>
+      <div class="review-title">Chegou rápido e perfeito</div>
+      <p class="review-text">Entrega super rápida, produto bem embalado. Já usei várias vezes e continua confortável como no primeiro dia. Amei!</p>
+    </div>
+
+    <div class="review-card">
+      <div class="review-card-header">
+        <div class="review-avatar" style="background:#fff8e6;display:flex;align-items:center;justify-content:center;font-size:20px;">👨</div>
+        <div class="review-meta">
+          <span class="review-name">Rafael T.</span>
+          <span class="review-date">há 2 meses</span>
+          <span class="review-verified">✔ Compra verificada</span>
+        </div>
+      </div>
+      <div class="review-stars">★★★★★</div>
+      <div class="review-title">Bonito e combina com tudo</div>
+      <p class="review-text">Design minimalista que combina com qualquer roupa. Uso pra sair, academia e trabalho — versátil demais. Super recomendo.</p>
+    </div>
+
+    <div class="review-card">
+      <div class="review-card-header">
+        <div class="review-avatar" style="background:#ffe6e6;display:flex;align-items:center;justify-content:center;font-size:20px;">👩</div>
+        <div class="review-meta">
+          <span class="review-name">Priscila M.</span>
+          <span class="review-date">há 2 meses</span>
+          <span class="review-verified">✔ Compra verificada</span>
+        </div>
+      </div>
+      <div class="review-stars">★★★★★</div>
+      <div class="review-title">Não incomoda nada</div>
+      <p class="review-text">Trabalho o dia inteiro em pé e esse tênis foi um divisor de águas. Não dói, não cansa, não incomoda. Simplesmente perfeito.</p>
+    </div>
+
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ── FAQ ── -->
+<section class="faq-section">
+  <h2>Dúvidas Frequentes</h2>
+
+  <div class="faq-item">
+    <button class="faq-question" onclick="toggleFaq(this)">
+      O produto é original On Cloud?
+      <span class="faq-icon">+</span>
+    </button>
+    <div class="faq-answer">Sim. Todos os nossos produtos são originais e passam por rigoroso controle de qualidade antes do envio. Trabalhamos apenas com fornecedores autorizados, garantindo autenticidade total.</div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question" onclick="toggleFaq(this)">
+      Qual o prazo de entrega?
+      <span class="faq-icon">+</span>
+    </button>
+    <div class="faq-answer">O prazo estimado é de 5 a 9 dias úteis após a confirmação do pagamento. O frete é grátis para todo o Brasil. Após o envio, você recebe o código de rastreamento por e-mail.</div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question" onclick="toggleFaq(this)">
+      E se o tamanho não servir?
+      <span class="faq-icon">+</span>
+    </button>
+    <div class="faq-answer">Oferecemos troca gratuita em até 30 dias após o recebimento. Basta entrar em contato com nosso suporte e enviar o produto nas mesmas condições de entrega. O processo é simples e sem burocracia.</div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question" onclick="toggleFaq(this)">
+      Essa promoção tem prazo?
+      <span class="faq-icon">+</span>
+    </button>
+    <div class="faq-answer">Sim. Esta oferta é exclusiva do período de aniversário da marca e pode ser encerrada sem aviso prévio quando o estoque acabar. Não garantimos que o preço se manterá depois que as unidades atuais forem esgotadas.</div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-question" onclick="toggleFaq(this)">
+      Como funciona o pagamento?
+      <span class="faq-icon">+</span>
+    </button>
+    <div class="faq-answer">Aceitamos Pix (5% de desconto extra), cartões de crédito Visa, Mastercard e Elo em até 12x sem juros, além de boleto bancário. Todos os pagamentos são processados em ambiente 100% seguro e criptografado.</div>
+  </div>
+
+</section>
+
+<!-- ── CTA BOTTOM ── -->
+<div class="cta-bottom">
+  <h2>Aproveite enquanto há estoque</h2>
+  <p>Esta é a condição especial de aniversário. Quando as unidades acabarem, a oferta é encerrada.</p>
+  <div class="cta-bottom-timer">
+    <div class="cta-td"><span id="cta-h">00</span><small>Horas</small></div>
+    <div class="cta-td-sep">:</div>
+    <div class="cta-td"><span id="cta-m">14</span><small>Min</small></div>
+    <div class="cta-td-sep">:</div>
+    <div class="cta-td"><span id="cta-s">59</span><small>Seg</small></div>
+  </div>
+  <a href="https://calcadosaxion.com/products/tenis-unissex-on-cloud-knit" class="cta-bottom-btn">
+    🛒 GARANTIR MEU DESCONTO AGORA
+  </a>
+  <p class="cta-bottom-note">🔒 Compra 100% segura · Frete Grátis · Troca em 30 dias</p>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-logo"><img src="assets/images/logo.png" alt="Click Notícias"></div>
+        <p class="footer-desc">Plataforma independente de análise e comparação de produtos. Mantida por comissões de referência.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Institucional</h4>
+        <ul>
+          <li><a href="#">Sobre Nós</a></li>
+          <li><a href="#">Política de Privacidade</a></li>
+          <li><a href="#">Termos de Uso</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Atendimento</h4>
+        <ul>
+          <li><a href="#">Contato</a></li>
+          <li><a href="#">Trocas e Devoluções</a></li>
+          <li><a href="#">Rastrear Pedido</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Click Notícias. Todos os direitos reservados. As marcas mencionadas são de titularidade exclusiva de seus respectivos proprietários.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ── NOTIFICATION POPUP ── -->
+<div id="notif" class="notif-popup"></div>
+
+<!-- ── STICKY MOBILE BUY BAR ── -->
+<div class="sticky-buy-bar">
+  <span class="sticky-price">R$ 269,90</span>
+  <button class="sticky-btn" onclick="window.location.href='https://calcadosaxion.com/products/tenis-unissex-on-cloud-knit'">
+    🛒 COMPRAR AGORA
+  </button>
+</div>
+
+<!-- ── SIZE MODAL ── -->
+<div class="modal-overlay" id="sizeModal" onclick="closeSizeModal(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="document.getElementById('sizeModal').classList.remove('open')">✕</button>
+    <h3>📏 Guia de Tamanhos — On Cloud Knit</h3>
+    <table class="size-table" style="margin-top:16px;">
+      <thead>
+        <tr><th>BR</th><th>EU</th><th>Comprimento (cm)</th><th>Largura (cm)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>36</td><td>36</td><td>22,5 cm</td><td>8,5 cm</td></tr>
+        <tr><td>37</td><td>37</td><td>23,2 cm</td><td>8,8 cm</td></tr>
+        <tr><td>38</td><td>38</td><td>24,0 cm</td><td>9,0 cm</td></tr>
+        <tr><td>39</td><td>39</td><td>24,8 cm</td><td>9,2 cm</td></tr>
+        <tr><td>40</td><td>40</td><td>25,5 cm</td><td>9,5 cm</td></tr>
+        <tr><td>41</td><td>41</td><td>26,2 cm</td><td>9,7 cm</td></tr>
+        <tr><td>42</td><td>42</td><td>27,0 cm</td><td>10,0 cm</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:#888;margin-top:12px;font-style:italic;">Em dúvida entre dois tamanhos, escolha o maior.</p>
+  </div>
+</div>
+
+<script>
+/* ── COUNTDOWN (sincronizado) ── */
+(function () {
+  let total = 14 * 60 + 59;
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function tick() {
+    const h = Math.floor(total / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    const s = total % 60;
+    ['ann-h','cta-h'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = pad(h); });
+    ['ann-m','cta-m'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = pad(m); });
+    ['ann-s','cta-s'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = pad(s); });
+    if (total > 0) total--; else total = 14 * 60 + 59;
+  }
+  tick();
+  setInterval(tick, 1000);
+})();
+
+/* ── GALLERY ── */
+function changeImg(thumb, src) {
+  document.getElementById('mainImg').src = src;
+  document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
+  thumb.classList.add('active');
+}
+
+/* ── COLOR SELECTOR ── */
+function selectColor(btn) {
+  document.querySelectorAll('.prod-color-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('selected-color').textContent = btn.dataset.color;
+}
+
+/* ── SIZE SELECTOR ── */
+function selectSize(btn) {
+  document.querySelectorAll('.prod-size-btn:not(.unavailable)').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('selected-size').textContent = btn.dataset.size;
+}
+
+/* ── STOCK COUNTER ── */
+(function () {
+  let remaining = 17;
+  function update() {
+    document.getElementById('stock-num').textContent = remaining;
+    const pct = Math.min(96, Math.max(65, 100 - remaining));
+    document.getElementById('stock-fill').style.width = pct + '%';
+  }
+  update();
+  setInterval(function () {
+    if (remaining > 6 && Math.random() > 0.5) { remaining--; update(); }
+  }, 5000);
+})();
+
+/* ── FAQ ACCORDION ── */
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+/* ── SIZE MODAL ── */
+function openSizeModal() {
+  document.getElementById('sizeModal').classList.add('open');
+}
+function closeSizeModal(e) {
+  if (e.target.id === 'sizeModal') document.getElementById('sizeModal').classList.remove('open');
+}
+
+/* ── NOTIFICATIONS ── */
+const nNames = ["Vitor", "Elaine", "Sérgio", "Monique", "Alexandre", "Cintia", "Robson", "Denise", "Igor", "Tatiana", "Bruno", "Mariana"];
+const nCities = ["São Paulo", "Belo Horizonte", "Rio de Janeiro", "Curitiba", "Porto Alegre", "Fortaleza", "Recife", "Salvador", "Manaus", "Goiânia"];
+const nSizes = ["38", "39", "40", "41", "37", "42"];
+const nColors = ["Branco", "Preto", "Azul Marinho", "Cinza"];
+
+function showNotif() {
+  const name = nNames[Math.floor(Math.random() * nNames.length)];
+  const city = nCities[Math.floor(Math.random() * nCities.length)];
+  const size = nSizes[Math.floor(Math.random() * nSizes.length)];
+  const color = nColors[Math.floor(Math.random() * nColors.length)];
+  const msgs = [
+    `<span class="notif-name">${name}</span> de ${city} acabou de comprar o nº ${size} na cor ${color}`,
+    `<span class="notif-name">${name}</span> de ${city} garantiu o último par nº ${size}`,
+    `<span class="notif-name">${name}</span> de ${city} está finalizando o pedido agora`,
+    `<span class="notif-name">${name}</span> de ${city} adicionou ao carrinho — nº ${size}`,
+  ];
+  const el = document.getElementById('notif');
+  el.innerHTML = '<strong>Agora:</strong> ' + msgs[Math.floor(Math.random() * msgs.length)];
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 4500);
+  const next = Math.floor(Math.random() * 18000) + 10000;
+  setTimeout(showNotif, next);
+}
+setTimeout(showNotif, 6000);
+</script>
+
+</body>
+</html>
