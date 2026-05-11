@@ -1,0 +1,17 @@
+// src/config/database.js
+const { Pool } = require('pg');
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: true } : false,
+  max: 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000,
+});
+
+pool.on('error', (err) => {
+  // Nunca logar dados sensíveis — só o tipo de erro
+  console.error('Erro inesperado no pool de conexão:', err.code);
+});
+
+module.exports = pool;

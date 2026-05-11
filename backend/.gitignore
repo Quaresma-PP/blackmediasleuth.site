@@ -1,0 +1,13 @@
+node_modules/
+.env
+.env.*
+!.env.example
+certs/
+*.pem
+*.p12
+*.key
+dist/
+build/
+logs/
+*.log
+.DS_Store

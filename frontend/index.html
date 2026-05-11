@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="description" content="Gerenciador de dívidas seguro - seus dados protegidos">
+<meta name="theme-color" content="#7C3AED">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:3001">
+<title>Minhas Dívidas — Seguro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --p:      #7C3AED;
+  --p-dark: #5B21B6;
+  --p-lt:   #EDE9FE;
+  --p-50:   #F5F3FF;
+  --ok:     #059669;
+  --ok-lt:  #D1FAE5;
+  --bad:    #DC2626;
+  --bad-lt: #FEE2E2;
+  --warn:   #D97706;
+  --warn-lt:#FEF3C7;
+  --bg:     #F5F3FF;
+  --card:   #FFFFFF;
+  --txt:    #1E1B4B;
+  --muted:  #6B7280;
+  --border: rgba(124,58,237,0.12);
+  --shadow: 0 4px 24px rgba(124,58,237,0.10);
+  --r:      16px;
+  --font:   'Plus Jakarta Sans', system-ui, sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font);background:var(--bg);color:var(--txt);min-height:100vh;-webkit-font-smoothing:antialiased;}
+
+/* ── AUTH SCREENS ── */
+.auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(135deg,#5B21B6 0%,#7C3AED 50%,#4F46E5 100%);}
+.auth-card{background:white;border-radius:24px;padding:32px 28px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,0.25);}
+.auth-logo{text-align:center;margin-bottom:28px;}
+.auth-logo .icon{font-size:40px;margin-bottom:8px;}
+.auth-logo h1{font-size:22px;font-weight:800;color:var(--txt);}
+.auth-logo p{font-size:13px;color:var(--muted);margin-top:4px;}
+.auth-tabs{display:flex;background:var(--p-50);border-radius:12px;padding:4px;margin-bottom:24px;}
+.auth-tab{flex:1;padding:9px;text-align:center;font-size:13px;font-weight:700;border-radius:9px;cursor:pointer;color:var(--muted);transition:all 0.2s;}
+.auth-tab.active{background:white;color:var(--p);box-shadow:0 2px 8px rgba(124,58,237,0.15);}
+
+/* ── FORM ELEMENTS ── */
+.field{margin-bottom:16px;}
+.field label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;}
+.field input,.field select,.field textarea{
+  width:100%;padding:12px 14px;border:1.5px solid #E5E7EB;border-radius:10px;
+  font-size:14px;font-family:var(--font);color:var(--txt);background:white;outline:none;
+  transition:border-color 0.2s,box-shadow 0.2s;
+}
+.field input:focus,.field select:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(124,58,237,0.10);}
+.field input.err{border-color:var(--bad);}
+.field-err{font-size:11px;color:var(--bad);margin-top:4px;font-weight:500;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+/* ── BUTTONS ── */
+.btn{display:block;width:100%;padding:14px;border:none;border-radius:12px;font-size:14px;font-weight:700;font-family:var(--font);cursor:pointer;transition:all 0.2s;text-align:center;}
+.btn-primary{background:linear-gradient(135deg,var(--p),var(--p-dark));color:white;}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(124,58,237,0.35);}
+.btn-primary:active{transform:translateY(0);}
+.btn-primary:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+.btn-ghost{background:transparent;border:1.5px solid var(--border);color:var(--p);padding:10px;}
+.btn-danger{background:var(--bad-lt);color:var(--bad);}
+.btn-ok{background:var(--ok-lt);color:var(--ok);}
+.btn-sm{padding:7px 12px;font-size:12px;font-weight:600;border:none;border-radius:8px;cursor:pointer;font-family:var(--font);}
+
+/* ── LGPD CHECKBOX ── */
+.lgpd-check{display:flex;align-items:flex-start;gap:10px;margin-bottom:16px;padding:12px;background:var(--p-50);border-radius:10px;}
+.lgpd-check input[type=checkbox]{width:18px;height:18px;margin-top:2px;flex-shrink:0;accent-color:var(--p);}
+.lgpd-check p{font-size:12px;color:var(--muted);line-height:1.5;}
+.lgpd-check a{color:var(--p);text-decoration:underline;cursor:pointer;}
+
+/* ── APP LAYOUT ── */
+#app{display:none;}
+header.app-header{
+  background:linear-gradient(135deg,#6D28D9 0%,#7C3AED 60%,#4F46E5 100%);
+  color:white;padding:20px 16px 56px;position:relative;overflow:hidden;
+}
+header.app-header::before{
+  content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;
+  border-radius:50%;background:rgba(255,255,255,0.06);
+}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;position:relative;}
+.header-title{font-size:19px;font-weight:800;}
+.header-user{font-size:12px;opacity:0.8;position:relative;}
+.btn-logout{background:rgba(255,255,255,0.2);border:none;color:white;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;}
+
+.summary-row{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+  max-width:480px;margin:-36px auto 0;padding:0 16px;position:relative;z-index:10;
+}
+.sum-card{background:white;border-radius:14px;padding:12px 8px;text-align:center;box-shadow:var(--shadow);}
+.sum-card .lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px;font-weight:600;}
+.sum-card .val{font-size:16px;font-weight:800;margin-top:4px;}
+.sum-card.tot .val{color:var(--bad);}
+.sum-card.pend .val{color:var(--warn);}
+.sum-card.pago .val{color:var(--ok);}
+
+nav.app-nav{
+  display:flex;max-width:480px;margin:20px auto 0;padding:0 16px;gap:6px;
+}
+nav.app-nav button{
+  flex:1;padding:9px 4px;border:1.5px solid var(--border);border-radius:10px;
+  background:white;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.2s;
+  color:var(--muted);font-family:var(--font);
+}
+nav.app-nav button.active{background:var(--p);border-color:var(--p);color:white;}
+
+.app-content{max-width:480px;margin:0 auto;padding:16px 16px 100px;}
+.section{display:none;}
+.section.active{display:block;}
+
+/* ── DEBT CARD ── */
+.debt-card{
+  background:white;border-radius:14px;padding:14px;margin-bottom:10px;
+  border-left:4px solid var(--p);box-shadow:0 2px 12px rgba(0,0,0,0.06);
+}
+.debt-card.pago{border-left-color:var(--ok);opacity:0.75;}
+.debt-card.vencida{border-left-color:var(--bad);}
+.debt-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.debt-name{font-size:15px;font-weight:700;}
+.debt-val{font-size:18px;font-weight:800;color:var(--p);white-space:nowrap;}
+.debt-card.pago .debt-val{color:var(--ok);}
+.debt-card.vencida .debt-val{color:var(--bad);}
+.debt-obs{font-size:12px;color:var(--muted);margin-top:3px;}
+.debt-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;}
+.b-p{background:var(--p-lt);color:var(--p-dark);}
+.b-ok{background:var(--ok-lt);color:var(--ok);}
+.b-bad{background:var(--bad-lt);color:var(--bad);}
+.b-warn{background:var(--warn-lt);color:var(--warn);}
+.b-gray{background:#F3F4F6;color:#6B7280;}
+.debt-actions{display:flex;gap:8px;margin-top:10px;}
+.btn-pagar{background:var(--ok-lt);color:var(--ok);}
+.btn-desfaz{background:var(--p-lt);color:var(--p-dark);}
+.btn-del{background:var(--bad-lt);color:var(--bad);}
+
+/* ── PERSON GROUP ── */
+.person-group{margin-bottom:20px;}
+.person-header{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--p-lt);border-radius:12px;margin-bottom:8px;}
+.avatar{width:40px;height:40px;border-radius:50%;background:var(--p);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;}
+.person-name{font-size:14px;font-weight:700;color:var(--p-dark);}
+.person-sub{font-size:12px;color:var(--muted);}
+.person-total{font-size:17px;font-weight:800;color:var(--p);margin-left:auto;}
+
+/* ── FILTERS ── */
+.filter-bar{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:2px;}
+.filter-btn{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:white;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;color:var(--muted);font-family:var(--font);}
+.filter-btn.active{background:var(--p);color:white;border-color:var(--p);}
+.search-wrap{margin-bottom:12px;}
+.search-wrap input{width:100%;padding:11px 14px 11px 38px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;background:white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236B7280' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.099zm-5.242 1.656a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z'/%3E%3C/svg%3E") no-repeat 12px center;outline:none;font-family:var(--font);color:var(--txt);}
+.search-wrap input:focus{border-color:var(--p);}
+
+/* ── ADD FORM ── */
+.add-card{background:white;border-radius:var(--r);padding:18px;box-shadow:var(--shadow);}
+.tipo-toggle{display:flex;gap:8px;margin-bottom:16px;}
+.tipo-btn{flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--border);background:white;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);color:var(--muted);transition:all 0.2s;}
+.tipo-btn.active{background:var(--p);color:white;border-color:var(--p);}
+.parc-preview{font-size:12px;color:var(--p);font-weight:600;margin:-10px 0 12px;min-height:16px;}
+.add-title{font-size:16px;font-weight:800;margin-bottom:16px;}
+
+/* ── EMPTY ── */
+.empty{text-align:center;padding:48px 20px;color:var(--muted);}
+.empty .icon{font-size:48px;margin-bottom:12px;}
+.empty p{font-size:14px;}
+
+/* ── LOADING ── */
+.loading{text-align:center;padding:32px;color:var(--muted);font-size:14px;}
+.spinner{width:28px;height:28px;border:3px solid var(--p-lt);border-top-color:var(--p);border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto 8px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:#1E1B4B;color:white;padding:12px 24px;border-radius:30px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:all 0.3s;z-index:9999;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.err{background:var(--bad);}
+
+/* ── MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(30,27,75,0.6);z-index:1000;display:none;align-items:flex-end;justify-content:center;}
+.modal-bg.open{display:flex;}
+.modal{background:white;border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:24px;max-height:90vh;overflow-y:auto;}
+.modal-handle{width:40px;height:4px;background:#E5E7EB;border-radius:4px;margin:0 auto 20px;}
+.modal-title{font-size:17px;font-weight:800;margin-bottom:16px;}
+
+/* ── CONFIG ── */
+.config-item{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid #F3F4F6;}
+.config-label{font-size:14px;font-weight:600;}
+.config-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+.security-badge{display:inline-flex;align-items:center;gap:6px;background:#ECFDF5;color:#065F46;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;margin-bottom:16px;}
+
+@media(min-width:520px){
+  .auth-wrap{padding:40px;}
+  nav.app-nav button{font-size:13px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ── AUTH ─────────────────────────────────────────────────────────────────── -->
+<div id="auth-wrap" class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="icon">💳</div>
+      <h1>Minhas Dívidas</h1>
+      <p>Controle seguro e privado</p>
+    </div>
+
+    <div class="auth-tabs">
+      <div class="auth-tab active" onclick="authTab('login')">Entrar</div>
+      <div class="auth-tab" onclick="authTab('cadastro')">Criar conta</div>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="form-login">
+      <div class="field">
+        <label>E-mail</label>
+        <input type="email" id="l-email" placeholder="seu@email.com" autocomplete="email">
+      </div>
+      <div class="field">
+        <label>Senha</label>
+        <input type="password" id="l-senha" placeholder="••••••••" autocomplete="current-password">
+        <div class="field-err" id="err-login"></div>
+      </div>
+      <button class="btn btn-primary" id="btn-login" onclick="fazerLogin()">Entrar</button>
+    </div>
+
+    <!-- CADASTRO -->
+    <div id="form-cadastro" style="display:none;">
+      <div class="field">
+        <label>Seu nome</label>
+        <input type="text" id="c-nome" placeholder="Como quer ser chamado?" autocomplete="name">
+        <div class="field-err" id="err-nome"></div>
+      </div>
+      <div class="field">
+        <label>E-mail</label>
+        <input type="email" id="c-email" placeholder="seu@email.com" autocomplete="email">
+        <div class="field-err" id="err-cemail"></div>
+      </div>
+      <div class="field">
+        <label>Senha</label>
+        <input type="password" id="c-senha" placeholder="Mín. 8 chars, letra maiúscula e número" autocomplete="new-password">
+        <div class="field-err" id="err-csenha"></div>
+      </div>
+      <div class="lgpd-check">
+        <input type="checkbox" id="lgpd-ok">
+        <p>Li e aceito a <a onclick="verPrivacidade()">Política de Privacidade</a>. Seus dados são protegidos pela LGPD (Lei 13.709/2018) e nunca serão vendidos.</p>
+      </div>
+      <div class="field-err" id="err-lgpd" style="margin-bottom:12px;"></div>
+      <button class="btn btn-primary" id="btn-cadastro" onclick="fazerCadastro()">Criar minha conta</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── APP ──────────────────────────────────────────────────────────────────── -->
+<div id="app">
+  <header class="app-header">
+    <div class="header-top">
+      <div>
+        <div class="header-title">💳 Minhas Dívidas</div>
+        <div class="header-user" id="hdr-user"></div>
+      </div>
+      <button class="btn-logout" onclick="logout()">Sair</button>
+    </div>
+  </header>
+
+  <div class="summary-row">
+    <div class="sum-card tot"><div class="lbl">Total</div><div class="val" id="s-tot">R$ 0</div></div>
+    <div class="sum-card pend"><div class="lbl">Pendente</div><div class="val" id="s-pend">R$ 0</div></div>
+    <div class="sum-card pago"><div class="lbl">Pago</div><div class="val" id="s-pago">R$ 0</div></div>
+  </div>
+
+  <nav class="app-nav">
+    <button class="active" onclick="goSection('minhas',this)">Minhas</button>
+    <button onclick="goSection('outros',this)">Terceiros</button>
+    <button onclick="goSection('add',this)">+ Novo</button>
+    <button onclick="goSection('config',this)">Config</button>
+  </nav>
+
+  <div class="app-content">
+
+    <!-- MINHAS -->
+    <div id="sec-minhas" class="section active">
+      <div class="filter-bar">
+        <button class="filter-btn active" onclick="setFiltro('todas',this)">Todas</button>
+        <button class="filter-btn" onclick="setFiltro('pendente',this)">Pendentes</button>
+        <button class="filter-btn" onclick="setFiltro('pago',this)">Pagas</button>
+        <button class="filter-btn" onclick="setFiltro('vencida',this)">Vencidas</button>
+      </div>
+      <div class="search-wrap"><input type="text" id="busca-minhas" placeholder="Buscar..." oninput="renderMinhas()"></div>
+      <div id="lista-minhas"><div class="loading"><div class="spinner"></div>Carregando...</div></div>
+    </div>
+
+    <!-- TERCEIROS -->
+    <div id="sec-outros" class="section">
+      <div class="search-wrap"><input type="text" id="busca-outros" placeholder="Buscar pessoa..." oninput="renderOutros()"></div>
+      <div id="lista-outros"><div class="loading"><div class="spinner"></div>Carregando...</div></div>
+    </div>
+
+    <!-- ADICIONAR -->
+    <div id="sec-add" class="section">
+      <div class="add-card">
+        <div class="add-title">Nova Dívida</div>
+        <div class="tipo-toggle">
+          <button class="tipo-btn active" id="tbtn-minha" onclick="setTipo('minha')">💳 Minha</button>
+          <button class="tipo-btn" id="tbtn-terceiro" onclick="setTipo('terceiro')">👤 De alguém</button>
+        </div>
+        <div class="field" id="campo-pessoa" style="display:none;">
+          <label>Nome da pessoa</label>
+          <input type="text" id="a-pessoa" placeholder="Ex: João, Maria...">
+        </div>
+        <div class="field">
+          <label>Descrição da compra</label>
+          <input type="text" id="a-desc" placeholder="Mercado, Roupa, Restaurante...">
+        </div>
+        <div class="field">
+          <label>Valor total (R$)</label>
+          <input type="number" id="a-valor" placeholder="0,00" step="0.01" min="0.01" oninput="calcPrev()">
+        </div>
+        <div class="field">
+          <label>Parcelado?</label>
+          <select id="a-parcelas" onchange="calcPrev()">
+            <option value="1">À vista (1x)</option>
+            <option value="2">2x</option><option value="3">3x</option><option value="4">4x</option>
+            <option value="5">5x</option><option value="6">6x</option><option value="7">7x</option>
+            <option value="8">8x</option><option value="9">9x</option><option value="10">10x</option>
+            <option value="11">11x</option><option value="12">12x</option>
+          </select>
+        </div>
+        <div class="parc-preview" id="parc-prev"></div>
+        <div class="field-row">
+          <div class="field">
+            <label>Data da compra</label>
+            <input type="date" id="a-data">
+          </div>
+          <div class="field">
+            <label>Vencimento</label>
+            <input type="date" id="a-venc">
+          </div>
+        </div>
+        <div class="field">
+          <label>Observação (opcional)</label>
+          <input type="text" id="a-obs" placeholder="Detalhes extras...">
+        </div>
+        <div class="field-err" id="err-add" style="margin-bottom:12px;"></div>
+        <button class="btn btn-primary" id="btn-add" onclick="addDivida()">💾 Salvar Dívida</button>
+      </div>
+    </div>
+
+    <!-- CONFIG -->
+    <div id="sec-config" class="section">
+      <div style="margin-bottom:16px;">
+        <div class="security-badge">🔒 App protegido pela LGPD</div>
+
+        <div class="config-item">
+          <div><div class="config-label">👤 Minha conta</div><div class="config-sub" id="cfg-email"></div></div>
+        </div>
+        <div class="config-item">
+          <div><div class="config-label">🔐 Sessão</div><div class="config-sub">Token JWT com expiração automática</div></div>
+          <span class="badge b-ok">Ativa</span>
+        </div>
+        <div class="config-item">
+          <div><div class="config-label">🛡️ Criptografia</div><div class="config-sub">AES-256-GCM no servidor</div></div>
+          <span class="badge b-ok">Ativa</span>
+        </div>
+        <div class="config-item">
+          <div><div class="config-label">📋 Auditoria LGPD</div><div class="config-sub">Log de todas as ações gravado</div></div>
+          <span class="badge b-ok">Ativa</span>
+        </div>
+        <div class="config-item">
+          <div><div class="config-label">🚫 Brute-force</div><div class="config-sub">Rate limiting + bloqueio automático</div></div>
+          <span class="badge b-ok">Protegido</span>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <button class="btn btn-ghost" onclick="verPrivacidade()">📄 Política de Privacidade (LGPD)</button>
+        <button class="btn btn-danger" onclick="pedirExclusaoConta()" style="border:none;">⚠️ Excluir minha conta e dados</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── MODAL PRIVACIDADE ─────────────────────────────────────────────────────── -->
+<div class="modal-bg" id="modal-privacidade">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Política de Privacidade — LGPD</div>
+    <div style="font-size:13px;color:var(--muted);line-height:1.7;">
+      <p><strong style="color:var(--txt);">Quais dados coletamos:</strong> nome, e-mail e informações de dívidas que você cadastrar.</p>
+      <br>
+      <p><strong style="color:var(--txt);">Como usamos:</strong> exclusivamente para exibir e gerenciar suas dívidas. Nunca vendemos ou compartilhamos seus dados.</p>
+      <br>
+      <p><strong style="color:var(--txt);">Proteção:</strong> senhas criptografadas com bcrypt (custo 12). Dados sensíveis com AES-256-GCM. Comunicação via HTTPS. Rate limiting contra ataques.</p>
+      <br>
+      <p><strong style="color:var(--txt);">Seus direitos (LGPD Art. 18):</strong></p>
+      <ul style="margin-left:16px;margin-top:6px;">
+        <li>Acesso aos seus dados</li>
+        <li>Correção de dados incorretos</li>
+        <li>Exclusão total da conta e dados</li>
+        <li>Portabilidade dos dados</li>
+        <li>Revogação do consentimento a qualquer momento</li>
+      </ul>
+      <br>
+      <p><strong style="color:var(--txt);">Retenção:</strong> dados mantidos enquanto a conta estiver ativa. Excluídos em até 30 dias após solicitação.</p>
+      <br>
+      <p><strong style="color:var(--txt);">Auditoria:</strong> todas as ações são registradas em log para segurança (IP, data/hora, ação).</p>
+    </div>
+    <br>
+    <button class="btn btn-primary" onclick="fecharModal('modal-privacidade')">Entendi</button>
+  </div>
+</div>
+
+<!-- ── TOAST ─────────────────────────────────────────────────────────────────── -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── CONFIGURAÇÃO ──────────────────────────────────────────────────────────────
+// IMPORTANTE: Troque pela URL real do seu backend quando hospedar
+const API = 'http://localhost:3001/api';
+
+// ── ESTADO LOCAL ──────────────────────────────────────────────────────────────
+let dividas = [];
+let usuario = null;
+let filtro = 'todas';
+let tipoForm = 'minha';
+let refreshTokenVal = null;
+let refreshTimer = null;
+
+// ── TOKEN MANAGEMENT ──────────────────────────────────────────────────────────
+function getAccess() { return sessionStorage.getItem('at'); }
+function setTokens(access, refresh) {
+  sessionStorage.setItem('at', access);
+  refreshTokenVal = refresh;
+  // Auto-refresh 2 min antes de expirar (token dura 15min)
+  clearTimeout(refreshTimer);
+  refreshTimer = setTimeout(renovarToken, 13 * 60 * 1000);
+}
+function clearTokens() {
+  sessionStorage.removeItem('at');
+  refreshTokenVal = null;
+  clearTimeout(refreshTimer);
+}
+
+async function renovarToken() {
+  if (!refreshTokenVal) { fazerLogout(); return; }
+  try {
+    const r = await fetch(`${API}/auth/refresh`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ refreshToken: refreshTokenVal })
+    });
+    if (!r.ok) { fazerLogout(); return; }
+    const d = await r.json();
+    setTokens(d.accessToken, d.refreshToken);
+  } catch { fazerLogout(); }
+}
+
+// ── HTTP HELPER ───────────────────────────────────────────────────────────────
+async function api(method, path, body) {
+  const opts = {
+    method,
+    headers: { 'Content-Type': 'application/json' }
+  };
+  const token = getAccess();
+  if (token) opts.headers['Authorization'] = `Bearer ${token}`;
+  if (body) opts.body = JSON.stringify(body);
+
+  const r = await fetch(`${API}${path}`, opts);
+
+  if (r.status === 401) {
+    const d = await r.json();
+    if (d.codigo === 'TOKEN_EXPIRADO') {
+      await renovarToken();
+      return api(method, path, body); // retry
+    }
+    fazerLogout();
+    throw new Error('Sessão expirada');
+  }
+  return r;
+}
+
+// ── AUTH TABS ─────────────────────────────────────────────────────────────────
+function authTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='cadastro')));
+  document.getElementById('form-login').style.display = tab === 'login' ? '' : 'none';
+  document.getElementById('form-cadastro').style.display = tab === 'cadastro' ? '' : 'none';
+  ['err-login','err-nome','err-cemail','err-csenha','err-lgpd'].forEach(id => setErr(id,''));
+}
+
+function setErr(id, msg) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = msg;
+}
+
+function setBtnLoading(id, loading, txt) {
+  const b = document.getElementById(id);
+  b.disabled = loading;
+  b.textContent = loading ? '⏳ Aguarde...' : txt;
+}
+
+// ── CADASTRO ──────────────────────────────────────────────────────────────────
+async function fazerCadastro() {
+  const nome = document.getElementById('c-nome').value.trim();
+  const email = document.getElementById('c-email').value.trim();
+  const senha = document.getElementById('c-senha').value;
+  const lgpd = document.getElementById('lgpd-ok').checked;
+
+  ['err-nome','err-cemail','err-csenha','err-lgpd'].forEach(id => setErr(id,''));
+  let ok = true;
+  if (nome.length < 2) { setErr('err-nome','Nome deve ter ao menos 2 caracteres.'); ok=false; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setErr('err-cemail','E-mail inválido.'); ok=false; }
+  if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}/.test(senha)) {
+    setErr('err-csenha','Mín. 8 caracteres com maiúscula e número.'); ok=false;
+  }
+  if (!lgpd) { setErr('err-lgpd','Você precisa aceitar os termos de privacidade.'); ok=false; }
+  if (!ok) return;
+
+  setBtnLoading('btn-cadastro', true);
+  try {
+    const r = await fetch(`${API}/auth/cadastro`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ nome, email, senha, lgpdAceito: 'true' })
+    });
+    const d = await r.json();
+    if (!r.ok) {
+      setErr('err-lgpd', d.erro || 'Erro ao criar conta.');
+      return;
+    }
+    entrarNoApp(d);
+    toast('✅ Conta criada! Bem-vindo(a)!');
+  } catch {
+    setErr('err-lgpd', 'Erro de conexão. Servidor offline?');
+  } finally {
+    setBtnLoading('btn-cadastro', false, 'Criar minha conta');
+  }
+}
+
+// ── LOGIN ─────────────────────────────────────────────────────────────────────
+async function fazerLogin() {
+  const email = document.getElementById('l-email').value.trim();
+  const senha = document.getElementById('l-senha').value;
+  setErr('err-login', '');
+
+  if (!email || !senha) { setErr('err-login', 'Preencha e-mail e senha.'); return; }
+
+  setBtnLoading('btn-login', true);
+  try {
+    const r = await fetch(`${API}/auth/login`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ email, senha })
+    });
+    const d = await r.json();
+    if (!r.ok) { setErr('err-login', d.erro || 'Credenciais inválidas.'); return; }
+    entrarNoApp(d);
+    toast('👋 Bem-vindo(a) de volta!');
+  } catch {
+    setErr('err-login', 'Erro de conexão. Servidor offline?');
+  } finally {
+    setBtnLoading('btn-login', false, 'Entrar');
+  }
+}
+
+function entrarNoApp(d) {
+  usuario = d.usuario;
+  setTokens(d.accessToken, d.refreshToken);
+  document.getElementById('auth-wrap').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('hdr-user').textContent = `Olá, ${usuario.nome.split(' ')[0]} 👋`;
+  document.getElementById('cfg-email').textContent = usuario.email;
+  document.getElementById('a-data').value = new Date().toISOString().split('T')[0];
+  carregarTudo();
+}
+
+// ── LOGOUT ────────────────────────────────────────────────────────────────────
+async function logout() {
+  if (!confirm('Deseja sair?')) return;
+  try {
+    await api('POST', '/auth/logout', { refreshToken: refreshTokenVal });
+  } catch {}
+  fazerLogout();
+}
+
+function fazerLogout() {
+  clearTokens();
+  usuario = null;
+  dividas = [];
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('auth-wrap').style.display = 'flex';
+}
+
+// ── CARREGAR DADOS ────────────────────────────────────────────────────────────
+async function carregarTudo() {
+  try {
+    const [rDiv, rRes] = await Promise.all([
+      api('GET', '/dividas'),
+      api('GET', '/dividas/resumo')
+    ]);
+    const dDiv = await rDiv.json();
+    const dRes = await rRes.json();
+    dividas = dDiv.dividas || [];
+    atualizarResumo(dRes);
+    renderMinhas();
+    renderOutros();
+  } catch (err) {
+    if (err.message !== 'Sessão expirada') toast('❌ Erro ao carregar dados.', true);
+  }
+}
+
+function atualizarResumo(r) {
+  const fmt = v => 'R$ ' + parseFloat(v).toLocaleString('pt-BR',{minimumFractionDigits:2});
+  document.getElementById('s-tot').textContent = fmt(parseFloat(r.total_pendente||0)+parseFloat(r.total_pago||0));
+  document.getElementById('s-pend').textContent = fmt(r.total_pendente||0);
+  document.getElementById('s-pago').textContent = fmt(r.total_pago||0);
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+const fmt = v => 'R$ ' + parseFloat(v).toLocaleString('pt-BR',{minimumFractionDigits:2});
+const fmtData = d => { if(!d) return ''; const [y,m,day]=d.split('T')[0].split('-'); return `${day}/${m}/${y}`; };
+const iniciais = n => n?.trim().split(' ').slice(0,2).map(x=>x[0]).join('').toUpperCase() || '?';
+
+function getStatus(d) {
+  if (d.status === 'pago') return 'pago';
+  if (d.data_vencimento && new Date(d.data_vencimento) < new Date() && d.status !== 'pago') return 'vencida';
+  return 'pendente';
+}
+
+function renderMinhas() {
+  const busca = document.getElementById('busca-minhas')?.value.toLowerCase() || '';
+  const lista = dividas.filter(d => {
+    if (d.tipo !== 'minha') return false;
+    if (busca && !d.descricao.toLowerCase().includes(busca)) return false;
+    const s = getStatus(d);
+    return filtro === 'todas' || filtro === s;
+  });
+  document.getElementById('lista-minhas').innerHTML = lista.length
+    ? lista.map(cardDivida).join('')
+    : `<div class="empty"><div class="icon">💸</div><p>Nenhuma dívida ${filtro !== 'todas' ? filtro : ''} aqui</p></div>`;
+}
+
+function renderOutros() {
+  const busca = document.getElementById('busca-outros')?.value.toLowerCase() || '';
+  const outros = dividas.filter(d => d.tipo === 'terceiro');
+  const pessoas = {};
+  outros.forEach(d => { const n = d.pessoa_nome||'Sem nome'; if(!pessoas[n]) pessoas[n]=[]; pessoas[n].push(d); });
+  const nomes = Object.keys(pessoas).filter(n => !busca || n.toLowerCase().includes(busca) || pessoas[n].some(d=>d.descricao.toLowerCase().includes(busca)));
+
+  document.getElementById('lista-outros').innerHTML = nomes.length
+    ? nomes.map(nome => {
+        const ds = pessoas[nome];
+        const totalPend = ds.filter(d=>getStatus(d)!=='pago').reduce((s,d)=>s+parseFloat(d.valor),0);
+        return `<div class="person-group">
+          <div class="person-header">
+            <div class="avatar">${iniciais(nome)}</div>
+            <div class="person-info"><div class="person-name">${nome}</div><div class="person-sub">${ds.length} compra${ds.length>1?'s':''}</div></div>
+            <div class="person-total">${fmt(totalPend)}</div>
+          </div>
+          ${ds.map(d=>cardDivida(d,true)).join('')}
+        </div>`;
+      }).join('')
+    : `<div class="empty"><div class="icon">👥</div><p>Nenhuma dívida de terceiros</p></div>`;
+}
+
+function cardDivida(d) {
+  const s = getStatus(d);
+  const cls = s === 'pago' ? 'pago' : s === 'vencida' ? 'vencida' : '';
+  const bdg = s==='pago'?'<span class="badge b-ok">✓ Pago</span>':s==='vencida'?'<span class="badge b-bad">⚠ Vencida</span>':'<span class="badge b-warn">⏳ Pendente</span>';
+  const parc = parseInt(d.parcelas)>1?`<span class="badge b-p">${d.parcelas}x de ${fmt(d.valor_parcela)}</span>`:'';
+  const venc = d.data_vencimento?`<span class="badge b-gray">📅 ${fmtData(d.data_vencimento)}</span>`:'';
+  const acao = s!=='pago'
+    ? `<button class="btn-sm btn-pagar" onclick="marcarPago('${d.id}')">✓ Pago</button>`
+    : `<button class="btn-sm btn-desfaz" onclick="desfazerPago('${d.id}')">↩ Desfazer</button>`;
+  return `
+    <div class="debt-card ${cls}">
+      <div class="debt-top">
+        <div><div class="debt-name">${d.descricao}</div>${d.observacao?`<div class="debt-obs">${d.observacao}</div>`:''}</div>
+        <div class="debt-val">${fmt(d.valor)}</div>
+      </div>
+      <div class="debt-meta">${bdg}${parc}${venc}${d.data_compra?`<span class="badge b-gray">🗓 ${fmtData(d.data_compra)}</span>`:''}</div>
+      <div class="debt-actions">${acao}<button class="btn-sm btn-del" onclick="excluir('${d.id}')">🗑</button></div>
+    </div>`;
+}
+
+// ── ACTIONS ───────────────────────────────────────────────────────────────────
+async function marcarPago(id) {
+  try {
+    const r = await api('PUT', `/dividas/${id}`, { status: 'pago' });
+    if (!r.ok) { toast('❌ Erro ao atualizar.', true); return; }
+    const d = dividas.find(x=>x.id===id);
+    if (d) d.status = 'pago';
+    renderMinhas(); renderOutros();
+    carregarTudo();
+    toast('✅ Marcado como pago!');
+  } catch {}
+}
+
+async function desfazerPago(id) {
+  try {
+    const r = await api('PUT', `/dividas/${id}`, { status: 'pendente' });
+    if (!r.ok) { toast('❌ Erro.', true); return; }
+    const d = dividas.find(x=>x.id===id);
+    if (d) d.status = 'pendente';
+    renderMinhas(); renderOutros(); carregarTudo();
+    toast('↩ Desfeito');
+  } catch {}
+}
+
+async function excluir(id) {
+  if (!confirm('Excluir esta dívida?')) return;
+  try {
+    const r = await api('DELETE', `/dividas/${id}`);
+    if (!r.ok) { toast('❌ Erro ao excluir.', true); return; }
+    dividas = dividas.filter(x=>x.id!==id);
+    renderMinhas(); renderOutros(); carregarTudo();
+    toast('🗑 Excluída');
+  } catch {}
+}
+
+// ── ADICIONAR ─────────────────────────────────────────────────────────────────
+function setTipo(t) {
+  tipoForm = t;
+  document.getElementById('campo-pessoa').style.display = t==='terceiro'?'':'none';
+  document.getElementById('tbtn-minha').classList.toggle('active', t==='minha');
+  document.getElementById('tbtn-terceiro').classList.toggle('active', t==='terceiro');
+}
+
+function calcPrev() {
+  const v = parseFloat(document.getElementById('a-valor').value)||0;
+  const p = parseInt(document.getElementById('a-parcelas').value)||1;
+  document.getElementById('parc-prev').textContent = v>0&&p>1 ? `= ${p}x de ${fmt(v/p)}` : '';
+}
+
+async function addDivida() {
+  const desc = document.getElementById('a-desc').value.trim();
+  const valor = parseFloat(document.getElementById('a-valor').value);
+  const pessoa = document.getElementById('a-pessoa').value.trim();
+  const parcelas = parseInt(document.getElementById('a-parcelas').value)||1;
+  const dataCompra = document.getElementById('a-data').value;
+  const dataVencimento = document.getElementById('a-venc').value;
+  const observacao = document.getElementById('a-obs').value.trim();
+  setErr('err-add','');
+
+  if (!desc) { setErr('err-add','Informe a descrição.'); return; }
+  if (!valor || valor <= 0) { setErr('err-add','Informe o valor.'); return; }
+  if (tipoForm === 'terceiro' && !pessoa) { setErr('err-add','Informe o nome da pessoa.'); return; }
+
+  setBtnLoading('btn-add', true);
+  try {
+    const r = await api('POST', '/dividas', {
+      tipo: tipoForm, pessoaNome: tipoForm==='terceiro'?pessoa:undefined,
+      descricao: desc, valor, parcelas,
+      dataCompra: dataCompra||undefined, dataVencimento: dataVencimento||undefined,
+      observacao: observacao||undefined
+    });
+    const d = await r.json();
+    if (!r.ok) { setErr('err-add', d.erro || 'Erro ao salvar.'); return; }
+    dividas.unshift(d.divida);
+    limparForm();
+    await carregarTudo();
+    toast('✅ Dívida salva!');
+    goSectionDirect(tipoForm==='minha'?'minhas':'outros');
+  } catch {
+    setErr('err-add','Erro de conexão.');
+  } finally {
+    setBtnLoading('btn-add', false, '💾 Salvar Dívida');
+  }
+}
+
+function limparForm() {
+  ['a-pessoa','a-desc','a-valor','a-obs'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+  document.getElementById('a-parcelas').value='1';
+  document.getElementById('a-venc').value='';
+  document.getElementById('a-data').value=new Date().toISOString().split('T')[0];
+  document.getElementById('parc-prev').textContent='';
+  setErr('err-add','');
+  setTipo('minha');
+}
+
+// ── NAVEGAÇÃO ─────────────────────────────────────────────────────────────────
+function goSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('nav.app-nav button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'add') limparForm();
+}
+
+function goSectionDirect(id) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('nav.app-nav button').forEach((b,i)=>{
+    b.classList.remove('active');
+    if((id==='minhas'&&i===0)||(id==='outros'&&i===1)) b.classList.add('active');
+  });
+  document.getElementById('sec-'+id).classList.add('active');
+}
+
+function setFiltro(f, el) {
+  filtro = f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderMinhas();
+}
+
+// ── MODAIS ────────────────────────────────────────────────────────────────────
+function verPrivacidade() { document.getElementById('modal-privacidade').classList.add('open'); }
+function fecharModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-bg').forEach(m => m.addEventListener('click', e => { if(e.target===m) m.classList.remove('open'); }));
+
+async function pedirExclusaoConta() {
+  const senha = prompt('Para excluir sua conta e todos os dados, confirme sua senha:');
+  if (!senha) return;
+  if (!confirm('ATENÇÃO: Isso apagará TODOS os seus dados permanentemente. Continuar?')) return;
+  try {
+    const r = await api('DELETE', '/auth/conta', { senha });
+    const d = await r.json();
+    if (!r.ok) { toast('❌ ' + (d.erro||'Erro.'), true); return; }
+    toast('✅ Conta excluída conforme LGPD.');
+    setTimeout(fazerLogout, 1500);
+  } catch { toast('❌ Erro de conexão.', true); }
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+function toast(msg, err=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (err?' err':'') + ' show';
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// Tecla Enter no login
+document.getElementById('l-senha').addEventListener('keydown', e => { if(e.key==='Enter') fazerLogin(); });
+document.getElementById('l-email').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('l-senha').focus(); });
+</script>
+</body>
+</html>
