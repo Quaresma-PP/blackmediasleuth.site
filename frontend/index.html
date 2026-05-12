@@ -136,6 +136,12 @@ nav.app-nav button.active{background:var(--p);border-color:var(--p);color:white;
 .b-warn{background:var(--warn-lt);color:var(--warn);}
 .b-gray{background:#F3F4F6;color:#6B7280;}
 .debt-actions{display:flex;gap:8px;margin-top:10px;}
+.month-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
+.chip{font-size:10px;font-weight:700;padding:4px 8px;border-radius:8px;white-space:nowrap;}
+.chip-paid{background:var(--ok-lt);color:var(--ok);}
+.chip-current{background:var(--warn-lt);color:var(--warn);cursor:pointer;border:1.5px solid var(--warn);}
+.chip-current:hover{background:var(--warn);color:#fff;}
+.chip-future{background:#F3F4F6;color:#9CA3AF;}
 .btn-pagar{background:var(--ok-lt);color:var(--ok);}
 .btn-desfaz{background:var(--p-lt);color:var(--p-dark);}
 .btn-del{background:var(--bad-lt);color:var(--bad);}
@@ -571,6 +577,7 @@ async function fazerLogin() {
   }
 }
 
+let _keepAlive = null;
 function entrarNoApp(d) {
   usuario = d.usuario;
   setTokens(d.accessToken, d.refreshToken);
@@ -578,6 +585,8 @@ function entrarNoApp(d) {
   document.getElementById('app').style.display = 'block';
   document.getElementById('hdr-user').textContent = `Olá, ${usuario.nome.split(' ')[0]} 👋`;
   document.getElementById('cfg-email').textContent = usuario.email;
+  if (_keepAlive) clearInterval(_keepAlive);
+  _keepAlive = setInterval(() => fetch(API.replace('/api','') + '/health').catch(()=>{}), 14 * 60 * 1000);
   document.getElementById('a-data').value = new Date().toISOString().split('T')[0];
   carregarTudo();
 }
@@ -671,6 +680,28 @@ function renderOutros() {
     : `<div class="empty"><div class="icon">👥</div><p>Nenhuma dívida de terceiros</p></div>`;
 }
 
+const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+
+function gerarChipsMeses(d) {
+  const total = parseInt(d.parcelas) || 1;
+  if (total <= 1) return '';
+  const pagas = parseInt(d.parcelas_pagas) || 0;
+  const ref = new Date(d.data_compra || d.created_at || Date.now());
+  const chips = [];
+  for (let i = 0; i < total; i++) {
+    const dt = new Date(ref.getFullYear(), ref.getMonth() + i, 1);
+    const label = `${MESES[dt.getMonth()]}/${String(dt.getFullYear()).slice(2)}`;
+    if (i < pagas) {
+      chips.push(`<span class="chip chip-paid">✓ ${label}</span>`);
+    } else if (i === pagas && d.status !== 'pago') {
+      chips.push(`<span class="chip chip-current" onclick="pagarParcela('${d.id}')" title="Clique para marcar como paga">${label} →</span>`);
+    } else {
+      chips.push(`<span class="chip chip-future">${label}</span>`);
+    }
+  }
+  return `<div class="month-chips">${chips.join('')}</div>`;
+}
+
 function cardDivida(d) {
   const s = getStatus(d);
   const cls = s === 'pago' ? 'pago' : s === 'vencida' ? 'vencida' : '';
@@ -678,23 +709,22 @@ function cardDivida(d) {
   const totalParc = parseInt(d.parcelas) || 1;
   const pagas = parseInt(d.parcelas_pagas) || 0;
   const pad = n => String(n).padStart(2,'0');
-  const parc = totalParc > 1
-    ? `<span class="badge b-p" style="cursor:pointer;" onclick="editarParcelas('${d.id}',${pagas},${totalParc})" title="Clique para editar parcelas pagas">${pad(pagas)}/${pad(totalParc)} · ${fmt(d.valor_parcela)}/mês ✏️</span>`
-    : '';
   const venc = d.data_vencimento?`<span class="badge b-gray">📅 ${fmtData(d.data_vencimento)}</span>`:'';
   const acao = s !== 'pago'
     ? (totalParc > 1
-        ? `<button class="btn-sm btn-pagar" onclick="pagarParcela('${d.id}')">✓ Parcela ${pad(pagas+1)}/${pad(totalParc)}</button>`
+        ? `<button class="btn-sm btn-pagar" onclick="pagarParcela('${d.id}')">✓ Pagar ${pad(pagas+1)}ª parcela</button>`
         : `<button class="btn-sm btn-pagar" onclick="marcarPago('${d.id}')">✓ Pago</button>`)
     : `<button class="btn-sm btn-desfaz" onclick="desfazerPago('${d.id}')">↩ Desfazer</button>`;
+  const chips = gerarChipsMeses(d);
   return `
     <div class="debt-card ${cls}">
       <div class="debt-top">
         <div><div class="debt-name">${d.descricao}</div>${d.observacao?`<div class="debt-obs">${d.observacao}</div>`:''}</div>
         <div class="debt-val">${fmt(d.valor)}</div>
       </div>
-      <div class="debt-meta">${bdg}${parc}${venc}${d.data_compra?`<span class="badge b-gray">🗓 ${fmtData(d.data_compra)}</span>`:''}</div>
-      <div class="debt-actions">${acao}<button class="btn-sm btn-del" onclick="excluir('${d.id}')">🗑</button></div>
+      <div class="debt-meta">${bdg}${venc}${d.data_compra?`<span class="badge b-gray">🗓 ${fmtData(d.data_compra)}</span>`:''}</div>
+      ${chips}
+      <div class="debt-actions">${acao}<button class="btn-sm" style="background:#F3F4F6;color:#6B7280;" onclick="editarParcelas('${d.id}',${pagas},${totalParc})">✏️ Editar</button><button class="btn-sm btn-del" onclick="excluir('${d.id}')">🗑</button></div>
     </div>`;
 }
 
@@ -709,6 +739,7 @@ async function editarParcelas(id, atual, total) {
     const { divida } = await r.json();
     const idx = dividas.findIndex(x => x.id === id);
     if (idx !== -1) dividas[idx] = divida;
+    setFiltro('todas', document.querySelector('.filter-btn'));
     renderMinhas(); renderOutros(); carregarTudo();
     toast(`✅ Atualizado: ${String(val).padStart(2,'0')}/${String(total).padStart(2,'0')} pagas`);
   } catch { toast('❌ Erro de conexão.', true); }
@@ -721,10 +752,11 @@ async function pagarParcela(id) {
     const { divida } = await r.json();
     const idx = dividas.findIndex(x => x.id === id);
     if (idx !== -1) dividas[idx] = divida;
+    setFiltro('todas', document.querySelector('.filter-btn'));
     renderMinhas(); renderOutros(); carregarTudo();
     const pagas = parseInt(divida.parcelas_pagas);
     const total = parseInt(divida.parcelas);
-    toast(pagas >= total ? '🎉 Dívida quitada!' : `✅ Parcela ${String(pagas).padStart(2,'0')}/${String(total).padStart(2,'0')} paga!`);
+    toast(pagas >= total ? '🎉 Dívida quitada!' : `✅ ${MESES[(new Date(divida.data_compra||divida.created_at)).getMonth() + pagas - 1] || 'Parcela'} paga!`);
   } catch { toast('❌ Erro de conexão.', true); }
 }
 
