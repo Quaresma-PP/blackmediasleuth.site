@@ -27,6 +27,9 @@ app.use(helmet({
   referrerPolicy: { policy: 'strict-origin-when-cross-origin' }
 }));
 
+// Render usa proxy reverso — necessário para rate limiter e IPs corretos
+app.set('trust proxy', 1);
+
 // ── CORS ─────────────────────────────────────────────────────────────────────
 const origensPermitidas = (process.env.FRONTEND_URL || 'http://localhost:5500').split(',');
 app.use(cors({
