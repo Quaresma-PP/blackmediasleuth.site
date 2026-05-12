@@ -47,7 +47,7 @@ const criar = async (req, res) => {
   const erros = validationResult(req);
   if (!erros.isEmpty()) return res.status(422).json({ erros: erros.array() });
 
-  const { tipo, pesssoaNome, descricao, valor, parcelas, dataCompra, dataVencimento, observacao } = req.body;
+  const { tipo, descricao, valor, parcelas, parcelasJaPagas, dataCompra, dataVencimento, observacao } = req.body;
   const pessoaNome = req.body.pessoaNome;
 
   if (tipo === 'terceiro' && !pessoaNome?.trim()) {
@@ -57,11 +57,13 @@ const criar = async (req, res) => {
   try {
     const parc = parseInt(parcelas) || 1;
     const val = parseFloat(valor);
+    const jasPagas = Math.max(0, Math.min(parseInt(parcelasJaPagas) || 0, parc - 1));
+    const statusInicial = jasPagas >= parc ? 'pago' : 'pendente';
     const { rows } = await pool.query(
       `INSERT INTO dividas
-        (usuario_id, tipo, pessoa_nome, descricao, valor, parcelas, valor_parcela,
-         data_compra, data_vencimento, observacao)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+        (usuario_id, tipo, pessoa_nome, descricao, valor, parcelas, parcelas_pagas, valor_parcela,
+         data_compra, data_vencimento, observacao, status)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
        RETURNING *`,
       [
         req.usuario.id,
@@ -70,10 +72,12 @@ const criar = async (req, res) => {
         sanitizar(descricao),
         val,
         parc,
+        jasPagas,
         +(val / parc).toFixed(2),
         dataCompra || null,
         dataVencimento || null,
-        observacao ? sanitizar(observacao) : null
+        observacao ? sanitizar(observacao) : null,
+        statusInicial
       ]
     );
 
@@ -102,9 +106,20 @@ const atualizar = async (req, res) => {
     );
     if (!check.length) return res.status(404).json({ erro: 'Dívida não encontrada.' });
 
-    const { descricao, valor, parcelas, dataVencimento, observacao, status, pessoaNome } = req.body;
+    const { descricao, valor, parcelas, parcelasJaPagas, dataVencimento, observacao, status, pessoaNome } = req.body;
     const parc = parseInt(parcelas) || 1;
     const val = parseFloat(valor);
+
+    // Se veio parcelasJaPagas, recalcula status automaticamente
+    let novoStatus = status || null;
+    let novasPagas = parcelasJaPagas !== undefined ? parseInt(parcelasJaPagas) : null;
+    if (novasPagas !== null) {
+      const { rows: cur } = await pool.query('SELECT parcelas FROM dividas WHERE id = $1', [id]);
+      const totalParc = parc || parseInt(cur[0]?.parcelas) || 1;
+      novasPagas = Math.max(0, Math.min(novasPagas, totalParc));
+      if (novasPagas >= totalParc) novoStatus = 'pago';
+      else if (novoStatus === 'pago') novoStatus = 'pendente';
+    }
 
     const { rows } = await pool.query(
       `UPDATE dividas SET
@@ -116,9 +131,10 @@ const atualizar = async (req, res) => {
         observacao = $6,
         status = COALESCE($7, status),
         pessoa_nome = COALESCE($8, pessoa_nome),
-        pago_em = CASE WHEN $7 = 'pago' AND status != 'pago' THEN NOW() ELSE pago_em END,
+        parcelas_pagas = COALESCE($9, parcelas_pagas),
+        pago_em = CASE WHEN COALESCE($7, status) = 'pago' AND status != 'pago' THEN NOW() ELSE pago_em END,
         updated_at = NOW()
-       WHERE id = $9 AND usuario_id = $10
+       WHERE id = $10 AND usuario_id = $11
        RETURNING *`,
       [
         descricao ? sanitizar(descricao) : null,
@@ -127,8 +143,9 @@ const atualizar = async (req, res) => {
         val && parc ? +(val / parc).toFixed(2) : null,
         dataVencimento || null,
         observacao !== undefined ? sanitizar(observacao) : undefined,
-        status || null,
+        novoStatus,
         pessoaNome ? sanitizar(pessoaNome) : null,
+        novasPagas,
         id, req.usuario.id
       ]
     );

@@ -331,6 +331,10 @@ nav.app-nav button.active{background:var(--p);border-color:var(--p);color:white;
           </select>
         </div>
         <div class="parc-preview" id="parc-prev"></div>
+        <div class="field" id="campo-pagas" style="display:none;">
+          <label>Parcelas já pagas</label>
+          <input type="number" id="a-pagas" value="0" min="0" step="1" placeholder="0">
+        </div>
         <div class="field-row">
           <div class="field">
             <label>Data da compra</label>
@@ -675,7 +679,7 @@ function cardDivida(d) {
   const pagas = parseInt(d.parcelas_pagas) || 0;
   const pad = n => String(n).padStart(2,'0');
   const parc = totalParc > 1
-    ? `<span class="badge b-p">${pad(pagas)}/${pad(totalParc)} · ${fmt(d.valor_parcela)}/mês</span>`
+    ? `<span class="badge b-p" style="cursor:pointer;" onclick="editarParcelas('${d.id}',${pagas},${totalParc})" title="Clique para editar parcelas pagas">${pad(pagas)}/${pad(totalParc)} · ${fmt(d.valor_parcela)}/mês ✏️</span>`
     : '';
   const venc = d.data_vencimento?`<span class="badge b-gray">📅 ${fmtData(d.data_vencimento)}</span>`:'';
   const acao = s !== 'pago'
@@ -695,6 +699,21 @@ function cardDivida(d) {
 }
 
 // ── ACTIONS ───────────────────────────────────────────────────────────────────
+async function editarParcelas(id, atual, total) {
+  const novo = prompt(`Quantas parcelas já foram pagas?\n(atual: ${atual} de ${total})`, atual);
+  if (novo === null) return;
+  const val = Math.max(0, Math.min(parseInt(novo)||0, total));
+  try {
+    const r = await api('PUT', `/dividas/${id}`, { parcelasJaPagas: val });
+    if (!r.ok) { const e = await r.json(); toast('❌ ' + (e.erro||'Erro.'), true); return; }
+    const { divida } = await r.json();
+    const idx = dividas.findIndex(x => x.id === id);
+    if (idx !== -1) dividas[idx] = divida;
+    renderMinhas(); renderOutros(); carregarTudo();
+    toast(`✅ Atualizado: ${String(val).padStart(2,'0')}/${String(total).padStart(2,'0')} pagas`);
+  } catch { toast('❌ Erro de conexão.', true); }
+}
+
 async function pagarParcela(id) {
   try {
     const r = await api('POST', `/dividas/${id}/parcela`);
@@ -755,6 +774,15 @@ function calcPrev() {
   const v = parseFloat(document.getElementById('a-valor').value)||0;
   const p = parseInt(document.getElementById('a-parcelas').value)||1;
   document.getElementById('parc-prev').textContent = v>0&&p>1 ? `= ${p}x de ${fmt(v/p)}` : '';
+  const campoPagas = document.getElementById('campo-pagas');
+  const inputPagas = document.getElementById('a-pagas');
+  if (p > 1) {
+    campoPagas.style.display = '';
+    inputPagas.max = p - 1;
+  } else {
+    campoPagas.style.display = 'none';
+    inputPagas.value = '0';
+  }
 }
 
 async function addDivida() {
@@ -762,6 +790,7 @@ async function addDivida() {
   const valor = parseFloat(document.getElementById('a-valor').value);
   const pessoa = document.getElementById('a-pessoa').value.trim();
   const parcelas = parseInt(document.getElementById('a-parcelas').value)||1;
+  const parcelasJaPagas = parcelas > 1 ? Math.min(parseInt(document.getElementById('a-pagas').value)||0, parcelas-1) : 0;
   const dataCompra = document.getElementById('a-data').value;
   const dataVencimento = document.getElementById('a-venc').value;
   const observacao = document.getElementById('a-obs').value.trim();
@@ -775,7 +804,7 @@ async function addDivida() {
   try {
     const r = await api('POST', '/dividas', {
       tipo: tipoForm, pessoaNome: tipoForm==='terceiro'?pessoa:undefined,
-      descricao: desc, valor, parcelas,
+      descricao: desc, valor, parcelas, parcelasJaPagas,
       dataCompra: dataCompra||undefined, dataVencimento: dataVencimento||undefined,
       observacao: observacao||undefined
     });
@@ -796,6 +825,8 @@ async function addDivida() {
 function limparForm() {
   ['a-pessoa','a-desc','a-valor','a-obs'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
   document.getElementById('a-parcelas').value='1';
+  document.getElementById('a-pagas').value='0';
+  document.getElementById('campo-pagas').style.display='none';
   document.getElementById('a-venc').value='';
   document.getElementById('a-data').value=new Date().toISOString().split('T')[0];
   document.getElementById('parc-prev').textContent='';
