@@ -21,7 +21,7 @@ const limiterLogin = rateLimit({
 // Limite para criação de conta
 const limiterCadastro = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hora
-  max: 5,
+  max: 20,
   message: { erro: 'Limite de cadastros atingido. Tente em 1 hora.' }
 });
 
