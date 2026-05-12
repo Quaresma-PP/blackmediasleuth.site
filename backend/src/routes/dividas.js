@@ -21,7 +21,8 @@ router.use(autenticar);
 router.get('/',           ctrl.listar);
 router.get('/resumo',     ctrl.resumo);
 router.post('/',          validarDivida, ctrl.criar);
-router.put('/:id',        [...validarId], ctrl.atualizar);
-router.delete('/:id',     validarId, ctrl.excluir);
+router.put('/:id',              [...validarId], ctrl.atualizar);
+router.post('/:id/parcela',     validarId,      ctrl.pagarParcela);
+router.delete('/:id',           validarId,      ctrl.excluir);
 
 module.exports = router;

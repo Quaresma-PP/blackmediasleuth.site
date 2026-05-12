@@ -671,10 +671,17 @@ function cardDivida(d) {
   const s = getStatus(d);
   const cls = s === 'pago' ? 'pago' : s === 'vencida' ? 'vencida' : '';
   const bdg = s==='pago'?'<span class="badge b-ok">✓ Pago</span>':s==='vencida'?'<span class="badge b-bad">⚠ Vencida</span>':'<span class="badge b-warn">⏳ Pendente</span>';
-  const parc = parseInt(d.parcelas)>1?`<span class="badge b-p">${d.parcelas}x de ${fmt(d.valor_parcela)}</span>`:'';
+  const totalParc = parseInt(d.parcelas) || 1;
+  const pagas = parseInt(d.parcelas_pagas) || 0;
+  const pad = n => String(n).padStart(2,'0');
+  const parc = totalParc > 1
+    ? `<span class="badge b-p">${pad(pagas)}/${pad(totalParc)} · ${fmt(d.valor_parcela)}/mês</span>`
+    : '';
   const venc = d.data_vencimento?`<span class="badge b-gray">📅 ${fmtData(d.data_vencimento)}</span>`:'';
-  const acao = s!=='pago'
-    ? `<button class="btn-sm btn-pagar" onclick="marcarPago('${d.id}')">✓ Pago</button>`
+  const acao = s !== 'pago'
+    ? (totalParc > 1
+        ? `<button class="btn-sm btn-pagar" onclick="pagarParcela('${d.id}')">✓ Parcela ${pad(pagas+1)}/${pad(totalParc)}</button>`
+        : `<button class="btn-sm btn-pagar" onclick="marcarPago('${d.id}')">✓ Pago</button>`)
     : `<button class="btn-sm btn-desfaz" onclick="desfazerPago('${d.id}')">↩ Desfazer</button>`;
   return `
     <div class="debt-card ${cls}">
@@ -688,6 +695,20 @@ function cardDivida(d) {
 }
 
 // ── ACTIONS ───────────────────────────────────────────────────────────────────
+async function pagarParcela(id) {
+  try {
+    const r = await api('POST', `/dividas/${id}/parcela`);
+    if (!r.ok) { const e = await r.json(); toast('❌ ' + (e.erro||'Erro.'), true); return; }
+    const { divida } = await r.json();
+    const idx = dividas.findIndex(x => x.id === id);
+    if (idx !== -1) dividas[idx] = divida;
+    renderMinhas(); renderOutros(); carregarTudo();
+    const pagas = parseInt(divida.parcelas_pagas);
+    const total = parseInt(divida.parcelas);
+    toast(pagas >= total ? '🎉 Dívida quitada!' : `✅ Parcela ${String(pagas).padStart(2,'0')}/${String(total).padStart(2,'0')} paga!`);
+  } catch { toast('❌ Erro de conexão.', true); }
+}
+
 async function marcarPago(id) {
   try {
     const r = await api('PUT', `/dividas/${id}`, { status: 'pago' });

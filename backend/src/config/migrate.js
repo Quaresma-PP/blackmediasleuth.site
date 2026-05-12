@@ -80,6 +80,9 @@ const migrate = async () => {
     `);
 
     // ── ÍNDICES DE PERFORMANCE ────────────────────────────────────────────
+    // Adiciona coluna parcelas_pagas se ainda não existir
+    await client.query(`ALTER TABLE dividas ADD COLUMN IF NOT EXISTS parcelas_pagas INTEGER DEFAULT 0;`);
+
     await client.query(`CREATE INDEX IF NOT EXISTS idx_dividas_usuario ON dividas(usuario_id);`);
     await client.query(`CREATE INDEX IF NOT EXISTS idx_dividas_status ON dividas(status);`);
     await client.query(`CREATE INDEX IF NOT EXISTS idx_dividas_vencimento ON dividas(data_vencimento);`);

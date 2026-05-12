@@ -141,6 +141,42 @@ const atualizar = async (req, res) => {
   }
 };
 
+// ── PAGAR PARCELA ─────────────────────────────────────────────────────────────
+const pagarParcela = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const { rows: check } = await pool.query(
+      'SELECT id, parcelas, parcelas_pagas, status FROM dividas WHERE id = $1 AND usuario_id = $2',
+      [id, req.usuario.id]
+    );
+    if (!check.length) return res.status(404).json({ erro: 'Dívida não encontrada.' });
+
+    const d = check[0];
+    if (d.status === 'pago') return res.status(400).json({ erro: 'Dívida já está totalmente paga.' });
+
+    const novasPagas = Math.min(parseInt(d.parcelas_pagas) + 1, parseInt(d.parcelas));
+    const novoStatus = novasPagas >= parseInt(d.parcelas) ? 'pago' : d.status;
+    const pagoEm = novoStatus === 'pago' ? 'NOW()' : 'pago_em';
+
+    const { rows } = await pool.query(
+      `UPDATE dividas SET
+        parcelas_pagas = $1,
+        status = $2,
+        pago_em = CASE WHEN $2 = 'pago' THEN NOW() ELSE pago_em END,
+        updated_at = NOW()
+       WHERE id = $3 AND usuario_id = $4
+       RETURNING *`,
+      [novasPagas, novoStatus, id, req.usuario.id]
+    );
+
+    await audit({ usuarioId: req.usuario.id, acao: 'PARCELA_PAGA', tabela: 'dividas', registroId: id, ip: getIP(req) });
+    res.json({ divida: rows[0] });
+  } catch (err) {
+    console.error('Erro ao pagar parcela:', err.code);
+    res.status(500).json({ erro: 'Erro ao registrar parcela.' });
+  }
+};
+
 // ── EXCLUIR ───────────────────────────────────────────────────────────────────
 const excluir = async (req, res) => {
   const { id } = req.params;
@@ -177,4 +213,4 @@ const resumo = async (req, res) => {
   }
 };
 
-module.exports = { listar, criar, atualizar, excluir, resumo };
+module.exports = { listar, criar, atualizar, excluir, resumo, pagarParcela };
