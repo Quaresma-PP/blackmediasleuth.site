@@ -116,32 +116,56 @@ nav.app-nav button.active{background:var(--p);border-color:var(--p);color:white;
 .section.active{display:block;}
 
 /* ── DEBT CARD ── */
-.debt-card{
-  background:white;border-radius:14px;padding:14px;margin-bottom:10px;
-  border-left:4px solid var(--p);box-shadow:0 2px 12px rgba(0,0,0,0.06);
-}
-.debt-card.pago{border-left-color:var(--ok);opacity:0.75;}
-.debt-card.vencida{border-left-color:var(--bad);}
-.debt-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
-.debt-name{font-size:15px;font-weight:700;}
-.debt-val{font-size:18px;font-weight:800;color:var(--p);white-space:nowrap;}
-.debt-card.pago .debt-val{color:var(--ok);}
-.debt-card.vencida .debt-val{color:var(--bad);}
-.debt-obs{font-size:12px;color:var(--muted);margin-top:3px;}
-.debt-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
 .badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;}
 .b-p{background:var(--p-lt);color:var(--p-dark);}
 .b-ok{background:var(--ok-lt);color:var(--ok);}
 .b-bad{background:var(--bad-lt);color:var(--bad);}
 .b-warn{background:var(--warn-lt);color:var(--warn);}
 .b-gray{background:#F3F4F6;color:#6B7280;}
-.debt-actions{display:flex;gap:8px;margin-top:10px;}
-.month-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
-.chip{font-size:10px;font-weight:700;padding:4px 8px;border-radius:8px;white-space:nowrap;}
+
+/* ── TABELA DE DÍVIDAS ── */
+.debt-table-wrap{background:white;border-radius:16px;box-shadow:0 2px 16px rgba(124,58,237,0.08);overflow:hidden;margin-bottom:16px;}
+.debt-table-title{padding:14px 16px 0;font-size:13px;font-weight:800;color:var(--p-dark);text-transform:uppercase;letter-spacing:0.5px;}
+.debt-table{width:100%;border-collapse:collapse;}
+.debt-table th{background:var(--p-50);color:var(--p-dark);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;padding:9px 12px;text-align:left;}
+.debt-table td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;}
+.debt-table tbody tr:last-child td{border-bottom:none;}
+.debt-table tbody tr.row-pago td{background:#F0FDF4;opacity:0.75;}
+.debt-table tbody tr.row-vencida td{background:var(--bad-lt);}
+.debt-table tfoot td{font-weight:800;font-size:13px;background:var(--p-50);color:var(--txt);border-top:2px solid var(--p-lt);}
+.dt-desc{font-weight:700;color:var(--txt);}
+.dt-obs{font-size:11px;color:var(--muted);margin-top:2px;}
+.dt-val{font-weight:800;color:var(--p);white-space:nowrap;}
+.row-pago .dt-val{color:var(--ok);}
+.row-vencida .dt-val{color:var(--bad);}
+
+/* ── CHIPS DE PARCELAS ── */
+.parc-chips{display:flex;flex-wrap:wrap;gap:4px;}
+.chip{font-size:10px;font-weight:700;padding:3px 7px;border-radius:6px;white-space:nowrap;display:inline-flex;align-items:center;gap:3px;}
 .chip-paid{background:var(--ok-lt);color:var(--ok);}
 .chip-current{background:var(--warn-lt);color:var(--warn);cursor:pointer;border:1.5px solid var(--warn);}
 .chip-current:hover{background:var(--warn);color:#fff;}
+.chip-last{background:var(--bad-lt);color:var(--bad);cursor:pointer;border:1.5px solid var(--bad);animation:pulse-red 1.5s infinite;}
+.chip-last:hover{background:var(--bad);color:#fff;}
 .chip-future{background:#F3F4F6;color:#9CA3AF;}
+@keyframes pulse-red{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,0.3);}50%{box-shadow:0 0 0 4px rgba(220,38,38,0);}}
+
+/* ── AÇÕES NA TABELA ── */
+.dt-actions{display:flex;gap:6px;align-items:center;}
+.btn-ic{background:none;border:1.5px solid var(--border);border-radius:8px;padding:5px 8px;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.15s;}
+.btn-ic:hover{background:var(--p-50);}
+.btn-ic.danger:hover{background:var(--bad-lt);border-color:var(--bad);color:var(--bad);}
+
+/* ── CARD LEGADO (terceiros ainda usa) ── */
+.debt-card{background:white;border-radius:14px;padding:14px;margin-bottom:10px;border-left:4px solid var(--p);box-shadow:0 2px 12px rgba(0,0,0,0.06);}
+.debt-card.pago{border-left-color:var(--ok);opacity:0.75;}
+.debt-card.vencida{border-left-color:var(--bad);}
+.debt-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.debt-name{font-size:15px;font-weight:700;}
+.debt-val{font-size:18px;font-weight:800;color:var(--p);white-space:nowrap;}
+.debt-obs{font-size:12px;color:var(--muted);margin-top:3px;}
+.debt-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.debt-actions{display:flex;gap:8px;margin-top:10px;}
 .btn-pagar{background:var(--ok-lt);color:var(--ok);}
 .btn-desfaz{background:var(--p-lt);color:var(--p-dark);}
 .btn-del{background:var(--bad-lt);color:var(--bad);}
@@ -652,9 +676,45 @@ function renderMinhas() {
     const s = getStatus(d);
     return filtro === 'todas' || filtro === s;
   });
-  document.getElementById('lista-minhas').innerHTML = lista.length
-    ? lista.map(cardDivida).join('')
-    : `<div class="empty"><div class="icon">💸</div><p>Nenhuma dívida ${filtro !== 'todas' ? filtro : ''} aqui</p></div>`;
+  if (!lista.length) {
+    document.getElementById('lista-minhas').innerHTML = `<div class="empty"><div class="icon">💸</div><p>Nenhuma dívida ${filtro !== 'todas' ? filtro : ''} aqui</p></div>`;
+    return;
+  }
+  const totalPend = lista.filter(d => getStatus(d) !== 'pago').reduce((s,d) => s + parseFloat(d.valor), 0);
+  const totalGeral = lista.reduce((s,d) => s + parseFloat(d.valor), 0);
+  const rows = lista.map(d => {
+    const s = getStatus(d);
+    const rowCls = s === 'pago' ? 'row-pago' : s === 'vencida' ? 'row-vencida' : '';
+    const bdg = s==='pago'?'<span class="badge b-ok">✓ Pago</span>':s==='vencida'?'<span class="badge b-bad">⚠ Vencida</span>':'';
+    const pagas = parseInt(d.parcelas_pagas)||0;
+    const total = parseInt(d.parcelas)||1;
+    const pad = n => String(n).padStart(2,'0');
+    const acaoPagar = s !== 'pago'
+      ? (total > 1
+          ? `<button class="btn-ic" onclick="pagarParcela('${d.id}')" title="Pagar ${pad(pagas+1)}ª parcela">✓ ${pad(pagas+1)}/${pad(total)}</button>`
+          : `<button class="btn-ic" onclick="marcarPago('${d.id}')">✓ Pago</button>`)
+      : `<button class="btn-ic" onclick="desfazerPago('${d.id}')" title="Desfazer">↩</button>`;
+    return `<tr class="${rowCls}">
+      <td><div class="dt-desc">${d.descricao}</div>${d.observacao?`<div class="dt-obs">${d.observacao}</div>`:''}${bdg?`<div style="margin-top:4px;">${bdg}</div>`:''}</td>
+      <td class="dt-val">${fmt(total>1?d.valor_parcela:d.valor)}<br><span style="font-size:10px;color:var(--muted);font-weight:400;">${total>1?'por parcela':'total'}</span></td>
+      <td>${gerarChipsParcelas(d)}</td>
+      <td style="color:var(--muted);font-size:12px;">${d.data_vencimento?fmtData(d.data_vencimento):'-'}</td>
+      <td><div class="dt-actions">${acaoPagar}<button class="btn-ic" onclick="editarParcelas('${d.id}',${pagas},${total})" title="Editar parcelas">✏️</button><button class="btn-ic danger" onclick="excluir('${d.id}')">🗑</button></div></td>
+    </tr>`;
+  }).join('');
+  document.getElementById('lista-minhas').innerHTML = `
+    <div class="debt-table-wrap">
+      <table class="debt-table">
+        <thead><tr>
+          <th>Descrição</th><th>Valor/parcela</th><th>Parcelas</th><th>Vencimento</th><th>Ações</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+        <tfoot><tr>
+          <td colspan="2">Total pendente</td>
+          <td colspan="3" style="text-align:right;">${fmt(totalPend)} <span style="font-weight:400;font-size:11px;color:var(--muted);">/ ${fmt(totalGeral)} total</span></td>
+        </tr></tfoot>
+      </table>
+    </div>`;
 }
 
 function renderOutros() {
@@ -680,26 +740,26 @@ function renderOutros() {
     : `<div class="empty"><div class="icon">👥</div><p>Nenhuma dívida de terceiros</p></div>`;
 }
 
-const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-
-function gerarChipsMeses(d) {
+function gerarChipsParcelas(d) {
   const total = parseInt(d.parcelas) || 1;
-  if (total <= 1) return '';
+  if (total <= 1) return '<span style="color:var(--muted);font-size:12px;">À vista</span>';
   const pagas = parseInt(d.parcelas_pagas) || 0;
-  const ref = new Date(d.data_compra || d.created_at || Date.now());
+  const pad = n => String(n).padStart(2,'0');
   const chips = [];
   for (let i = 0; i < total; i++) {
-    const dt = new Date(ref.getFullYear(), ref.getMonth() + i, 1);
-    const label = `${MESES[dt.getMonth()]}/${String(dt.getFullYear()).slice(2)}`;
+    const num = `${pad(i+1)}/${pad(total)}`;
     if (i < pagas) {
-      chips.push(`<span class="chip chip-paid">✓ ${label}</span>`);
+      chips.push(`<span class="chip chip-paid">✓ ${num}</span>`);
     } else if (i === pagas && d.status !== 'pago') {
-      chips.push(`<span class="chip chip-current" onclick="pagarParcela('${d.id}')" title="Clique para marcar como paga">${label} →</span>`);
+      const isLast = (i === total - 1);
+      const cls = isLast ? 'chip-last' : 'chip-current';
+      const icon = isLast ? '🔴' : '→';
+      chips.push(`<span class="chip ${cls}" onclick="pagarParcela('${d.id}')" title="${isLast ? 'Última parcela!' : 'Clique para pagar'}">${num} ${icon}</span>`);
     } else {
-      chips.push(`<span class="chip chip-future">${label}</span>`);
+      chips.push(`<span class="chip chip-future">${num}</span>`);
     }
   }
-  return `<div class="month-chips">${chips.join('')}</div>`;
+  return `<div class="parc-chips">${chips.join('')}</div>`;
 }
 
 function cardDivida(d) {
@@ -715,16 +775,16 @@ function cardDivida(d) {
         ? `<button class="btn-sm btn-pagar" onclick="pagarParcela('${d.id}')">✓ Pagar ${pad(pagas+1)}ª parcela</button>`
         : `<button class="btn-sm btn-pagar" onclick="marcarPago('${d.id}')">✓ Pago</button>`)
     : `<button class="btn-sm btn-desfaz" onclick="desfazerPago('${d.id}')">↩ Desfazer</button>`;
-  const chips = gerarChipsMeses(d);
+  const chips = totalParc > 1 ? `<div style="margin-top:8px;">${gerarChipsParcelas(d)}</div>` : '';
   return `
     <div class="debt-card ${cls}">
       <div class="debt-top">
         <div><div class="debt-name">${d.descricao}</div>${d.observacao?`<div class="debt-obs">${d.observacao}</div>`:''}</div>
-        <div class="debt-val">${fmt(d.valor)}</div>
+        <div class="debt-val">${fmt(totalParc>1?d.valor_parcela:d.valor)}</div>
       </div>
       <div class="debt-meta">${bdg}${venc}${d.data_compra?`<span class="badge b-gray">🗓 ${fmtData(d.data_compra)}</span>`:''}</div>
       ${chips}
-      <div class="debt-actions">${acao}<button class="btn-sm" style="background:#F3F4F6;color:#6B7280;" onclick="editarParcelas('${d.id}',${pagas},${totalParc})">✏️ Editar</button><button class="btn-sm btn-del" onclick="excluir('${d.id}')">🗑</button></div>
+      <div class="debt-actions">${acao}<button class="btn-sm" style="background:#F3F4F6;color:#6B7280;" onclick="editarParcelas('${d.id}',${pagas},${totalParc})">✏️</button><button class="btn-sm btn-del" onclick="excluir('${d.id}')">🗑</button></div>
     </div>`;
 }
 
