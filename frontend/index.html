@@ -651,10 +651,23 @@ async function carregarTudo() {
 }
 
 function atualizarResumo(r) {
-  const fmt = v => 'R$ ' + parseFloat(v).toLocaleString('pt-BR',{minimumFractionDigits:2});
-  document.getElementById('s-tot').textContent = fmt(parseFloat(r.total_pendente||0)+parseFloat(r.total_pago||0));
-  document.getElementById('s-pend').textContent = fmt(r.total_pendente||0);
-  document.getElementById('s-pago').textContent = fmt(r.total_pago||0);
+  const f = v => 'R$ ' + parseFloat(v).toLocaleString('pt-BR',{minimumFractionDigits:2});
+  document.getElementById('s-tot').textContent = f(parseFloat(r.total_pendente||0)+parseFloat(r.total_pago||0));
+  document.getElementById('s-pend').textContent = f(r.total_pendente||0);
+  document.getElementById('s-pago').textContent = f(r.total_pago||0);
+}
+
+async function refreshResumo() {
+  try {
+    const r = await api('GET', '/dividas/resumo');
+    if (r.ok) atualizarResumo(await r.json());
+  } catch {}
+}
+
+function reRender() {
+  renderMinhas();
+  renderOutros();
+  refreshResumo();
 }
 
 // ── RENDER ────────────────────────────────────────────────────────────────────
@@ -668,6 +681,62 @@ function getStatus(d) {
   return 'pendente';
 }
 
+function gerarLinhaTabela(d) {
+  const s = getStatus(d);
+  const rowCls = s === 'pago' ? 'row-pago' : s === 'vencida' ? 'row-vencida' : '';
+  const pagas = parseInt(d.parcelas_pagas)||0;
+  const total = parseInt(d.parcelas)||1;
+  const pad = n => String(n).padStart(2,'0');
+  const statusInfo = s==='pago'
+    ? `<span class="badge b-ok" style="font-size:10px;">✓ Pago</span>`
+    : s==='vencida'
+    ? `<span class="badge b-bad" style="font-size:10px;">⚠ Vencida</span>`
+    : '';
+  const vencInfo = d.data_vencimento ? `<div style="font-size:10px;color:var(--muted);margin-top:2px;">📅 ${fmtData(d.data_vencimento)}</div>` : '';
+  const acaoPagar = s !== 'pago'
+    ? (total > 1
+        ? `<button class="btn-ic" onclick="pagarParcela('${d.id}')">✓ ${pad(pagas+1)}/${pad(total)}</button>`
+        : `<button class="btn-ic" onclick="marcarPago('${d.id}')">✓</button>`)
+    : `<button class="btn-ic" onclick="desfazerPago('${d.id}')">↩</button>`;
+  return `<tr class="${rowCls}">
+    <td>
+      <div class="dt-desc">${d.descricao}</div>
+      ${d.observacao?`<div class="dt-obs">${d.observacao}</div>`:''}
+      ${vencInfo}
+      ${statusInfo?`<div style="margin-top:4px;">${statusInfo}</div>`:''}
+    </td>
+    <td>
+      <div class="dt-val">${fmt(total>1?d.valor_parcela:d.valor)}</div>
+      <div style="font-size:10px;color:var(--muted);">${total>1?'por parcela':'total'}</div>
+      <div style="margin-top:6px;">${gerarChipsParcelas(d)}</div>
+    </td>
+    <td>
+      <div class="dt-actions">
+        ${acaoPagar}
+        <button class="btn-ic" onclick="editarParcelas('${d.id}',${pagas},${total})">✏️</button>
+        <button class="btn-ic danger" onclick="excluir('${d.id}')">🗑</button>
+      </div>
+    </td>
+  </tr>`;
+}
+
+function gerarTabela(lista, emptyMsg) {
+  if (!lista.length) return `<div class="empty"><div class="icon">💸</div><p>${emptyMsg}</p></div>`;
+  const totalPend = lista.filter(d => getStatus(d) !== 'pago').reduce((s,d) => s + parseFloat(d.valor), 0);
+  const totalGeral = lista.reduce((s,d) => s + parseFloat(d.valor), 0);
+  return `<div class="debt-table-wrap">
+    <table class="debt-table">
+      <thead><tr><th>Descrição</th><th>Valor · Parcelas</th><th>Ações</th></tr></thead>
+      <tbody>${lista.map(gerarLinhaTabela).join('')}</tbody>
+      <tfoot><tr>
+        <td>Total pendente</td>
+        <td class="dt-val">${fmt(totalPend)}</td>
+        <td style="font-size:11px;color:var(--muted);">de ${fmt(totalGeral)}</td>
+      </tr></tfoot>
+    </table>
+  </div>`;
+}
+
 function renderMinhas() {
   const busca = document.getElementById('busca-minhas')?.value.toLowerCase() || '';
   const lista = dividas.filter(d => {
@@ -676,50 +745,16 @@ function renderMinhas() {
     const s = getStatus(d);
     return filtro === 'todas' || filtro === s;
   });
-  if (!lista.length) {
-    document.getElementById('lista-minhas').innerHTML = `<div class="empty"><div class="icon">💸</div><p>Nenhuma dívida ${filtro !== 'todas' ? filtro : ''} aqui</p></div>`;
-    return;
-  }
-  const totalPend = lista.filter(d => getStatus(d) !== 'pago').reduce((s,d) => s + parseFloat(d.valor), 0);
-  const totalGeral = lista.reduce((s,d) => s + parseFloat(d.valor), 0);
-  const rows = lista.map(d => {
-    const s = getStatus(d);
-    const rowCls = s === 'pago' ? 'row-pago' : s === 'vencida' ? 'row-vencida' : '';
-    const bdg = s==='pago'?'<span class="badge b-ok">✓ Pago</span>':s==='vencida'?'<span class="badge b-bad">⚠ Vencida</span>':'';
-    const pagas = parseInt(d.parcelas_pagas)||0;
-    const total = parseInt(d.parcelas)||1;
-    const pad = n => String(n).padStart(2,'0');
-    const acaoPagar = s !== 'pago'
-      ? (total > 1
-          ? `<button class="btn-ic" onclick="pagarParcela('${d.id}')" title="Pagar ${pad(pagas+1)}ª parcela">✓ ${pad(pagas+1)}/${pad(total)}</button>`
-          : `<button class="btn-ic" onclick="marcarPago('${d.id}')">✓ Pago</button>`)
-      : `<button class="btn-ic" onclick="desfazerPago('${d.id}')" title="Desfazer">↩</button>`;
-    return `<tr class="${rowCls}">
-      <td><div class="dt-desc">${d.descricao}</div>${d.observacao?`<div class="dt-obs">${d.observacao}</div>`:''}${bdg?`<div style="margin-top:4px;">${bdg}</div>`:''}</td>
-      <td class="dt-val">${fmt(total>1?d.valor_parcela:d.valor)}<br><span style="font-size:10px;color:var(--muted);font-weight:400;">${total>1?'por parcela':'total'}</span></td>
-      <td>${gerarChipsParcelas(d)}</td>
-      <td style="color:var(--muted);font-size:12px;">${d.data_vencimento?fmtData(d.data_vencimento):'-'}</td>
-      <td><div class="dt-actions">${acaoPagar}<button class="btn-ic" onclick="editarParcelas('${d.id}',${pagas},${total})" title="Editar parcelas">✏️</button><button class="btn-ic danger" onclick="excluir('${d.id}')">🗑</button></div></td>
-    </tr>`;
-  }).join('');
-  document.getElementById('lista-minhas').innerHTML = `
-    <div class="debt-table-wrap">
-      <table class="debt-table">
-        <thead><tr>
-          <th>Descrição</th><th>Valor/parcela</th><th>Parcelas</th><th>Vencimento</th><th>Ações</th>
-        </tr></thead>
-        <tbody>${rows}</tbody>
-        <tfoot><tr>
-          <td colspan="2">Total pendente</td>
-          <td colspan="3" style="text-align:right;">${fmt(totalPend)} <span style="font-weight:400;font-size:11px;color:var(--muted);">/ ${fmt(totalGeral)} total</span></td>
-        </tr></tfoot>
-      </table>
-    </div>`;
+  document.getElementById('lista-minhas').innerHTML = gerarTabela(lista, `Nenhuma dívida ${filtro !== 'todas' ? filtro : ''} aqui`);
 }
 
 function renderOutros() {
   const busca = document.getElementById('busca-outros')?.value.toLowerCase() || '';
-  const outros = dividas.filter(d => d.tipo === 'terceiro');
+  const outros = dividas.filter(d => {
+    if (d.tipo !== 'terceiro') return false;
+    const s = getStatus(d);
+    return filtro === 'todas' || filtro === s;
+  });
   const pessoas = {};
   outros.forEach(d => { const n = d.pessoa_nome||'Sem nome'; if(!pessoas[n]) pessoas[n]=[]; pessoas[n].push(d); });
   const nomes = Object.keys(pessoas).filter(n => !busca || n.toLowerCase().includes(busca) || pessoas[n].some(d=>d.descricao.toLowerCase().includes(busca)));
@@ -728,13 +763,12 @@ function renderOutros() {
     ? nomes.map(nome => {
         const ds = pessoas[nome];
         const totalPend = ds.filter(d=>getStatus(d)!=='pago').reduce((s,d)=>s+parseFloat(d.valor),0);
-        return `<div class="person-group">
+        return `<div style="margin-bottom:16px;">
           <div class="person-header">
             <div class="avatar">${iniciais(nome)}</div>
-            <div class="person-info"><div class="person-name">${nome}</div><div class="person-sub">${ds.length} compra${ds.length>1?'s':''}</div></div>
-            <div class="person-total">${fmt(totalPend)}</div>
+            <div class="person-info"><div class="person-name">${nome}</div><div class="person-sub">${ds.length} item${ds.length>1?'s':''} · pendente: ${fmt(totalPend)}</div></div>
           </div>
-          ${ds.map(d=>cardDivida(d,true)).join('')}
+          ${gerarTabela(ds, 'Nenhuma dívida')}
         </div>`;
       }).join('')
     : `<div class="empty"><div class="icon">👥</div><p>Nenhuma dívida de terceiros</p></div>`;
@@ -800,7 +834,7 @@ async function editarParcelas(id, atual, total) {
     const idx = dividas.findIndex(x => x.id === id);
     if (idx !== -1) dividas[idx] = divida;
     setFiltro('todas', document.querySelector('.filter-btn'));
-    renderMinhas(); renderOutros(); carregarTudo();
+    reRender();
     toast(`✅ Atualizado: ${String(val).padStart(2,'0')}/${String(total).padStart(2,'0')} pagas`);
   } catch { toast('❌ Erro de conexão.', true); }
 }
@@ -813,7 +847,7 @@ async function pagarParcela(id) {
     const idx = dividas.findIndex(x => x.id === id);
     if (idx !== -1) dividas[idx] = divida;
     setFiltro('todas', document.querySelector('.filter-btn'));
-    renderMinhas(); renderOutros(); carregarTudo();
+    reRender();
     const pagas = parseInt(divida.parcelas_pagas);
     const total = parseInt(divida.parcelas);
     toast(pagas >= total ? '🎉 Dívida quitada!' : `✅ ${MESES[(new Date(divida.data_compra||divida.created_at)).getMonth() + pagas - 1] || 'Parcela'} paga!`);
@@ -826,7 +860,7 @@ async function marcarPago(id) {
     if (!r.ok) { toast('❌ Erro ao atualizar.', true); return; }
     const d = dividas.find(x=>x.id===id);
     if (d) d.status = 'pago';
-    renderMinhas(); renderOutros();
+    reRender();
     carregarTudo();
     toast('✅ Marcado como pago!');
   } catch {}
@@ -838,7 +872,7 @@ async function desfazerPago(id) {
     if (!r.ok) { toast('❌ Erro.', true); return; }
     const d = dividas.find(x=>x.id===id);
     if (d) d.status = 'pendente';
-    renderMinhas(); renderOutros(); carregarTudo();
+    reRender();
     toast('↩ Desfeito');
   } catch {}
 }
@@ -849,7 +883,7 @@ async function excluir(id) {
     const r = await api('DELETE', `/dividas/${id}`);
     if (!r.ok) { toast('❌ Erro ao excluir.', true); return; }
     dividas = dividas.filter(x=>x.id!==id);
-    renderMinhas(); renderOutros(); carregarTudo();
+    reRender();
     toast('🗑 Excluída');
   } catch {}
 }
