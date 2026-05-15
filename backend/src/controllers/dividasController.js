@@ -107,8 +107,9 @@ const atualizar = async (req, res) => {
     if (!check.length) return res.status(404).json({ erro: 'Dívida não encontrada.' });
 
     const { descricao, valor, parcelas, parcelasJaPagas, dataVencimento, observacao, status, pessoaNome } = req.body;
-    const parc = parseInt(parcelas) || 1;
-    const val = parseFloat(valor);
+    // null quando o campo não foi enviado — COALESCE mantém o valor atual no banco
+    const parc = parcelas !== undefined ? (parseInt(parcelas) || 1) : null;
+    const val  = valor    !== undefined ? (parseFloat(valor)  || null) : null;
 
     // Se veio parcelasJaPagas, recalcula status automaticamente
     let novoStatus = status || null;
@@ -137,9 +138,9 @@ const atualizar = async (req, res) => {
        WHERE id = $10 AND usuario_id = $11
        RETURNING *`,
       [
-        descricao ? sanitizar(descricao) : null,
-        val || null,
-        parc || null,
+        descricao  !== undefined ? sanitizar(descricao) : null,
+        val,
+        parc,
         val && parc ? +(val / parc).toFixed(2) : null,
         dataVencimento || null,
         observacao !== undefined ? sanitizar(observacao) : undefined,
