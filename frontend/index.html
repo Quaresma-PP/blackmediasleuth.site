@@ -635,14 +635,10 @@ function fazerLogout() {
 // ── CARREGAR DADOS ────────────────────────────────────────────────────────────
 async function carregarTudo() {
   try {
-    const [rDiv, rRes] = await Promise.all([
-      api('GET', '/dividas'),
-      api('GET', '/dividas/resumo')
-    ]);
-    const dDiv = await rDiv.json();
-    const dRes = await rRes.json();
-    dividas = dDiv.dividas || [];
-    atualizarResumo(dRes);
+    const r = await api('GET', '/dividas');
+    const d = await r.json();
+    dividas = d.dividas || [];
+    atualizarResumoLocal();
     renderMinhas();
     renderOutros();
   } catch (err) {
@@ -650,24 +646,20 @@ async function carregarTudo() {
   }
 }
 
-function atualizarResumo(r) {
+function atualizarResumoLocal() {
   const f = v => 'R$ ' + parseFloat(v).toLocaleString('pt-BR',{minimumFractionDigits:2});
-  document.getElementById('s-tot').textContent = f(parseFloat(r.total_pendente||0)+parseFloat(r.total_pago||0));
-  document.getElementById('s-pend').textContent = f(r.total_pendente||0);
-  document.getElementById('s-pago').textContent = f(r.total_pago||0);
-}
-
-async function refreshResumo() {
-  try {
-    const r = await api('GET', '/dividas/resumo');
-    if (r.ok) atualizarResumo(await r.json());
-  } catch {}
+  const mensal = d => parseFloat(parseInt(d.parcelas) > 1 ? d.valor_parcela : d.valor) || 0;
+  const pend = dividas.filter(d => d.status !== 'pago').reduce((s,d) => s + mensal(d), 0);
+  const pago = dividas.filter(d => d.status === 'pago').reduce((s,d) => s + mensal(d), 0);
+  document.getElementById('s-tot').textContent = f(pend + pago);
+  document.getElementById('s-pend').textContent = f(pend);
+  document.getElementById('s-pago').textContent = f(pago);
 }
 
 function reRender() {
   renderMinhas();
   renderOutros();
-  refreshResumo();
+  atualizarResumoLocal();
 }
 
 // ── RENDER ────────────────────────────────────────────────────────────────────
@@ -692,7 +684,9 @@ function gerarLinhaTabela(d) {
     : s==='vencida'
     ? `<span class="badge b-bad" style="font-size:10px;">⚠ Vencida</span>`
     : '';
-  const vencInfo = d.data_vencimento ? `<div style="font-size:10px;color:var(--muted);margin-top:2px;">📅 ${fmtData(d.data_vencimento)}</div>` : '';
+  const vencInfo = d.data_vencimento
+    ? `<div style="font-size:10px;color:var(--muted);margin-top:2px;cursor:pointer;" onclick="editarData('${d.id}','${d.data_vencimento}')" title="Clique para editar">📅 ${fmtData(d.data_vencimento)} ✎</div>`
+    : `<div style="font-size:10px;color:var(--muted);margin-top:2px;cursor:pointer;" onclick="editarData('${d.id}','')" title="Definir data">📅 Definir data ✎</div>`;
   const acaoPagar = s !== 'pago'
     ? (total > 1
         ? `<button class="btn-ic" onclick="pagarParcela('${d.id}')">✓ ${pad(pagas+1)}/${pad(total)}</button>`
@@ -836,6 +830,21 @@ async function editarParcelas(id, atual, total) {
     setFiltro('todas', document.querySelector('.filter-btn'));
     reRender();
     toast(`✅ Atualizado: ${String(val).padStart(2,'0')}/${String(total).padStart(2,'0')} pagas`);
+  } catch { toast('❌ Erro de conexão.', true); }
+}
+
+async function editarData(id, dataAtual) {
+  const atual = dataAtual ? dataAtual.split('T')[0] : '';
+  const nova = prompt('Nova data de vencimento (AAAA-MM-DD):\nExemplo: 2025-12-31\n(Deixe em branco para remover)', atual);
+  if (nova === null) return;
+  try {
+    const r = await api('PUT', `/dividas/${id}`, { dataVencimento: nova.trim() || null });
+    if (!r.ok) { const e = await r.json(); toast('❌ ' + (e.erro||'Erro.'), true); return; }
+    const { divida } = await r.json();
+    const idx = dividas.findIndex(x => x.id === id);
+    if (idx !== -1) dividas[idx] = divida;
+    reRender();
+    toast('✅ Data atualizada!');
   } catch { toast('❌ Erro de conexão.', true); }
 }
 
