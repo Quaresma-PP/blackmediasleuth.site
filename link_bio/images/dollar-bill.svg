@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 145" width="340" height="145">
+  <defs>
+    <!-- Textura de linhas finas (guilhoché) -->
+    <pattern id="h" width="1" height="5" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0" x2="340" y2="0" stroke="rgba(0,60,0,0.4)" stroke-width="0.4"/>
+    </pattern>
+    <pattern id="v" width="5" height="1" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0" x2="0" y2="145" stroke="rgba(0,60,0,0.25)" stroke-width="0.4"/>
+    </pattern>
+    <!-- Gradiente de profundidade -->
+    <radialGradient id="depth" cx="50%" cy="50%" r="60%">
+      <stop offset="0%"   stop-color="#3d7832" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#1e4018" stop-opacity="1"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Base verde -->
+  <rect width="340" height="145" rx="7" fill="url(#depth)"/>
+
+  <!-- Textura linhas -->
+  <rect width="340" height="145" rx="7" fill="url(#h)" opacity="0.6"/>
+  <rect width="340" height="145" rx="7" fill="url(#v)" opacity="0.4"/>
+
+  <!-- Borda externa -->
+  <rect x="2.5" y="2.5" width="335" height="140" rx="6" fill="none" stroke="rgba(170,230,150,0.4)" stroke-width="1.5"/>
+  <!-- Borda interna -->
+  <rect x="7" y="7" width="326" height="131" rx="4" fill="none" stroke="rgba(170,230,150,0.18)" stroke-width="0.7"/>
+  <!-- Borda interna 2 -->
+  <rect x="11" y="11" width="318" height="123" rx="3" fill="none" stroke="rgba(170,230,150,0.10)" stroke-width="0.5"/>
+
+  <!-- Área escura esquerda (região do retrato oval) -->
+  <ellipse cx="72" cy="72.5" rx="46" ry="52" fill="rgba(0,0,0,0.18)"/>
+  <!-- Aro oval externo -->
+  <ellipse cx="72" cy="72.5" rx="46" ry="52" fill="none" stroke="rgba(180,235,155,0.32)" stroke-width="1.4"/>
+  <!-- Aro oval interno -->
+  <ellipse cx="72" cy="72.5" rx="40" ry="46" fill="none" stroke="rgba(180,235,155,0.15)" stroke-width="0.7"/>
+  <!-- Cifrão dentro do oval -->
+  <text x="72" y="85" text-anchor="middle" font-family="Georgia,serif" font-size="44" font-weight="bold" fill="rgba(210,250,190,0.22)">$</text>
+
+  <!-- Topo: THE UNITED STATES OF AMERICA -->
+  <text x="210" y="29" text-anchor="middle" font-family="Arial,sans-serif" font-size="8" font-weight="bold" fill="rgba(200,245,175,0.35)" letter-spacing="2.2">THE UNITED STATES OF AMERICA</text>
+
+  <!-- FEDERAL RESERVE NOTE -->
+  <text x="210" y="46" text-anchor="middle" font-family="Arial,sans-serif" font-size="7" fill="rgba(200,245,175,0.22)" letter-spacing="1.5">FEDERAL RESERVE NOTE</text>
+
+  <!-- IN GOD WE TRUST -->
+  <text x="210" y="61" text-anchor="middle" font-family="Georgia,serif" font-size="7.5" font-style="italic" fill="rgba(200,245,175,0.20)" letter-spacing="1">IN GOD WE TRUST</text>
+
+  <!-- ONE — grande, centro -->
+  <text x="210" y="100" text-anchor="middle" font-family="Georgia,Times New Roman,serif" font-size="46" font-weight="bold" fill="rgba(200,250,180,0.22)" letter-spacing="6">ONE</text>
+
+  <!-- Números nos cantos -->
+  <text x="24"  y="35"  font-family="Georgia,serif" font-size="17" font-weight="bold" fill="rgba(200,250,180,0.35)">1</text>
+  <text x="316" y="35"  text-anchor="end" font-family="Georgia,serif" font-size="17" font-weight="bold" fill="rgba(200,250,180,0.35)">1</text>
+  <text x="24"  y="130" font-family="Georgia,serif" font-size="17" font-weight="bold" fill="rgba(200,250,180,0.35)">1</text>
+  <text x="316" y="130" text-anchor="end" font-family="Georgia,serif" font-size="17" font-weight="bold" fill="rgba(200,250,180,0.35)">1</text>
+
+  <!-- Linha separadora vertical -->
+  <line x1="126" y1="16" x2="126" y2="129" stroke="rgba(180,235,155,0.12)" stroke-width="0.7"/>
+
+  <!-- Número de série -->
+  <text x="135" y="120" font-family="Courier New,monospace" font-size="7" fill="rgba(180,240,160,0.28)" letter-spacing="1.2">MB 94823156 C</text>
+
+  <!-- Linha decorativa embaixo do serial -->
+  <line x1="134" y1="123" x2="294" y2="123" stroke="rgba(180,235,155,0.10)" stroke-width="0.5"/>
+
+  <!-- Ornamentos laterais esquerdos -->
+  <line x1="130" y1="18" x2="130" y2="127" stroke="rgba(180,235,155,0.12)" stroke-width="0.5"/>
+</svg>
