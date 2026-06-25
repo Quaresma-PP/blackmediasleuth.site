@@ -94,6 +94,9 @@ strong,.hl{color:var(--champ);font-weight:700}
 @keyframes scrollx{to{transform:translateX(-50%)}}
 @media(prefers-reduced-motion:reduce){.placas-track{animation:none}.placas{overflow-x:auto;-webkit-overflow-scrolling:touch}}
 
+/* Esconde o bloco MASTERCLASS/MCM/título só no mobile (a capa já mostra isso) */
+@media(max-width:767px){.lockup{display:none}}
+
 /* LIVE CARD */
 .live{padding:8px 0 26px}
 .live-card{max-width:560px;margin:0 auto;padding:22px 18px;border-radius:18px;border:1.5px solid var(--champ-deep);background:linear-gradient(180deg,rgba(208,193,179,.05),rgba(0,0,0,.2))}
