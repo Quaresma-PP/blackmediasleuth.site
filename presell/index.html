@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Nossa Senhora Desatadora dos Nós – oração das 7 palavras que desatam os nós invisíveis da sua vida.">
+<title>Oração da Desatadora dos Nós</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: Georgia, "Times New Roman", serif;
+    min-height: 100vh;
+    background: #fffdf9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 16px 50px;
+  }
+
+  .card-shell {
+    width: 100%;
+    max-width: 400px;
+    background: #fff;
+    border: 1px solid #d9c6a8;
+    border-radius: 10px;
+    box-shadow: 0 20px 46px rgba(90, 60, 30, 0.14);
+    padding: 32px 26px 26px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card-photo {
+    width: 60%;
+    aspect-ratio: 1 / 1.15;
+    border-radius: 50% / 42%;
+    overflow: hidden;
+    border: 5px solid #8a5a2e;
+    box-shadow: 0 10px 24px rgba(90, 60, 30, 0.28);
+  }
+
+  .card-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 8%; display: block; }
+
+  .card-kicker {
+    margin-top: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: #8a5a2e;
+  }
+
+  .card-headline {
+    margin-top: 14px;
+    font-size: clamp(21px, 6vw, 26px);
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.45;
+    color: #4a2c17;
+  }
+
+  .card-headline span { color: #8a5a2e; font-style: italic; }
+
+  .card-text {
+    margin-top: 14px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    text-align: center;
+    color: #5a4a3a;
+  }
+
+  .card-text strong { color: #4a2c17; }
+
+  .card-cta {
+    margin-top: 24px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 17px 20px;
+    background: #fff;
+    border: 2px solid #6b4423;
+    color: #6b4423;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15.5px;
+    font-weight: 700;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  .card-cta:hover { background: #6b4423; color: #fff8ec; }
+
+  .card-fine {
+    margin-top: 12px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #a68f74;
+  }
+
+  .card-links {
+    margin-top: 24px;
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    color: #b5a48c;
+    line-height: 1.8;
+  }
+
+  .card-links a { color: #8a5a2e; text-decoration: none; }
+</style>
+</head>
+<body>
+
+  <div class="card-shell">
+    <div class="card-photo">
+      <img src="des1.png" alt="Nossa Senhora Desatadora dos Nós" onerror="this.parentElement.style.display='none'">
+    </div>
+
+    <span class="card-kicker">Oração das 7 palavras</span>
+
+    <h1 class="card-headline">Os nós que você já não consegue desatar <span>ela desata por você</span></h1>
+
+    <p class="card-text">
+      Há nós que carregamos sozinhos por anos — na saúde, no trabalho, na família.
+      <strong>Nossa Senhora Desatadora dos Nós</strong> intercede por quem entrega esses nós a ela em oração.
+    </p>
+
+    <a href="https://blackmediasleuth.site/vsl/" class="card-cta" id="btn-ouvir">Ouvir a oração agora</a>
+    <span class="card-fine">Conteúdo gratuito · acesso imediato</span>
+  </div>
+
+  <div class="card-links">
+    &copy; 2026 Desatadora dos Nós<br>
+    <a href="termos.html">Termos de Uso</a> &nbsp;·&nbsp; <a href="privacidade.html">Privacidade</a>
+  </div>
+
+  <script>
+    (function () {
+      var params = window.location.search;
+      if (!params) return;
+      var link = document.getElementById('btn-ouvir');
+      var base = link.getAttribute('href');
+      link.setAttribute('href', base + (base.indexOf('?') !== -1 ? '&' : '?') + params.slice(1));
+    })();
+  </script>
+</body>
+</html>
