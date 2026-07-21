@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Nossa Senhora Desatadora dos Nós – oração das 7 palavras que desatam os nós invisíveis da sua vida.">
+<title>Oração da Desatadora dos Nós</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f7f1e4;
+    color: #3a2314;
+  }
+
+  .page {
+    max-width: 440px;
+    margin: 0 auto;
+    padding: 34px 26px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .frame {
+    padding: 10px;
+    background: #fff;
+    border: 2px solid #6b4423;
+    box-shadow: 0 14px 34px rgba(74, 44, 23, 0.22);
+  }
+
+  .frame img {
+    display: block;
+    width: 220px;
+    max-width: 60vw;
+    height: auto;
+  }
+
+  .kicker {
+    margin-top: 22px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #a9722f;
+  }
+
+  .headline {
+    font-family: "Merriweather", serif;
+    font-weight: 700;
+    font-size: clamp(23px, 6.8vw, 29px);
+    text-align: center;
+    line-height: 1.4;
+    color: #4a2c17;
+    margin-top: 10px;
+  }
+
+  .headline em {
+    font-style: italic;
+    color: #a9722f;
+  }
+
+  .rule {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 22px 0;
+    width: 100%;
+    max-width: 260px;
+  }
+
+  .rule-line { flex: 1; height: 1px; background: #c9a876; }
+  .rule-cross { color: #a9722f; font-size: 15px; }
+
+  .lead {
+    font-size: 15px;
+    line-height: 1.75;
+    text-align: center;
+    color: #5a4230;
+    max-width: 360px;
+  }
+
+  .lead strong { color: #4a2c17; }
+
+  .btn {
+    margin-top: 26px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 18px 22px;
+    background: #6b4423;
+    color: #fff8ec;
+    font-size: 16px;
+    font-weight: 700;
+    border-radius: 6px;
+    text-decoration: none;
+    box-shadow: 0 14px 28px rgba(107, 68, 35, 0.35);
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  .btn:hover { background: #4a2c17; transform: translateY(-2px); }
+
+  .fine {
+    margin-top: 12px;
+    margin-bottom: 30px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #9c8265;
+  }
+
+  .bottom-bar {
+    background: #4a2c17;
+    padding: 22px 20px 28px;
+    text-align: center;
+  }
+
+  .bottom-bar p {
+    font-size: 11px;
+    line-height: 1.9;
+    color: rgba(255, 248, 236, 0.6);
+  }
+
+  .bottom-bar a {
+    color: rgba(255, 248, 236, 0.88);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 248, 236, 0.4);
+  }
+</style>
+</head>
+<body>
+
+  <div class="page">
+    <div class="frame">
+      <img src="des1.png" alt="Nossa Senhora Desatadora dos Nós" onerror="this.parentElement.style.display='none'">
+    </div>
+
+    <p class="kicker">Oração das 7 palavras</p>
+    <h1 class="headline">Ela desata os nós que <em>você já não consegue desatar sozinho</em></h1>
+
+    <div class="rule">
+      <span class="rule-line"></span>
+      <span class="rule-cross">&#10013;</span>
+      <span class="rule-line"></span>
+    </div>
+
+    <p class="lead">
+      Há nós que carregamos sozinhos por anos — na saúde, no trabalho, na família.
+      <strong>Nossa Senhora Desatadora dos Nós</strong> intercede por quem entrega esses nós a ela em oração.
+    </p>
+
+    <a href="https://blackmediasleuth.site/vsl_1/" class="btn" id="btn-ouvir">Ouvir a oração agora</a>
+    <span class="fine">Conteúdo gratuito · acesso imediato</span>
+  </div>
+
+  <div class="bottom-bar">
+    <p>
+      &copy; 2026 Desatadora dos Nós. Todos os direitos reservados.<br>
+      <a href="termos.html">Termos de Uso</a> &nbsp;·&nbsp; <a href="privacidade.html">Política de Privacidade</a>
+    </p>
+  </div>
+
+  <script>
+    (function () {
+      var params = window.location.search;
+      if (!params) return;
+      var link = document.getElementById('btn-ouvir');
+      var base = link.getAttribute('href');
+      link.setAttribute('href', base + (base.indexOf('?') !== -1 ? '&' : '?') + params.slice(1));
+    })();
+  </script>
+</body>
+</html>
