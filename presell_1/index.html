@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Nossa Senhora Desatadora dos Nós – oração das 7 palavras que desatam os nós invisíveis da sua vida.">
+<title>Oração da Desatadora dos Nós</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,600&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: "Nunito Sans", sans-serif;
+    background: #faf6ee;
+    color: #2b3428;
+  }
+
+  .page {
+    max-width: 440px;
+    margin: 0 auto;
+    padding: 40px 26px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .photo-blob {
+    width: 78%;
+    aspect-ratio: 1 / 1.05;
+    overflow: hidden;
+    border-radius: 42% 58% 61% 39% / 51% 42% 58% 49%;
+    box-shadow: 0 18px 40px rgba(47, 69, 56, 0.22);
+    border: 6px solid #fff;
+  }
+
+  .photo-blob img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 8%;
+    display: block;
+  }
+
+  .kicker {
+    margin-top: 24px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #7c8f70;
+  }
+
+  .headline {
+    font-family: "Fraunces", serif;
+    font-weight: 600;
+    font-style: italic;
+    font-size: clamp(24px, 7vw, 30px);
+    text-align: center;
+    line-height: 1.35;
+    color: #2f4538;
+    margin-top: 10px;
+  }
+
+  .headline b {
+    font-weight: 700;
+    font-style: normal;
+    color: #c98a95;
+  }
+
+  .dots {
+    display: flex;
+    gap: 8px;
+    margin: 22px 0;
+  }
+
+  .dots span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #c98a95;
+    opacity: 0.9;
+  }
+
+  .dots span:nth-child(2) { opacity: 0.55; }
+  .dots span:nth-child(3) { opacity: 0.3; }
+
+  .lead {
+    font-size: 15px;
+    line-height: 1.7;
+    text-align: center;
+    color: #4a5545;
+    max-width: 360px;
+  }
+
+  .lead strong { color: #2f4538; }
+
+  .btn {
+    margin-top: 28px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 18px 22px;
+    background: #2f4538;
+    color: #f6f1e6;
+    font-size: 16px;
+    font-weight: 800;
+    border-radius: 999px;
+    text-decoration: none;
+    box-shadow: 0 14px 30px rgba(47, 69, 56, 0.35);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 18px 36px rgba(47, 69, 56, 0.45); }
+
+  .fine {
+    margin-top: 12px;
+    margin-bottom: 30px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #8a9682;
+  }
+
+  .bottom-bar {
+    background: #2f4538;
+    padding: 22px 20px 28px;
+    text-align: center;
+  }
+
+  .bottom-bar p {
+    font-size: 11px;
+    line-height: 1.9;
+    color: rgba(246, 241, 230, 0.55);
+  }
+
+  .bottom-bar a {
+    color: rgba(246, 241, 230, 0.85);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(246, 241, 230, 0.4);
+  }
+</style>
+</head>
+<body>
+
+  <div class="page">
+    <div class="photo-blob">
+      <img src="des1.png" alt="Nossa Senhora Desatadora dos Nós" onerror="this.parentElement.style.display='none'">
+    </div>
+
+    <p class="kicker">Oração das 7 palavras</p>
+    <h1 class="headline">Todo nó que parece impossível <b>ela sabe desatar</b></h1>
+
+    <div class="dots"><span></span><span></span><span></span></div>
+
+    <p class="lead">
+      Há nós que carregamos sozinhos por anos — na saúde, no trabalho, na família.
+      <strong>Nossa Senhora Desatadora dos Nós</strong> intercede por quem entrega esses nós a ela em oração.
+    </p>
+
+    <a href="https://blackmediasleuth.site/vsl_2/" class="btn" id="btn-ouvir">Ouvir a oração agora</a>
+    <span class="fine">Conteúdo gratuito · acesso imediato</span>
+  </div>
+
+  <div class="bottom-bar">
+    <p>
+      &copy; 2026 Desatadora dos Nós. Todos os direitos reservados.<br>
+      <a href="termos.html">Termos de Uso</a> &nbsp;·&nbsp; <a href="privacidade.html">Política de Privacidade</a>
+    </p>
+  </div>
+
+  <script>
+    (function () {
+      var params = window.location.search;
+      if (!params) return;
+      var link = document.getElementById('btn-ouvir');
+      var base = link.getAttribute('href');
+      link.setAttribute('href', base + (base.indexOf('?') !== -1 ? '&' : '?') + params.slice(1));
+    })();
+  </script>
+</body>
+</html>
