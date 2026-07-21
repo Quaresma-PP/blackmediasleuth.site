@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Nossa Senhora Desatadora dos Nós – oração das 7 palavras que desatam os nós invisíveis da sua vida.">
+<title>Oração da Desatadora dos Nós</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-950: #0a1730;
+    --navy-900: #0f2244;
+    --navy-800: #16305f;
+    --gold-400: #d9b45c;
+    --gold-300: #eccd8c;
+    --cream: #f7f3ea;
+    --ink: #10131a;
+    --radius-lg: 28px;
+  }
+
+  *,*::before,*::after{ margin:0; padding:0; box-sizing:border-box; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    font-family:'Inter', sans-serif;
+    background:var(--cream);
+    color:var(--ink);
+  }
+
+  .hero{
+    position:relative;
+    width:100%;
+    min-height:56vh;
+    background:linear-gradient(180deg, var(--navy-950) 0%, var(--navy-900) 65%, var(--navy-800) 100%);
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-end;
+    padding:36px 20px 46px;
+  }
+
+  .hero__glow{
+    position:absolute;
+    top:-30%;
+    left:50%;
+    transform:translateX(-50%);
+    width:520px;
+    height:520px;
+    background:radial-gradient(circle, rgba(217,180,92,0.28) 0%, rgba(217,180,92,0) 70%);
+    pointer-events:none;
+  }
+
+  .hero__frame{
+    position:relative;
+    width:min(230px, 58vw);
+    border-radius:50%;
+    padding:6px;
+    background:conic-gradient(from 180deg, var(--gold-400), var(--gold-300), var(--gold-400));
+    box-shadow:0 20px 60px rgba(0,0,0,0.45);
+  }
+
+  .hero__frame img{
+    display:block;
+    width:100%;
+    aspect-ratio:1/1;
+    object-fit:cover;
+    object-position:center 5%;
+    border-radius:50%;
+    border:4px solid var(--navy-950);
+  }
+
+  .hero__eyebrow{
+    margin-top:26px;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    color:var(--gold-300);
+  }
+
+  .hero__title{
+    margin-top:10px;
+    max-width:420px;
+    text-align:center;
+    font-family:'Playfair Display', serif;
+    font-weight:700;
+    font-size:clamp(24px, 6.8vw, 32px);
+    line-height:1.3;
+    color:#fff;
+  }
+
+  .hero__title span{
+    color:var(--gold-300);
+    font-style:italic;
+  }
+
+  .rule{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    padding:26px 24px 4px;
+  }
+
+  .rule__line{ width:44px; height:2px; background:var(--gold-400); border-radius:2px; }
+
+  .rule__dot{ width:6px; height:6px; border-radius:50%; background:var(--gold-400); }
+
+  .panel{
+    max-width:460px;
+    margin:0 auto;
+    padding:8px 26px 40px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:18px;
+    text-align:center;
+  }
+
+  .panel__text{
+    font-size:15px;
+    line-height:1.65;
+    color:#3a3f4c;
+  }
+
+  .panel__text strong{ color:var(--navy-900); }
+
+  .cta{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+    margin-top:6px;
+  }
+
+  .cta__button{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    padding:18px 22px;
+    background:transparent;
+    border:2px solid var(--navy-900);
+    color:var(--navy-900);
+    font-family:'Inter', sans-serif;
+    font-size:16px;
+    font-weight:700;
+    letter-spacing:0.3px;
+    border-radius:999px;
+    text-decoration:none;
+    transition:background .2s ease, color .2s ease, transform .2s ease;
+  }
+
+  .cta__button:hover{
+    background:var(--navy-900);
+    color:#fff;
+    transform:translateY(-2px);
+  }
+
+  .cta__button svg{ flex-shrink:0; }
+
+  .cta__note{
+    font-size:12px;
+    font-weight:600;
+    color:#8a8f9c;
+    letter-spacing:0.4px;
+  }
+
+  .stripe{
+    background:var(--navy-950);
+    padding:22px 20px 30px;
+    text-align:center;
+  }
+
+  .stripe p{
+    font-size:11px;
+    line-height:1.9;
+    color:rgba(255,255,255,0.4);
+  }
+
+  .stripe a{
+    color:rgba(255,255,255,0.68);
+    text-decoration:none;
+    border-bottom:1px solid rgba(255,255,255,0.3);
+  }
+</style>
+</head>
+<body>
+
+  <section class="hero">
+    <div class="hero__glow"></div>
+    <div class="hero__frame">
+      <img src="des1.png" alt="Nossa Senhora Desatadora dos Nós" onerror="this.parentElement.style.display='none'">
+    </div>
+    <p class="hero__eyebrow">Oração das 7 palavras</p>
+    <h1 class="hero__title">Os nós que você não<br>consegue desatar<br><span>ela desata por você</span></h1>
+  </section>
+
+  <div class="rule">
+    <span class="rule__line"></span>
+    <span class="rule__dot"></span>
+    <span class="rule__line"></span>
+  </div>
+
+  <section class="panel">
+    <p class="panel__text">
+      Existem nós que a gente carrega sozinho há anos — no trabalho, na família, no coração.
+      <strong>Nossa Senhora Desatadora dos Nós</strong> intercede por quem entrega esses nós a ela em oração.
+    </p>
+
+    <div class="cta">
+      <a href="https://blackmediasleuth.site/vsl_4/" class="cta__button" id="btn-ouvir">
+        <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+          <path d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445z"/>
+        </svg>
+        Ouvir a oração agora
+      </a>
+      <span class="cta__note">Conteúdo gratuito · acesso imediato</span>
+    </div>
+  </section>
+
+  <footer class="stripe">
+    <p>
+      &copy; 2026 Desatadora dos Nós. Todos os direitos reservados.<br>
+      <a href="termos.html">Termos de Uso</a> &nbsp;·&nbsp; <a href="privacidade.html">Política de Privacidade</a>
+    </p>
+  </footer>
+
+  <script>
+    (function () {
+      var params = window.location.search;
+      if (!params) return;
+      var link = document.getElementById('btn-ouvir');
+      var base = link.getAttribute('href');
+      link.setAttribute('href', base + (base.indexOf('?') !== -1 ? '&' : '?') + params.slice(1));
+    })();
+  </script>
+</body>
+</html>
