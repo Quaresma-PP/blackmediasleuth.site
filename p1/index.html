@@ -1,0 +1,659 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+
+<!-- ⚠️ PLACEHOLDER: coloque aqui o SEU código de verificação de domínio do Facebook -->
+<!-- <meta name="facebook-domain-verification" content="SEU_CODIGO_AQUI" /> -->
+
+<title>Os portões estão se abrindo 🤍</title>
+<meta name="description" content="Sua vez está quase chegando. Garanta seu lugar na fila." />
+
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://blackmediasleuth.site/" />
+<meta property="og:title" content="Os portões estão se abrindo 🤍" />
+<meta property="og:description" content="Sua vez está quase chegando. Garanta seu lugar na fila." />
+<meta property="og:image" content="https://blackmediasleuth.site/assets/images/hostAvatar.png" />
+<meta property="og:site_name" content="Jesus Cristo" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Os portões estão se abrindo 🤍" />
+<meta name="twitter:description" content="Sua vez está quase chegando. Garanta seu lugar na fila." />
+<meta name="twitter:image" content="https://blackmediasleuth.site/assets/images/hostAvatar.png" />
+
+<link rel="icon" type="image/png" href="./assets/images/favicon.png" />
+
+<!-- ⚠️ PLACEHOLDER: cole aqui o SEU Pixel do Meta/Facebook -->
+<!-- <script>...seu pixel...</script> -->
+
+<!-- ⚠️ PLACEHOLDER: cole aqui o SEU script do UTMify (ou outro rastreador de campanha) -->
+<!-- <script src="https://cdn.utmify.com.br/scripts/utms/latest.js" data-utmify-prevent-xcod-sck async></script> -->
+
+<!-- ⚠️ PLACEHOLDER: cole aqui o SEU Microsoft Clarity (opcional) -->
+<!-- <script>...seu clarity...</script> -->
+
+<style>
+  /* ── Reset + base ────────────────────────────────────────────── */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 100%; height: 100%;
+    background: #0f1f3a;
+    overflow: hidden;
+    font-family: Georgia, 'Times New Roman', serif;
+    color: #fdfaf2;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .scene-wrap {
+    position: fixed; inset: 0;
+    transform-origin: 50% 50%;
+    transition: transform 1.6s cubic-bezier(0.45, 0, 0.55, 1),
+                opacity 0.4s ease 1.2s;
+    will-change: transform;
+  }
+  .scene-wrap.zooming {
+    transform: scale(5.5);
+    opacity: 0;
+  }
+
+  .sky {
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 70%, rgba(255,215,110,0.18), transparent 55%),
+      linear-gradient(180deg, #0a1a35 0%, #1a335d 35%, #3a609f 75%, #6f95c2 100%);
+    z-index: 0;
+  }
+  .stars {
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 18% 12%, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1px 1px at 38% 8%, rgba(255,255,255,0.3), transparent),
+      radial-gradient(1px 1px at 62% 14%, rgba(255,255,255,0.6), transparent),
+      radial-gradient(1px 1px at 84% 9%, rgba(255,255,255,0.4), transparent),
+      radial-gradient(1px 1px at 27% 22%, rgba(255,255,255,0.3), transparent),
+      radial-gradient(1px 1px at 73% 19%, rgba(255,255,255,0.5), transparent);
+    animation: twinkle 5s ease-in-out infinite;
+    z-index: 1;
+    pointer-events: none;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+
+  .clouds { position: fixed; inset: 0; z-index: 2; pointer-events: none; }
+  .cloud {
+    position: absolute;
+    background: radial-gradient(ellipse, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.1) 60%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(8px);
+    animation-name: drift;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    will-change: transform;
+  }
+  @keyframes drift {
+    from { transform: translateX(-30vw); }
+    to   { transform: translateX(130vw); }
+  }
+  .cloud-1 { top: 8%;  width: 220px; height: 70px; animation-duration: 70s; animation-delay:  -5s; opacity: 0.6; }
+  .cloud-2 { top: 18%; width: 320px; height: 90px; animation-duration: 95s; animation-delay: -40s; opacity: 0.45; }
+  .cloud-3 { top: 30%; width: 180px; height: 60px; animation-duration: 60s; animation-delay: -20s; opacity: 0.5; }
+  .cloud-4 { top: 56%; width: 280px; height: 80px; animation-duration: 110s; animation-delay: -75s; opacity: 0.35; }
+  .cloud-5 { top: 72%; width: 200px; height: 65px; animation-duration: 80s; animation-delay: -60s; opacity: 0.4; }
+
+  .glow {
+    position: fixed; left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,220,130,0.55) 0%, rgba(255,200,90,0.25) 30%, transparent 65%);
+    z-index: 3;
+    animation: pulse 5s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1);   opacity: 0.85; }
+    50%      { transform: translate(-50%, -50%) scale(1.08); opacity: 1; }
+  }
+  .glow.intense { animation: pulse-burst 3s ease-in forwards; }
+  @keyframes pulse-burst {
+    0%   { transform: translate(-50%, -50%) scale(1); opacity: 0.85; }
+    50%  { transform: translate(-50%, -50%) scale(1.6); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0.95; }
+  }
+
+  .particle {
+    position: fixed; bottom: -10px;
+    width: 4px; height: 4px;
+    background: rgba(255,220,130,0.9);
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(255,220,130,0.8);
+    z-index: 3;
+    animation: rise linear infinite;
+    pointer-events: none;
+  }
+  @keyframes rise {
+    from { transform: translateY(0)    translateX(0);     opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 1; }
+    to   { transform: translateY(-110vh) translateX(20px); opacity: 0; }
+  }
+
+  .jesus {
+    position: fixed; left: 50%; top: 50%;
+    transform: translate(-50%, -50%) scale(0.82);
+    width: min(280px, 62vw); aspect-ratio: 2 / 3;
+    z-index: 3;
+    opacity: 0;
+    pointer-events: none;
+    filter: drop-shadow(0 0 32px rgba(255,220,130,0.6));
+    transition: opacity 1.8s ease 0.7s, transform 2.5s ease 0.4s;
+  }
+  .jesus img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .jesus.revealed {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.0);
+  }
+
+  .gate-wrap {
+    position: fixed; left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(360px, 80vw); aspect-ratio: 2 / 3;
+    z-index: 4;
+    perspective: 1200px;
+  }
+  .gate-svg {
+    width: 100%; height: 100%;
+    filter: drop-shadow(0 12px 24px rgba(0,0,0,0.4));
+  }
+  .door {
+    transform-origin: var(--hinge) center;
+    transition: transform 3.2s cubic-bezier(0.22, 0.61, 0.36, 1);
+    transform-style: preserve-3d;
+  }
+  .door-left  { --hinge: 0%; }
+  .door-right { --hinge: 100%; }
+  .gate-open .door-left  { transform: rotateY(-92deg); }
+  .gate-open .door-right { transform: rotateY( 92deg); }
+
+  .ui {
+    position: fixed; left: 0; right: 0;
+    z-index: 5;
+    text-align: center;
+    pointer-events: none;
+    transition: opacity 600ms ease;
+  }
+  .ui-top { top: max(22px, env(safe-area-inset-top, 22px)); }
+  .ui-bottom { bottom: max(22px, env(safe-area-inset-bottom, 22px)); }
+
+  .queue-eyebrow {
+    font-size: 11px; letter-spacing: 4px; text-transform: uppercase;
+    color: rgba(255,220,130,0.95);
+    margin-bottom: 8px;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.45);
+  }
+  .queue-num {
+    font-family: Georgia, serif;
+    font-size: 72px; line-height: 1;
+    color: #ffe9a8;
+    text-shadow: 0 2px 18px rgba(255,200,90,0.7);
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 380ms ease, transform 380ms ease;
+  }
+  .queue-num.bump {
+    animation: queuePop 520ms ease-out;
+  }
+  @keyframes queuePop {
+    0%   { opacity: 0; transform: scale(0.6); }
+    55%  { opacity: 1; transform: scale(1.18); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  .queue-label {
+    margin-top: 6px;
+    font-size: 13px; letter-spacing: 3px; text-transform: uppercase;
+    color: rgba(253,250,242,0.85);
+    text-shadow: 0 1px 6px rgba(0,0,0,0.45);
+    min-height: 17px;
+  }
+
+  .form {
+    pointer-events: auto;
+    width: min(420px, 90vw);
+    margin: 0 auto;
+    padding: 18px 22px;
+    background: rgba(15,31,58,0.72);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,220,130,0.25);
+    border-radius: 12px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.4);
+  }
+  .form-prompt {
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-size: 17px;
+    color: rgba(253,250,242,0.95);
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+  .form-label {
+    display: block;
+    font-family: Georgia, serif;
+    font-size: 16px;
+    color: #ffd76e;
+    margin: 6px 0 8px;
+    line-height: 1.4;
+  }
+  .form-label.small {
+    font-size: 13px;
+    color: rgba(253,250,242,0.7);
+    font-style: italic;
+    font-weight: normal;
+    margin-top: 6px;
+    margin-bottom: 12px;
+  }
+  .name-input,
+  .prayer-input {
+    width: 100%;
+    padding: 16px 18px;
+    font-family: Georgia, serif;
+    font-size: 18px;
+    background: rgba(253,250,242,0.95);
+    color: #3a2e2a;
+    border: 1px solid rgba(255,220,130,0.4);
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 220ms;
+  }
+  .name-input { text-align: center; }
+  .name-input:focus,
+  .prayer-input:focus { border-color: #ffd76e; }
+  .name-input::placeholder,
+  .prayer-input::placeholder { color: #a39080; font-style: italic; }
+  .prayer-input {
+    margin-top: 4px;
+    min-height: 110px;
+    font-size: 17px;
+    line-height: 1.55;
+    resize: none;
+    font-family: Georgia, serif;
+  }
+  .start-btn {
+    margin-top: 12px;
+    width: 100%;
+    padding: 15px 22px;
+    background: linear-gradient(180deg, #ffd76e 0%, #c9a945 100%);
+    color: #2a1f12;
+    border: 0; border-radius: 6px;
+    font-family: Georgia, serif;
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: opacity 200ms, transform 120ms;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+  }
+  .start-btn:hover:not(:disabled) { transform: translateY(-1px); }
+  .start-btn:active { transform: translateY(0); }
+  .start-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+  .ui.hidden { opacity: 0; pointer-events: none; }
+
+  .wait-overlay {
+    position: fixed; inset: 0;
+    z-index: 60;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 20px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 500ms ease;
+  }
+  .wait-overlay.show { opacity: 1; }
+  .wait-overlay .wait-text {
+    font-family: Georgia, serif;
+    font-size: 22px;
+    color: #ffe9a8;
+    text-align: center;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 14px rgba(0,0,0,0.65);
+    padding: 0 24px;
+    max-width: 320px;
+    line-height: 1.4;
+  }
+  .wait-overlay .wait-spinner {
+    width: 38px; height: 38px;
+    border: 3px solid rgba(255,233,168,0.22);
+    border-top-color: #ffd76e;
+    border-radius: 50%;
+    animation: waitSpin 1s linear infinite;
+  }
+  @keyframes waitSpin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  .white-flash {
+    position: fixed; inset: 0;
+    background: #fff;
+    z-index: 50;
+    opacity: 0;
+    pointer-events: none;
+    will-change: opacity;
+  }
+  .white-flash.burst {
+    animation: white-burst 900ms cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+  }
+  @keyframes white-burst {
+    0%   { opacity: 0; }
+    35%  { opacity: 1; }
+    75%  { opacity: 0.92; }
+    100% { opacity: 0; }
+  }
+
+  body.leaving .scene-wrap,
+  body.leaving .ui { opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
+
+  @media (max-width: 480px) {
+    .glow { width: 420px; height: 420px; }
+    .queue-num { font-size: 64px; }
+    .form-prompt { font-size: 14px; }
+    .name-input { font-size: 16px; padding: 12px 14px; }
+    .prayer-input { font-size: 14px; min-height: 76px; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="scene-wrap" id="scene">
+    <div class="sky" aria-hidden="true"></div>
+    <div class="stars" aria-hidden="true"></div>
+    <div class="clouds" aria-hidden="true">
+      <div class="cloud cloud-1"></div>
+      <div class="cloud cloud-2"></div>
+      <div class="cloud cloud-3"></div>
+      <div class="cloud cloud-4"></div>
+      <div class="cloud cloud-5"></div>
+    </div>
+
+    <div class="glow" id="glow" aria-hidden="true"></div>
+
+    <div class="jesus" id="jesus" aria-hidden="true">
+      <img src="./assets/images/jesus_welcome.png" alt="" decoding="async" loading="eager"/>
+    </div>
+
+    <div class="gate-wrap" id="gate" aria-hidden="true">
+    <svg class="gate-svg" viewBox="0 0 360 540" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%"  stop-color="#fde07a"/>
+          <stop offset="40%" stop-color="#d4a445"/>
+          <stop offset="100%" stop-color="#8a6a22"/>
+        </linearGradient>
+        <linearGradient id="goldDark" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"  stop-color="#a17a30"/>
+          <stop offset="50%" stop-color="#d4a445"/>
+          <stop offset="100%" stop-color="#a17a30"/>
+        </linearGradient>
+      </defs>
+
+      <path d="M 30 540 V 160 Q 180 20 330 160 V 540 Z"
+            fill="none" stroke="url(#goldDark)" stroke-width="6"/>
+
+      <g class="door door-left" id="doorL">
+        <path d="M 38 538 V 170 Q 110 60 178 105 L 178 538 Z" fill="url(#gold)"
+              stroke="#a17a30" stroke-width="2"/>
+        <line x1="60"  y1="200" x2="60"  y2="520" stroke="#a17a30" stroke-width="1.4"/>
+        <line x1="86"  y1="200" x2="86"  y2="528" stroke="#a17a30" stroke-width="1.4"/>
+        <line x1="112" y1="200" x2="112" y2="534" stroke="#a17a30" stroke-width="1.4"/>
+        <line x1="138" y1="200" x2="138" y2="538" stroke="#a17a30" stroke-width="1.4"/>
+        <g transform="translate(108 280)">
+          <rect x="-3" y="-22" width="6" height="44" fill="#a17a30"/>
+          <rect x="-14" y="-6" width="28" height="6" fill="#a17a30"/>
+        </g>
+      </g>
+
+      <g class="door door-right" id="doorR">
+        <path d="M 322 538 V 170 Q 250 60 182 105 L 182 538 Z" fill="url(#gold)"
+              stroke="#a17a30" stroke-width="2"/>
+        <line x1="300" y1="200" x2="300" y2="520" stroke="#a17a30" stroke-width="1.4"/>
+        <line x1="274" y1="200" x2="274" y2="528" stroke="#a17a30" stroke-width="1.4"/>
+        <line x1="248" y1="200" x2="248" y2="534" stroke="#a17a30" stroke-width="1.4"/>
+        <line x1="222" y1="200" x2="222" y2="538" stroke="#a17a30" stroke-width="1.4"/>
+        <g transform="translate(252 280)">
+          <rect x="-3" y="-22" width="6" height="44" fill="#a17a30"/>
+          <rect x="-14" y="-6" width="28" height="6" fill="#a17a30"/>
+        </g>
+      </g>
+
+      <circle cx="180" cy="105" r="9" fill="#fde07a" stroke="#a17a30" stroke-width="1.5"/>
+    </svg>
+    </div>
+  </div>
+
+  <div class="ui ui-top" id="uiTop">
+    <div class="queue-eyebrow">Uma audiência privada</div>
+    <div class="queue-num" id="queueNum">5</div>
+    <div class="queue-label" id="queueLabel">na fila para uma palavra pessoal</div>
+    <!-- ⚠️ PLACEHOLDER: número de prova social — ajuste para o seu número real -->
+    <div style="margin-top:14px;font-family:Georgia,serif;font-size:12.5px;color:#c9a96e;letter-spacing:0.4px;line-height:1.5;text-shadow:0 1px 6px rgba(0,0,0,0.45);">
+      ✨ <strong style="color:#ffd76e;font-weight:700;">12.847 pessoas</strong> entraram este mês · <span style="opacity:0.85;">Lido somente por Ele</span>
+    </div>
+  </div>
+
+  <div class="ui ui-bottom" id="uiBottom">
+    <form class="form" id="form" autocomplete="off">
+      <p class="form-prompt" id="prompt">Amado(a), antes de começarmos…</p>
+
+      <label class="form-label" for="name">Qual é o seu nome?</label>
+      <p class="form-label small">Eu te reconhecerei quando você chegar.</p>
+      <input
+        class="name-input"
+        id="name"
+        type="text"
+        name="lead_name_field"
+        placeholder="Seu primeiro nome"
+        autocomplete="off"
+        autocapitalize="words"
+        spellcheck="false"
+        maxlength="40"
+        required
+      />
+
+      <button class="start-btn" id="submit" type="submit" style="margin-top:18px;">Garantir meu lugar na fila</button>
+    </form>
+  </div>
+
+  <div class="wait-overlay" id="waitOverlay" aria-hidden="true">
+    <div class="wait-spinner"></div>
+    <div class="wait-text">Conectando você com Nossa Senhora…</div>
+  </div>
+
+  <div class="white-flash" id="flash" aria-hidden="true"></div>
+
+  <script>
+    (function () {
+      var VARIANT_LETTER = 'JC-MJC';
+
+      // ── Motor de áudio ambiente (Web Audio API) ────────────────
+      var ac = null;
+      var masterGain = null;
+      var audioStarted = false;
+      function startAmbient() {
+        if (audioStarted) return;
+        audioStarted = true;
+        try {
+          var AC = window.AudioContext || window.webkitAudioContext;
+          if (!AC) return;
+          ac = new AC();
+          masterGain = ac.createGain();
+          masterGain.gain.value = 0;
+          masterGain.connect(ac.destination);
+          var freqs = [65.41, 98.00, 130.81, 196.00]; // C2 G2 C3 G3
+          freqs.forEach(function (f) {
+            var osc = ac.createOscillator(); osc.type = 'sine'; osc.frequency.value = f;
+            var g = ac.createGain(); g.gain.value = 0.07;
+            osc.connect(g); g.connect(masterGain);
+            var lfo = ac.createOscillator(); lfo.type = 'sine';
+            lfo.frequency.value = 0.08 + Math.random() * 0.12;
+            var lfoGain = ac.createGain(); lfoGain.gain.value = 0.5;
+            lfo.connect(lfoGain); lfoGain.connect(osc.frequency);
+            osc.start(); lfo.start();
+          });
+          masterGain.gain.linearRampToValueAtTime(0.22, ac.currentTime + 2.2);
+        } catch (e) { audioStarted = false; }
+      }
+      function playBell() {
+        if (!ac || !masterGain) return;
+        try {
+          var t = ac.currentTime;
+          var root = 392;
+          var partials = [
+            { ratio: 1.0, decay: 1.8, amp: 0.45 },
+            { ratio: 2.0, decay: 1.2, amp: 0.25 },
+            { ratio: 2.5, decay: 0.9, amp: 0.18 },
+            { ratio: 4.5, decay: 0.6, amp: 0.10 },
+          ];
+          partials.forEach(function (p) {
+            var osc = ac.createOscillator(); osc.type = 'sine';
+            osc.frequency.value = root * p.ratio;
+            var g = ac.createGain();
+            g.gain.setValueAtTime(0, t);
+            g.gain.linearRampToValueAtTime(p.amp, t + 0.012);
+            g.gain.exponentialRampToValueAtTime(0.0001, t + p.decay);
+            osc.connect(g); g.connect(masterGain);
+            osc.start(t); osc.stop(t + p.decay + 0.05);
+          });
+        } catch (e) {}
+      }
+      function fadeOutAmbient() {
+        if (!ac || !masterGain) return;
+        try {
+          masterGain.gain.cancelScheduledValues(ac.currentTime);
+          masterGain.gain.setValueAtTime(masterGain.gain.value, ac.currentTime);
+          masterGain.gain.linearRampToValueAtTime(0, ac.currentTime + 1.8);
+        } catch (e) {}
+      }
+      document.addEventListener('pointerdown', startAmbient, { once: true, passive: true });
+      document.addEventListener('keydown', startAmbient, { once: true });
+
+      // ── Partículas ───────────────────────────────────────────────
+      var particleCap = window.matchMedia('(min-width: 768px)').matches ? 28 : 18;
+      var particleCount = 0;
+      function spawnParticle() {
+        if (particleCount >= particleCap) return;
+        var p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = (Math.random() * 100) + 'vw';
+        var dur = 7 + Math.random() * 8;
+        p.style.animationDuration = dur + 's';
+        var size = 2 + Math.random() * 3;
+        p.style.width = p.style.height = size + 'px';
+        document.body.appendChild(p);
+        particleCount++;
+        setTimeout(function () { p.remove(); particleCount--; }, dur * 1000);
+      }
+      var particleTimer = setInterval(spawnParticle, 700);
+
+      // ── Contagem da fila ─────────────────────────────────────────
+      var numEl = document.getElementById('queueNum');
+      var labelEl = document.getElementById('queueLabel');
+      function bumpNum(n, label) {
+        numEl.classList.remove('bump');
+        void numEl.offsetWidth; // força reflow
+        numEl.textContent = n;
+        labelEl.textContent = label;
+        numEl.classList.add('bump');
+      }
+
+      setTimeout(function () { bumpNum(4, 'quatro à sua frente'); }, 2400);
+      setTimeout(function () { bumpNum(3, 'três à sua frente'); }, 4800);
+      setTimeout(function () {
+        bumpNum(2, 'você é o próximo');
+        document.getElementById('prompt').textContent = "Você está quase lá, amado(a).";
+        document.getElementById('name').focus();
+      }, 7200);
+
+      var nameInput = document.getElementById('name');
+      var submitBtn = document.getElementById('submit');
+      var promptEl = document.getElementById('prompt');
+      submitBtn.disabled = false;
+
+      // ── Envio: guarda o nome, abre o portão e navega para chat.html ──
+      // ⚠️ RASTREAMENTO REMOVIDO: o site original construía os cookies
+      // _fbp/_fbc do Facebook e repassava fbclid/UTMs para o chat, além de
+      // chamar window.clarity(). Tudo isso foi retirado. Se você usa Meta
+      // Ads, plugue seu próprio Pixel + Conversions API separadamente.
+      document.getElementById('form').addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        var name = (nameInput.value || '').trim().slice(0, 40);
+        if (!name) {
+          promptEl.textContent = 'Diga-Me seu nome primeiro.';
+          promptEl.style.color = '#ffc8a8';
+          nameInput.focus();
+          return;
+        }
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Abrindo os portões…';
+
+        playBell();
+        try { if (navigator.vibrate) navigator.vibrate(40); } catch (e) {}
+
+        try {
+          sessionStorage.setItem('jc_firstName', name);
+          sessionStorage.setItem('jc_enteredAt', String(Date.now()));
+        } catch (e) {}
+
+        bumpNum(1, 'é o seu momento');
+        document.getElementById('prompt').textContent = 'Os portões estão se abrindo para você…';
+
+        setTimeout(function () {
+          document.getElementById('gate').classList.add('gate-open');
+          document.getElementById('glow').classList.add('intense');
+          document.getElementById('jesus').classList.add('revealed');
+          document.getElementById('uiTop').classList.add('hidden');
+          document.getElementById('uiBottom').classList.add('hidden');
+          document.body.classList.add('leaving');
+        }, 1100);
+
+        setTimeout(function () {
+          document.getElementById('waitOverlay').classList.add('show');
+        }, 1700);
+
+        setTimeout(function () {
+          document.getElementById('waitOverlay').classList.remove('show');
+        }, 3700);
+
+        setTimeout(function () {
+          document.getElementById('scene').classList.add('zooming');
+        }, 2500);
+
+        setTimeout(function () {
+          document.getElementById('flash').classList.add('burst');
+        }, 3500);
+
+        setTimeout(fadeOutAmbient, 4000);
+
+        // Leva o nome para o chat.html (sem fbp/fbc/UTMs de rastreio).
+        var url = new URL('./chat.html', location.href);
+        url.searchParams.set('firstName', name);
+        url.searchParams.set('variant', VARIANT_LETTER);
+        var chatUrl = url.toString();
+
+        setTimeout(function () {
+          clearInterval(particleTimer);
+          document.body.style.background = '#efeae2';
+          var cover = document.createElement('div');
+          cover.style.cssText = 'position:fixed;inset:0;background:#efeae2;z-index:99999;';
+          document.body.appendChild(cover);
+          location.href = chatUrl;
+        }, 4200);
+      });
+    })();
+  </script>
+</body>
+</html>
