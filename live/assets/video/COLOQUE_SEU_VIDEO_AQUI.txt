@@ -1,0 +1,2 @@
+Coloque aqui o seu arquivo de vídeo (ex: seu-video.mp4).
+O index.html já está configurado para tocar assets/video/seu-video.mp4.
