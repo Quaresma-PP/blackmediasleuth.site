@@ -163,34 +163,22 @@
 </head>
 <body>
   <!--
-    ⚠️ Roteiro trocado para a copy "Desatadora dos Nós" (documento com
-    comentário do Filipe Santana), substituindo a copy anterior do Jesus.
-    Motor de chat (balões + digitação + botões + caixa de oração) é o
-    mesmo já testado.
+    ⚠️ Copy "Desatadora dos Nós" atualizada (revisão mais recente do
+    documento). A versão anterior tinha "minha filha"/"meu filho" e
+    variação de gênero em "sozinho"/"pronto" — essa revisão removeu tudo
+    isso, então tirei também a lógica de gênero do código (não é mais
+    necessária). "MINHA RAINHA" continua fixo pros dois públicos: é o
+    visitante chamando Nossa Senhora de "minha rainha" (título dela), não
+    ela chamando o visitante. "Já pedi ao meu filho Jesus..." é sobre
+    Jesus, não sobre a pessoa no chat.
 
-    GÊNERO: nunca pergunta — resolve sozinho a partir do nome que já veio
-    do index.html. Prioridade: 1) ?genero=f|m na URL, 2) lista de nomes
-    comuns no Brasil, 3) regra de terminação (-a → feminino, -o →
-    masculino), 4) chute final (masculino) pra qualquer nome fora disso.
-    A partir do gênero resolvido, o chat usa "minha filha" / "meu filho", "sozinha" / "sozinho",
-    "pronta" / "pronto" — com a concordância certa (bloco "minha amada
-    filha" / "meu amado filho", não palavra trocada isolada). "MINHA
-    RAINHA" NÃO varia por gênero: é o visitante chamando Nossa Senhora de
-    "minha rainha" (título dela), não ela chamando o visitante — fica
-    igual pra todo mundo. E "Já pedi ao meu filho..." também não varia:
-    ali "meu filho" é Jesus.
-
-    Outros placeholders / decisões em aberto, marcados com ⚠️ no código:
-    1. URL_DA_VSL: hoje é só um placeholder "#". Troque pelo link real
-       da sua oferta/live.
+    Placeholders / decisões em aberto, marcados com ⚠️ no código:
+    1. URL_DA_VSL: aponta pra "./live.html" — a página de live falsa
+       (estilo Facebook) que fica nesta mesma pasta, continuação deste
+       funil (index.html → chat.html → live.html).
     2. Foto do topo: usando hero-desatadora.png (a mesma arte de
        Nossa Senhora Desatadora dos Nós que você já tinha em
        desatadora-nos/presell/des1.png).
-    3. Linha "SIM, ME ENVIE A TRANSMISSÃO AO VIVO!" aparecia duplicada no
-       seu doc — uma vez como linha solta, de novo dentro dos botões.
-       Tratei como resíduo de edição e mantive só como opção de botão. Se
-       era pra ser uma fala extra antes dos botões, me avisa que eu
-       devolvo.
   -->
 
   <div class="chat-wrap" id="chatWrap">
@@ -205,95 +193,31 @@
     var nome = (q.get('firstName') || '').trim();
     if (!nome) nome = 'querida(o)';
 
-    // Tenta descobrir o gênero pelo primeiro nome (lista de nomes comuns
-    // no Brasil + regra de terminação como reforço). Só pergunta dentro
-    // do chat quando não conseguir identificar com confiança.
-    var NOMES_FEMININOS = ['maria','ana','julia','juliana','fernanda','camila','patricia','beatriz','carla',
-      'carolina','amanda','bruna','bianca','isabela','isabel','laura','leticia','luiza','luisa','marcia',
-      'marina','natalia','paula','priscila','raquel','rafaela','renata','sabrina','sandra','simone','sofia',
-      'sonia','tatiana','vanessa','vera','viviane','adriana','aline','alessandra','andrea','angela','barbara',
-      'cintia','claudia','cristina','daniela','debora','denise','edna','elaine','eliane','elizabeth','fabiana',
-      'flavia','gabriela','gisele','helena','ingrid','ivone','janaina','joana','jaqueline','jessica','joyce',
-      'karina','katia','kelly','larissa','lidiane','lilian','lucia','luciana','luciene','magda','manuela',
-      'marcela','margarida','mariana','miriam','monica','nadia','neusa','norma','odete','pamela','regina',
-      'rita','roberta','rosa','rosana','rosangela','rosemary','sara','selma','silvana','silvia','solange',
-      'suzana','tania','telma','teresa','valeria','valentina','veronica','vitoria','yasmin','yara','alice',
-      'esther','ester','sarah','emanuelle','emanuele','luiza','livia','melissa','nicole','stephanie','thais'];
-    var NOMES_MASCULINOS = ['joao','jose','antonio','francisco','carlos','paulo','pedro','lucas','luiz',
-      'marcos','luis','gabriel','rafael','daniel','marcelo','bruno','eduardo','felipe','raimundo','rodrigo',
-      'manoel','manuel','fabio','diego','fabricio','alexandre','gustavo','leonardo','ricardo','vinicius',
-      'wesley','anderson','andre','caio','cesar','cristiano','danilo','davi','david','denis','edson','elias',
-      'emerson','erick','fernando','flavio','gilberto','guilherme','helio','henrique','hugo','igor','ivan',
-      'jefferson','jonathan','jorge','julio','junior','leandro','marcio','mario','mateus','matheus','mauricio',
-      'miguel','nelson','nicolas','otavio','patrick','renato','roberto','rogerio','ronaldo','samuel','sergio',
-      'sidney','tiago','thiago','thomas','victor','vitor','wagner','walter','washington','wellington','william',
-      'alan','allan','arthur','artur','breno','caue','emanuel','enzo','erik','ian','isaac','kaue','kevin',
-      'lorenzo','murilo','noah','pietro','theo','yuri'];
-    var EXCECOES_A_MASCULINO = ['luca', 'joshua'];
-    var EXCECOES_CONSOANTE_FEMININO = ['ingrid', 'raquel', 'isabel', 'judite', 'beatriz', 'miriam', 'ruth',
-      'esther', 'ester', 'carmen', 'iris', 'noemi'];
-
-    // Nunca retorna null — sempre chuta algo, pra nunca precisar perguntar.
-    function inferirGenero(primeiroNome) {
-      var n = (primeiroNome || '').toLowerCase().trim().split(/\s+/)[0] || '';
-      n = n.normalize ? n.normalize('NFD').replace(/[̀-ͯ]/g, '') : n;
-      if (!n) return 'f';
-      if (NOMES_FEMININOS.indexOf(n) !== -1) return 'f';
-      if (NOMES_MASCULINOS.indexOf(n) !== -1) return 'm';
-      if (EXCECOES_A_MASCULINO.indexOf(n) !== -1) return 'm';
-      if (EXCECOES_CONSOANTE_FEMININO.indexOf(n) !== -1) return 'f';
-      if (/a$/.test(n)) return 'f';
-      if (/o$/.test(n)) return 'm';
-      // Terminação fora da lista (-e, -l, -r, -s, -n, -z...): no português,
-      // a maioria desses nomes é masculina (Rafael, André, Carlos, Marcos,
-      // Luis...) — chuta masculino como padrão em vez de perguntar.
-      return 'm';
-    }
-
-    // 'f' ou 'm'. ?genero= na URL manda, senão infere pelo nome — sempre
-    // resolve, nunca pergunta dentro do chat.
-    var generoParam = (q.get('genero') || '').trim().toLowerCase();
-    var genero = (generoParam === 'f' || generoParam === 'm') ? generoParam : inferirGenero(nome);
-
     // ⚠️ PLACEHOLDER: troque pela URL real da sua live/VSL/oferta.
-    var URL_DA_VSL = '#';
+    var URL_DA_VSL = './live.html';
 
     var AVATAR = './assets/images/hero-desatadora.png';
 
-    function g(f, m) { return genero === 'm' ? m : f; }
-
-    // Substitui {{nome}} pelo {NAME} da copy, e os tokens de gênero pelas
-    // formas corretas (concordância feita em bloco — "minha amada filha" /
-    // "meu amado filho" — não palavra por palavra, pra não quebrar o
-    // português). O resto do texto é transcrição literal da copy.
-    // ⚠️ "Já pedi ao meu filho..." NÃO tem token: ali "meu filho" é Jesus
-    // (filho de Maria), não a pessoa no chat — teria que ficar fixo mesmo.
-    // ⚠️ "MINHA RAINHA" também NÃO varia por gênero: é o visitante chamando
-    // Nossa Senhora de "minha rainha" (título dela, Rainha do Céu) — não é
-    // ela chamando o visitante. Fica igual pra homem e mulher.
+    // A copy atual não usa mais termos de gênero pro visitante (nem
+    // "minha filha/meu filho" nem variação de "sozinho"/"pronto") — só
+    // substitui {{nome}} pelo {NAME}. "Já pedi ao meu filho Jesus..." é
+    // sobre Jesus (filho de Maria), não sobre a pessoa no chat.
     function t(str) {
-      return str
-        .replace(/\{\{nome\}\}/g, nome)
-        .replace(/\{\{filha_filho\}\}/g, g('minha filha', 'meu filho'))
-        .replace(/\{\{sozinho_a\}\}/g, g('sozinha', 'sozinho'))
-        .replace(/\{\{pronto_a\}\}/g, g('pronta', 'pronto'))
-        .replace(/\{\{PRONTO_A\}\}/g, g('PRONTA', 'PRONTO'))
-        .replace(/\{\{amada_filha\}\}/g, g('minha amada filha', 'meu amado filho'));
+      return str.replace(/\{\{nome\}\}/g, nome);
     }
 
     // Cada "step" roda em sequência.
-    // Tipos: 'gender' (pergunta homem/mulher, só entra se genero==null),
-    // 'bot' (grupo de balões), 'choices' (botões), 'input' (caixa de
+    // Tipos: 'bot' (grupo de balões), 'choices' (botões), 'input' (caixa de
     // texto), 'redirect' (mostra as últimas falas e navega sozinho pra VSL).
     var script = [
-      { type: 'bot', lines: ['Eu estava esperando por você, {{filha_filho}}.', 'Tenho uma mensagem para você'] },
+      { type: 'bot', lines: ['Eu estava esperando por você', 'Tenho uma mensagem para você'] },
       { type: 'choices', options: ['✅ EU QUERO TE OUVIR, MINHA RAINHA'] },
 
       { type: 'bot', lines: ['Eu sei que neste momento as coisas estão muito difíceis na sua vida…', 'E você precisa de ajuda.', 'Certo?'] },
       { type: 'choices', options: ['SIM! 🙏', 'EU PRECISO DE AJUDA AGORA ✅'] },
 
-      { type: 'bot', lines: ['Você não está {{sozinho_a}}, {{nome}}!', 'Estou aqui para te ajudar.', 'Hoje realizaremos um milagre que mudará toda a sua vida!', 'Você está {{pronto_a}}?'] },
-      { type: 'choices', options: ['ESTOU {{PRONTO_A}}! 🙏'] },
+      { type: 'bot', lines: ['Você não está sozinho, {{nome}}!', 'Estou aqui para te ajudar.', 'Hoje realizaremos um milagre que mudará toda a sua vida!', 'Você está pronto?'] },
+      { type: 'choices', options: ['ESTOU PRONTO! 🙏'] },
 
       { type: 'bot', lines: ['Receba minhas bênçãos 🙏', 'Seu milagre divino está acontecendo agora mesmo, {{nome}}!', 'Feche os olhos, conecte-se com nosso amado Deus.', 'E responda:', 'Você tem fé?'] },
       { type: 'choices', options: ['TENHO FÉ! 🙏', 'EU ACREDITO NOS MILAGRES DE DEUS ✅'] },
@@ -303,9 +227,9 @@
 
       { type: 'bot', lines: [
           'Ouvi sua prece, {{nome}}…',
-          'Feche os olhos agora, {{amada_filha}}, eu vou desatar todos os nós que sufocam sua vida.',
+          'Feche os olhos agora, eu vou desatar todos os nós que sufocam sua vida.',
           'Escute com atenção… pois estou prestes a liberar a bênção que você tanto pediu…',
-          'Já pedi ao meu filho para liberar seu milagre…',
+          'Já pedi ao meu filho jesus para liberar seu milagre…',
           'Agora me diga, do fundo do seu coração…',
           'Você aceita o milagre que tenho para você?'
         ] },
@@ -321,8 +245,8 @@
           'Tudo que peço é um minuto do seu tempo!',
           'Preparei uma transmissão ao vivo exclusiva para aqueles que chegaram até aqui! 🙏',
           'Agora tudo o que você precisa fazer é assistir até o final e seu milagre acontecerá.',
-          'Posso contar com a sua presença?',
-          'Esse é o canal que preparei para te entregar a bênção que você aceitou.'
+          'Esse é o canal que preparei para desatar os nós que te prendem!',
+          'Posso contar com a sua presença?'
         ] },
       { type: 'choices', options: ['SIM, ME ENVIE A TRANSMISSÃO AO VIVO!', 'EU VOU ASSISTIR'] },
 

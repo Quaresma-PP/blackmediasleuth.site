@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>AO VIVO AGORA - Oferta Especial</title>
+<meta name="description" content="Assista à transmissão ao vivo e garanta sua oferta exclusiva." />
+<link rel="icon" type="image/png" href="./assets/images/hero-desatadora.png" />
+
+<!--
+  ⚠️ LEIA ANTES DE PUBLICAR — clone traduzido de uma página "live falsa"
+  estilo Facebook (yourrequestdontskip.lovable.app/live), trocando a
+  persona de "Jesus" para "Novena de Nossa Senhora Desatadora dos Nós".
+
+  O QUE FOI REMOVIDO (rastreamento — o HTML original não mostrava isso,
+  só aparecia rodando o JavaScript da página):
+  1. Script da UTMify (cdn.utmify.com.br/scripts/utms/latest.js)
+  2. Pixel do Meta/Facebook via UTMify — pixelId do DONO ORIGINAL:
+     "6a0f8be32f65ceffd5705495"
+  3. Pixel do TikTok via UTMify — tikTokPixelId do DONO ORIGINAL:
+     "6a4c0e88c99dce671e1288de"
+  4. "Sequestro" do botão voltar do navegador (a página original empurra
+     3 estados no histórico e redireciona pra /wait se o usuário tentar
+     voltar). Isso é um dark pattern — NÃO reproduzi por padrão. Se
+     quiser mesmo assim, me avisa que eu explico como funcionava.
+  5. IDs de produto + afiliado do Digistore24 do DONO ORIGINAL que
+     estavam nos botões de oferta (?aff=nbascaleboy).
+
+  ⚠️ Sem seção de ofertas/depoimentos/FAQ — a pedido, tirei toda a parte
+  de "doação" (ofertas, depoimentos, FAQ de pagamento). Fica só a
+  simulação da live: cabeçalho, vídeo, reações e o loop de comentários
+  falsos, rodando pra sempre (sem timer, sem revelar nada depois).
+
+  PLACEHOLDER que falta:
+  - Vídeo: o player original é um vídeo hospedado na conta ConverteAI/
+    VTurb do dono original (com IA gerando "Jesus" falando) — não dá pra
+    copiar por scraping, é conteúdo proprietário de vídeo dele. Deixei
+    uma imagem estática no lugar + comentário com o snippet de embed
+    original pra você adaptar com o SEU player/vídeo (procure
+    "COLE AQUI" no código).
+-->
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #000; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #e4e6eb; -webkit-font-smoothing: antialiased; }
+  .fb-page { max-width: 480px; margin: 0 auto; min-height: 100vh; background: #18191a; }
+
+  .fb-header { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: #242526; position: sticky; top: 0; z-index: 20; }
+  .fb-avatar-wrap { position: relative; }
+  .fb-avatar-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; object-position: top; display: block; }
+  .fb-live-dot { position:absolute; bottom:-2px; right:-2px; width:14px; height:14px; border-radius:50%; background:#e41e3f; border:2px solid #242526; animation: pulseDot 1.4s infinite; }
+  @keyframes pulseDot { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .fb-header-info { flex: 1; min-width: 0; }
+  .fb-name { font-weight: 700; font-size: 14.5px; color: #e4e6eb; }
+  .fb-verified { color: #1877f2; font-size: 12px; }
+  .fb-meta { display: flex; gap: 8px; align-items: center; font-size: 12px; color: #b0b3b8; margin-top: 2px; }
+  .fb-live-badge { background: #e41e3f; color:#fff; padding: 1px 6px; border-radius: 3px; font-weight: 800; font-size: 10.5px; letter-spacing: .5px; }
+  .fb-viewers, .fb-elapsed { font-variant-numeric: tabular-nums; }
+  .fb-follow { background: #1877f2; color: #fff; border: 0; font-weight: 700; padding: 7px 14px; border-radius: 6px; font-size: 13px; }
+
+  .video-outer { display: flex; justify-content: center; padding: 8px 12px; background: #18191a; }
+  .video-wrap { position: relative; width: 100%; max-width: 300px; aspect-ratio: 9/16; background: #000; border-radius: 10px; overflow: hidden; }
+  .video-inner { position: absolute; inset: 0; }
+  .video-inner img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+  .video-mute-cta { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); background:#e41e3f; color:#fff; font-weight:800; font-size:15px; padding:12px 22px; border-radius:8px; display:flex; align-items:center; gap:10px; cursor:pointer; border:0; }
+  .video-live-tag { position:absolute; top:12px; left:12px; background:#e41e3f; color:#fff; font-weight:800; font-size:11.5px; padding:4px 8px; border-radius:4px; letter-spacing:.5px; box-shadow:0 2px 8px rgba(228,30,63,.5); }
+  .video-viewers-tag { position:absolute; top:12px; right:12px; background:rgba(0,0,0,.55); color:#fff; font-size:11.5px; padding:4px 8px; border-radius:4px; backdrop-filter: blur(6px); }
+
+  .like-pops { position:absolute; left:10px; bottom:14px; display:flex; flex-direction:column; gap:6px; pointer-events:none; z-index:5; }
+  .like-pop { display:flex; align-items:center; gap:8px; background:rgba(0,0,0,.55); backdrop-filter: blur(6px); color:#fff; padding:5px 10px 5px 5px; border-radius:100px; font-size:12.5px; animation: likePopIn .5s ease-out; max-width:260px; }
+  .purchase-pop { background:rgba(34,197,94,.65); }
+  .lp-avatar { width:26px; height:26px; border-radius:50%; object-fit:cover; flex-shrink:0; display:block; }
+  .lp-text { line-height:1.2; }
+  .lp-text strong { font-weight:700; margin-right:4px; }
+  @keyframes likePopIn { from { opacity:0; transform: translateX(-20px);} to {opacity:1; transform:none;} }
+
+  .fb-reactions { display: flex; gap: 4px; padding: 4px 6px; border-bottom: 1px solid #3a3b3c; background: #242526; }
+  .fb-react-btn { flex: 1; background: transparent; border: 0; color: #b0b3b8; font-weight: 600; font-size: 13px; padding: 8px 6px; border-radius: 6px; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; }
+  .fb-react-btn.liked { color: #ff4d67; }
+  .fb-react-btn span { font-variant-numeric: tabular-nums; font-size: 12.5px; }
+
+  .delay-block { background: #18191a; padding: 2px 12px 20px; }
+  .live-comments { position: relative; max-height: 210px; padding: 8px 4px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
+  .live-comment { display: flex; gap: 8px; align-items: flex-start; animation: slideIn .35s ease-out; padding: 0 4px; }
+  @keyframes slideIn { from { opacity:0; transform: translateY(8px);} to {opacity:1; transform:none;} }
+  .lc-avatar { width:32px; height:32px; border-radius:50%; object-fit:cover; flex-shrink:0; display:block; }
+  .lc-body { background: #3a3b3c; padding: 7px 12px; border-radius: 16px; font-size: 13.5px; line-height:1.35; box-shadow: 0 2px 8px rgba(0,0,0,.35); }
+  .lc-name { font-weight: 700; color: #e4e6eb; margin-right: 6px; }
+  .lc-text { color: #d8dadf; }
+
+  .comment-input { position: sticky; bottom: 0; background: #242526; padding: 10px 12px; display: flex; gap: 8px; align-items: center; border-top: 1px solid #3a3b3c; }
+  .comment-input input { flex: 1; background: #3a3b3c; border: 0; border-radius: 100px; padding: 9px 14px; color: #e4e6eb; font-size: 13.5px; }
+  .comment-input span { font-size: 20px; }
+</style>
+</head>
+<body>
+  <div class="fb-page">
+    <header class="fb-header">
+      <div class="fb-avatar-wrap">
+        <img src="./assets/images/hero-desatadora.png" alt="Novena Desatadora dos Nós" class="fb-avatar-img" />
+        <span class="fb-live-dot"></span>
+      </div>
+      <div class="fb-header-info">
+        <div class="fb-name">Novena Desatadora dos Nós <span class="fb-verified">✓</span></div>
+        <div class="fb-meta">
+          <span class="fb-live-badge">● AO VIVO</span>
+          <span class="fb-viewers" id="viewersTag">👁 1.247</span>
+          <span class="fb-elapsed" id="elapsedTag">00:00</span>
+        </div>
+      </div>
+      <button class="fb-follow">Seguir</button>
+    </header>
+
+    <div class="video-outer">
+      <div class="video-wrap">
+        <div class="video-inner">
+          <!-- ▼▼▼ COLE AQUI O SEU CÓDIGO DE EMBED DA VTURB ▼▼▼
+
+            Exemplo de como costuma vir (adapte com o SEU id de conta e
+            de player, copiado do painel da VTurb/ConverteAI):
+
+            <vturb-smartplayer id="vid-SEU_PLAYER_ID"
+              style="display:block;margin:0 auto;width:100%;max-width:400px;">
+              <div class="vturb-player-placeholder"
+                style="position:relative;width:100%;padding:177.9% 0 0;
+                z-index:0;background-color:black;"></div>
+            </vturb-smartplayer>
+            <script>
+              var s = document.createElement("script");
+              s.src = "https://scripts.converteai.net/SUA_CONTA/players/SEU_PLAYER_ID/v4/player.js";
+              s.async = true;
+              document.head.appendChild(s);
+            </script>
+
+            Cole seu código real logo abaixo desta linha, e apague a
+            div "placeholderFallback" (com a imagem estática) — ela só
+            está aqui pra a página não ficar em branco enquanto você não
+            cola o vídeo de verdade.
+          -->
+          <!-- ▲▲▲ COLE ACIMA DESTA LINHA ▲▲▲ -->
+
+          <div id="placeholderFallback">
+            <img src="./assets/images/hero-desatadora.png" alt="" />
+          </div>
+        </div>
+        <button class="video-mute-cta" id="muteCta">🔇 Clique para assistir</button>
+        <div class="video-live-tag">● AO VIVO</div>
+        <div class="video-viewers-tag"><span id="viewersWatching">👁 1.247 assistindo</span></div>
+        <div class="like-pops" id="likePops"></div>
+      </div>
+    </div>
+
+    <div class="fb-reactions">
+      <button class="fb-react-btn" id="likeBtn">🤍 <span id="likeCount">4.823</span></button>
+      <button class="fb-react-btn">💬 <span id="commentCount">312</span></button>
+      <button class="fb-react-btn">🔗 Compartilhar</button>
+    </div>
+
+    <div id="delayBlock" class="delay-block">
+      <div class="live-comments" id="liveComments"></div>
+      <div class="comment-input">
+        <input placeholder="Escreva um comentário…" disabled />
+        <span>😊</span>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+  (function () {
+    var NOMES_F = ['Maria Silva','Ana Souza','Fernanda Costa','Juliana Oliveira','Patrícia Santos','Camila Pereira','Aline Rodrigues','Bruna Almeida','Larissa Ferreira','Débora Lima','Vanessa Carvalho','Renata Gomes','Cristina Barbosa','Simone Ribeiro','Adriana Martins','Priscila Rocha','Tatiane Dias','Luciana Nunes','Rosana Cardoso','Elaine Teixeira'];
+    var NOMES_M = ['João Silva','Carlos Souza','Marcos Oliveira','Rafael Santos','Paulo Pereira','Rodrigo Costa','Eduardo Lima','Bruno Carvalho','Felipe Gomes','Anderson Martins','Diego Ribeiro','Gustavo Barbosa','Leonardo Rocha','Marcelo Dias','Ricardo Nunes'];
+    var CORES = ['#ef4444','#f97316','#eab308','#22c55e','#14b8a6','#3b82f6','#8b5cf6','#ec4899','#f43f5e','#06b6d4'];
+    var FOTOS_F = ['https://randomuser.me/api/portraits/women/65.jpg','https://randomuser.me/api/portraits/women/68.jpg','https://randomuser.me/api/portraits/women/75.jpg','https://randomuser.me/api/portraits/women/79.jpg','https://randomuser.me/api/portraits/women/80.jpg','https://randomuser.me/api/portraits/women/81.jpg','https://randomuser.me/api/portraits/women/87.jpg','https://randomuser.me/api/portraits/women/90.jpg'];
+    var FOTOS_M = ['https://randomuser.me/api/portraits/men/42.jpg','https://randomuser.me/api/portraits/men/45.jpg','https://randomuser.me/api/portraits/men/52.jpg','https://randomuser.me/api/portraits/men/60.jpg','https://randomuser.me/api/portraits/men/70.jpg','https://randomuser.me/api/portraits/men/75.jpg','https://randomuser.me/api/portraits/men/83.jpg','https://randomuser.me/api/portraits/men/84.jpg','https://randomuser.me/api/portraits/men/86.jpg','https://randomuser.me/api/portraits/men/92.jpg'];
+
+    var COMENTARIOS = [
+      'Esse vídeo salvou minha vida 🙏','Eu precisava desse milagre na minha vida',
+      'Que bênção ter sido escolhida pra ver essa mensagem','Deus mandou isso pra mim na hora certa',
+      'Não consigo parar de assistir, isso é muito forte','Minha fé foi restaurada por causa disso',
+      'Todo mundo precisa assistir isso agora','Isso me trouxe lágrimas aos olhos, obrigada, Nossa Senhora',
+      'Vou compartilhar isso com toda a minha família','Essa mensagem é exatamente o que eu pedi em oração',
+      'Nunca me senti tão esperançosa antes','Deus abençoe quem criou isso 🙏',
+      'Continue assistindo, fica ainda melhor','Isso mudou tudo pra mim',
+      'Fico tão grata por ter clicado nessa live','Não saia, a melhor parte está chegando',
+      'Essa é uma verdadeira bênção lá do céu','Meu coração está tão cheio agora',
+      'Eu queria ter encontrado isso antes','Orando por todo mundo que está assistindo isso ❤️',
+      'Isso respondeu minhas orações hoje','Sinto o Espírito Santo através desse vídeo',
+      'Nunca pule isso, muda a vida','Obrigada, Nossa Senhora, por essa mensagem 🙌',
+      'Minha alma precisava disso mais que tudo','Vou contar pro meu grupo da igreja sobre isso',
+      'Quem mais está se sentindo abençoado agora?','Essa é a prova de que Deus é real',
+      'Assista até o final, você não vai se arrepender','Eu estava perdida antes de encontrar essa live',
+      'Eu e meu marido estamos assistindo juntos, incrível','Isso me lembrou que milagres ainda acontecem',
+      'Não role a tela e perca essa bênção','Minha vida inteira mudou depois de assistir isso',
+      'Mandando amor pra todo mundo nessa live','Eu chorei quando ouvi essa mensagem',
+      'Deus age de formas misteriosas 🙏','Esse é o sinal que eu estava esperando',
+      'Por favor continuem compartilhando isso com o mundo','Minha depressão passou depois de assistir isso',
+      'Eu me sentia sem esperança até encontrar essa live','Esse vídeo é um presente do céu',
+      'Já assisti de novo três vezes','Meus filhos precisam ver essa mensagem',
+      'Isso restaurou meu casamento, graças a Deus','Nada tocou meu coração assim antes',
+      'Finalmente tenho paz na minha alma','Quem estiver lendo isso, você foi escolhido(a)',
+      'Não perca essa oportunidade, é divina'
+    ];
+
+    // ── Cabeçalho: relógio + contador de espectadores ──────────────
+    var elapsed = 0;
+    var elapsedTag = document.getElementById('elapsedTag');
+    setInterval(function () {
+      elapsed++;
+      var mm = String(Math.floor(elapsed / 60)).padStart(2, '0');
+      var ss = String(elapsed % 60).padStart(2, '0');
+      elapsedTag.textContent = mm + ':' + ss;
+    }, 1000);
+
+    var viewers = 1247;
+    var viewersTag = document.getElementById('viewersTag');
+    var viewersWatching = document.getElementById('viewersWatching');
+    function fmt(n) { return n.toLocaleString('pt-BR'); }
+    function renderViewers() {
+      viewersTag.textContent = '👁 ' + fmt(viewers);
+      viewersWatching.textContent = '👁 ' + fmt(viewers) + ' assistindo';
+    }
+    renderViewers();
+    setInterval(function () {
+      viewers = Math.max(800, viewers + Math.floor(Math.random() * 21) - 8);
+      renderViewers();
+    }, 6000);
+
+    // ── Reação (curtir) ─────────────────────────────────────────────
+    var liked = false;
+    var likeCount = 4823;
+    var likeBtn = document.getElementById('likeBtn');
+    var likeCountEl = document.getElementById('likeCount');
+    likeCountEl.textContent = fmt(likeCount);
+    likeBtn.addEventListener('click', function () {
+      liked = !liked;
+      likeCount += liked ? 1 : -1;
+      likeBtn.classList.toggle('liked', liked);
+      likeBtn.childNodes[0].textContent = liked ? '❤️ ' : '🤍 ';
+      likeCountEl.textContent = fmt(likeCount);
+    });
+
+    // ── Vídeo: clique pra "assistir" (só remove o overlay — troque
+    // pelo play() do seu player real) ───────────────────────────────
+    document.getElementById('muteCta').addEventListener('click', function (ev) {
+      ev.currentTarget.style.display = 'none';
+    });
+
+    // ── Comentários ao vivo (aparecem antes da oferta) ──────────────
+    var commentCount = 312;
+    var commentCountEl = document.getElementById('commentCount');
+    commentCountEl.textContent = fmt(commentCount);
+    var liveComments = document.getElementById('liveComments');
+    var commentSeq = 0;
+    function novoComentario() {
+      var texto = COMENTARIOS[Math.floor(Math.random() * COMENTARIOS.length)];
+      var isF = Math.random() < 0.6;
+      var nome = (isF ? NOMES_F : NOMES_M)[Math.floor(Math.random() * (isF ? NOMES_F : NOMES_M).length)];
+      var foto = (isF ? FOTOS_F : FOTOS_M)[Math.floor(Math.random() * (isF ? FOTOS_F : FOTOS_M).length)];
+      commentSeq++;
+      var el = document.createElement('div');
+      el.className = 'live-comment';
+      el.innerHTML = '<img class="lc-avatar" src="' + foto + '" alt=""><div class="lc-body"><span class="lc-name">' + nome + '</span><span class="lc-text">' + texto + '</span></div>';
+      liveComments.appendChild(el);
+      while (liveComments.children.length > 6) liveComments.removeChild(liveComments.firstChild);
+      liveComments.scrollTop = liveComments.scrollHeight;
+      commentCount += 1 + Math.floor(Math.random() * 3);
+      commentCountEl.textContent = fmt(commentCount);
+    }
+    for (var i = 0; i < 3; i++) setTimeout(novoComentario, i * 600);
+    setInterval(novoComentario, 4500 + Math.random() * 2500);
+
+    // ── Curtidas flutuantes sobre o vídeo ────────────────────────────
+    var likePopsEl = document.getElementById('likePops');
+    function novoLikePop() {
+      var isF = Math.random() < 0.6;
+      var nome = (isF ? NOMES_F : NOMES_M)[Math.floor(Math.random() * (isF ? NOMES_F : NOMES_M).length)];
+      var foto = (isF ? FOTOS_F : FOTOS_M)[Math.floor(Math.random() * (isF ? FOTOS_F : FOTOS_M).length)];
+      var el = document.createElement('div');
+      el.className = 'like-pop';
+      el.innerHTML = '<img class="lp-avatar" src="' + foto + '" alt=""><div class="lp-text"><strong>' + nome + '</strong> curtiu ❤️</div>';
+      likePopsEl.appendChild(el);
+      likeCount += 1;
+      likeCountEl.textContent = fmt(likeCount);
+      setTimeout(function () { el.remove(); }, 4500);
+    }
+    setTimeout(novoLikePop, 8000);
+    setInterval(novoLikePop, 35000 + Math.random() * 10000);
+  })();
+  </script>
+</body>
+</html>
