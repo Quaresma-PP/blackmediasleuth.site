@@ -168,13 +168,11 @@
     Motor de chat (balões + digitação + botões + caixa de oração) é o
     mesmo já testado.
 
-    GÊNERO: prioridade é 1) ?genero=f|m na URL, 2) inferir pelo primeiro
-    nome (lista de nomes comuns no Brasil + regra de terminação -a/-o),
-    3) só se as duas falharem, pergunta dentro do chat ("SOU MULHER" /
-    "SOU HOMEM") antes de começar. Ou seja: como o index.html já pede o
-    nome, a grande maioria das pessoas NÃO vê a pergunta de gênero — só
-    nomes ambíguos (ex: "Alex") caem nela. A partir do gênero resolvido,
-    o chat usa "minha filha" / "meu filho", "sozinha" / "sozinho",
+    GÊNERO: nunca pergunta — resolve sozinho a partir do nome que já veio
+    do index.html. Prioridade: 1) ?genero=f|m na URL, 2) lista de nomes
+    comuns no Brasil, 3) regra de terminação (-a → feminino, -o →
+    masculino), 4) chute final (masculino) pra qualquer nome fora disso.
+    A partir do gênero resolvido, o chat usa "minha filha" / "meu filho", "sozinha" / "sozinho",
     "pronta" / "pronto" — com a concordância certa (bloco "minha amada
     filha" / "meu amado filho", não palavra trocada isolada). "MINHA
     RAINHA" NÃO varia por gênero: é o visitante chamando Nossa Senhora de
@@ -235,21 +233,25 @@
     var EXCECOES_CONSOANTE_FEMININO = ['ingrid', 'raquel', 'isabel', 'judite', 'beatriz', 'miriam', 'ruth',
       'esther', 'ester', 'carmen', 'iris', 'noemi'];
 
+    // Nunca retorna null — sempre chuta algo, pra nunca precisar perguntar.
     function inferirGenero(primeiroNome) {
       var n = (primeiroNome || '').toLowerCase().trim().split(/\s+/)[0] || '';
       n = n.normalize ? n.normalize('NFD').replace(/[̀-ͯ]/g, '') : n;
-      if (!n) return null;
+      if (!n) return 'f';
       if (NOMES_FEMININOS.indexOf(n) !== -1) return 'f';
       if (NOMES_MASCULINOS.indexOf(n) !== -1) return 'm';
       if (EXCECOES_A_MASCULINO.indexOf(n) !== -1) return 'm';
       if (EXCECOES_CONSOANTE_FEMININO.indexOf(n) !== -1) return 'f';
       if (/a$/.test(n)) return 'f';
       if (/o$/.test(n)) return 'm';
-      return null; // terminação ambígua (ex: nomes em -e, -l, -r, -z não listados) — melhor perguntar
+      // Terminação fora da lista (-e, -l, -r, -s, -n, -z...): no português,
+      // a maioria desses nomes é masculina (Rafael, André, Carlos, Marcos,
+      // Luis...) — chuta masculino como padrão em vez de perguntar.
+      return 'm';
     }
 
-    // 'f' ou 'm'. Prioridade: ?genero= na URL > inferência pelo nome >
-    // pergunta dentro do chat (step 0) como último recurso.
+    // 'f' ou 'm'. ?genero= na URL manda, senão infere pelo nome — sempre
+    // resolve, nunca pergunta dentro do chat.
     var generoParam = (q.get('genero') || '').trim().toLowerCase();
     var genero = (generoParam === 'f' || generoParam === 'm') ? generoParam : inferirGenero(nome);
 
@@ -327,12 +329,6 @@
       { type: 'bot', lines: ['Então…', 'PRONTO! 🙏', 'Aceito seu pedido.', 'EU REALIZO SEU MILAGRE! ✨'] },
       { type: 'redirect', label: 'Preparando sua transmissão ao vivo…' },
     ];
-
-    // Se o gênero não veio pronto pela URL, pergunta antes de tudo —
-    // é o que define "minha filha/meu filho" já na primeira fala.
-    if (genero === null) {
-      script.unshift({ type: 'gender' });
-    }
 
     var wrap = document.getElementById('chatWrap');
     var i = 0;
@@ -442,52 +438,11 @@
       }, 2200);
     }
 
-    function renderGenderQuestion(done) {
-      var group = document.createElement('div');
-      group.className = 'group';
-      var bubbles = document.createElement('div');
-      bubbles.className = 'bubbles';
-      group.innerHTML = '<img class="avatar" src="' + AVATAR + '" alt="">';
-      group.appendChild(bubbles);
-      wrap.appendChild(group);
-      scrollDown();
-
-      showTypingIn(bubbles, 1100, function () {
-        var b = document.createElement('div');
-        b.className = 'bubble';
-        b.textContent = 'Antes de começarmos, me diga uma coisa…';
-        bubbles.appendChild(b);
-        scrollDown();
-
-        var box = document.createElement('div');
-        box.className = 'choices';
-        wrap.appendChild(box);
-        [
-          ['SOU MULHER 🙋‍♀️', 'f'],
-          ['SOU HOMEM 🙋‍♂️', 'm']
-        ].forEach(function (pair) {
-          var btn = document.createElement('button');
-          btn.className = 'choice-btn';
-          btn.textContent = pair[0];
-          btn.addEventListener('click', function () {
-            genero = pair[1];
-            box.classList.add('done');
-            btn.classList.add('chosen');
-            done();
-          });
-          box.appendChild(btn);
-        });
-        scrollDown();
-      });
-    }
-
     function runNext() {
       if (i >= script.length) return;
       var step = script[i];
       i++;
-      if (step.type === 'gender') {
-        renderGenderQuestion(runNext);
-      } else if (step.type === 'bot') {
+      if (step.type === 'bot') {
         renderBotGroup(step.lines, runNext);
       } else if (step.type === 'choices') {
         renderChoices(step.options, runNext);

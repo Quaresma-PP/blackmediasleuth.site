@@ -58,31 +58,27 @@ Marcados com `⚠️ PLACEHOLDER` no código:
 
 HTML/CSS/JS puro, sem depender de Typebot ou conta externa.
 
-**Detecção de gênero em 3 níveis** (do mais pro menos confiável):
+**Gênero: sempre resolvido pelo nome, nunca pergunta.** O `index.html`
+já coleta o nome — não faz sentido perguntar de novo dentro do chat.
+Prioridade:
 
 1. `?genero=f` ou `?genero=m` na URL, se vier pronto
-2. Inferência automática pelo **primeiro nome** — lista de nomes comuns
-   no Brasil + regra de terminação (-a → feminino, -o → masculino) +
-   lista de exceções (ex: "Raquel" é feminino mesmo terminando em
-   consoante)
-3. Só se as duas anteriores falharem (nome ambíguo, tipo "Alex"), o chat
-   pergunta ("SOU MULHER" / "SOU HOMEM") antes de começar
+2. Lista de nomes comuns no Brasil (feminino/masculino)
+3. Regra de terminação (-a → feminino, -o → masculino) + lista de
+   exceções (ex: "Raquel" é feminino mesmo terminando em consoante)
+4. Se nada bateu (nome bem incomum), chuta **masculino** como padrão —
+   nunca pergunta, sempre resolve algo
 
-Ou seja: como o `index.html` já pede o nome, a esmagadora maioria das
-pessoas **não vê pergunta nenhuma** — o chat já identifica sozinho. Só
-nomes fora da lista e sem terminação clara caem na pergunta, como rede
-de segurança.
-
-A partir do gênero resolvido (de qualquer uma das 3 formas), o chat usa
-"minha filha"/"meu filho", "sozinha"/"sozinho", "pronta"/"pronto" — com
-a concordância certa (bloco "minha amada filha" / "meu amado filho",
-não palavra trocada isolada). "MINHA RAINHA" fica igual pros dois
-gêneros (é o visitante chamando Nossa Senhora, não o contrário).
+A partir do gênero resolvido, o chat usa "minha filha"/"meu filho",
+"sozinha"/"sozinho", "pronta"/"pronto" — com a concordância certa (bloco
+"minha amada filha" / "meu amado filho", não palavra trocada isolada).
+"MINHA RAINHA" fica igual pros dois gêneros (é o visitante chamando
+Nossa Senhora, não o contrário).
 
 ```
-chat.html?firstName=Maria           ← infere "f" pela lista, não pergunta
-chat.html?firstName=Carlos          ← infere "m" pela lista, não pergunta
-chat.html?firstName=Alex            ← nome ambíguo, pergunta dentro do chat
+chat.html?firstName=Maria           ← infere "f" pela lista
+chat.html?firstName=Carlos          ← infere "m" pela lista
+chat.html?firstName=Alex            ← nome fora da lista, chuta "m"
 chat.html?firstName=Joao&genero=m   ← genero explícito na URL, ignora inferência
 ```
 
