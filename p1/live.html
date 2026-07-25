@@ -59,10 +59,8 @@
   .fb-follow { background: #1877f2; color: #fff; border: 0; font-weight: 700; padding: 7px 14px; border-radius: 6px; font-size: 13px; }
 
   .video-outer { display: flex; justify-content: center; padding: 8px 12px; background: #18191a; }
-  .video-wrap { position: relative; width: 100%; max-width: 300px; aspect-ratio: 9/16; background: #000; border-radius: 10px; overflow: hidden; }
-  .video-inner { position: absolute; inset: 0; }
-  .video-inner img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
-  .video-mute-cta { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); background:#e41e3f; color:#fff; font-weight:800; font-size:15px; padding:12px 22px; border-radius:8px; display:flex; align-items:center; gap:10px; cursor:pointer; border:0; }
+  .video-wrap { position: relative; width: 100%; max-width: 300px; background: #000; border-radius: 10px; overflow: hidden; }
+  .video-inner { position: relative; width: 100%; line-height: 0; }
   .video-live-tag { position:absolute; top:12px; left:12px; background:#e41e3f; color:#fff; font-weight:800; font-size:11.5px; padding:4px 8px; border-radius:4px; letter-spacing:.5px; box-shadow:0 2px 8px rgba(228,30,63,.5); }
   .video-viewers-tag { position:absolute; top:12px; right:12px; background:rgba(0,0,0,.55); color:#fff; font-size:11.5px; padding:4px 8px; border-radius:4px; backdrop-filter: blur(6px); }
 
@@ -92,6 +90,15 @@
   .comment-input input { flex: 1; background: #3a3b3c; border: 0; border-radius: 100px; padding: 9px 14px; color: #e4e6eb; font-size: 13.5px; }
   .comment-input span { font-size: 20px; }
 </style>
+
+<script>!function(i,n){i._plt=i._plt||(n&&n.timeOrigin?n.timeOrigin+n.now():Date.now())}(window,performance);</script>
+<link rel="preload" href="https://scripts.converteai.net/beb06ebc-0219-4b97-b88f-8ccab6eb2442/players/6a64222c8a73f4eaa90008ce/v4/player.js" as="script">
+<link rel="preload" href="https://scripts.converteai.net/lib/js/smartplayer-wc/v4/smartplayer.js" as="script">
+<link rel="preload" href="https://cdn.converteai.net/beb06ebc-0219-4b97-b88f-8ccab6eb2442/6a39abdfdf26dbd6a95e6a79/main.m3u8" as="fetch">
+<link rel="dns-prefetch" href="https://cdn.converteai.net">
+<link rel="dns-prefetch" href="https://scripts.converteai.net">
+<link rel="dns-prefetch" href="https://images.converteai.net">
+<link rel="dns-prefetch" href="https://license.vturb.com">
 </head>
 <body>
   <div class="fb-page">
@@ -114,36 +121,8 @@
     <div class="video-outer">
       <div class="video-wrap">
         <div class="video-inner">
-          <!-- ▼▼▼ COLE AQUI O SEU CÓDIGO DE EMBED DA VTURB ▼▼▼
-
-            Exemplo de como costuma vir (adapte com o SEU id de conta e
-            de player, copiado do painel da VTurb/ConverteAI):
-
-            <vturb-smartplayer id="vid-SEU_PLAYER_ID"
-              style="display:block;margin:0 auto;width:100%;max-width:400px;">
-              <div class="vturb-player-placeholder"
-                style="position:relative;width:100%;padding:177.9% 0 0;
-                z-index:0;background-color:black;"></div>
-            </vturb-smartplayer>
-            <script>
-              var s = document.createElement("script");
-              s.src = "https://scripts.converteai.net/SUA_CONTA/players/SEU_PLAYER_ID/v4/player.js";
-              s.async = true;
-              document.head.appendChild(s);
-            </script>
-
-            Cole seu código real logo abaixo desta linha, e apague a
-            div "placeholderFallback" (com a imagem estática) — ela só
-            está aqui pra a página não ficar em branco enquanto você não
-            cola o vídeo de verdade.
-          -->
-          <!-- ▲▲▲ COLE ACIMA DESTA LINHA ▲▲▲ -->
-
-          <div id="placeholderFallback">
-            <img src="./assets/images/hero-desatadora.png" alt="" />
-          </div>
+          <vturb-smartplayer id="vid-6a64222c8a73f4eaa90008ce" style="display: block; margin: 0 auto; width: 100%; max-width: 400px;"><div class="vturb-player-placeholder" style="position: relative; width: 100%; padding: 133.33333333333331% 0 0; z-index: 0; background-color: black;"></div></vturb-smartplayer> <script type="text/javascript"> var s=document.createElement("script"); s.src="https://scripts.converteai.net/beb06ebc-0219-4b97-b88f-8ccab6eb2442/players/6a64222c8a73f4eaa90008ce/v4/player.js", s.async=!0,document.head.appendChild(s); </script>
         </div>
-        <button class="video-mute-cta" id="muteCta">🔇 Clique para assistir</button>
         <div class="video-live-tag">● AO VIVO</div>
         <div class="video-viewers-tag"><span id="viewersWatching">👁 1.247 assistindo</span></div>
         <div class="like-pops" id="likePops"></div>
@@ -238,12 +217,6 @@
       likeBtn.classList.toggle('liked', liked);
       likeBtn.childNodes[0].textContent = liked ? '❤️ ' : '🤍 ';
       likeCountEl.textContent = fmt(likeCount);
-    });
-
-    // ── Vídeo: clique pra "assistir" (só remove o overlay — troque
-    // pelo play() do seu player real) ───────────────────────────────
-    document.getElementById('muteCta').addEventListener('click', function (ev) {
-      ev.currentTarget.style.display = 'none';
     });
 
     // ── Comentários ao vivo (aparecem antes da oferta) ──────────────

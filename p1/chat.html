@@ -264,7 +264,7 @@
     // Tempo fixo de "digitando" antes de CADA balão — igual pra todos,
     // curto ou longo (sem variar por tamanho do texto).
     function thinkTime(text) {
-      return 2200;
+      return 3200;
     }
 
     function showTypingIn(container, ms, cb) {
@@ -300,7 +300,7 @@
           bubbles.appendChild(b);
           scrollDown();
           idx++;
-          setTimeout(next, 600);
+          setTimeout(next, 900);
         });
       }
       next();
